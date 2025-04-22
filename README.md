@@ -1,7 +1,7 @@
 batabase
 ---------------
-`docker build -t test .`
-`docker run -it test /bin/sh`
-Dans la bd : 
-`sqlite3`
+`docker build -t test .`<br>
+`docker run -it test /bin/sh`<br>
+Dans la bd :<br>
+`sqlite3`<br>
 `.databases`
