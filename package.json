@@ -1,0 +1,21 @@
+{
+  "name": "transcend",
+  "version": "1.0.0",
+  "description": "batabase --------------- `docker build -t test .`<br> `docker run -it test /bin/sh`<br> Dans la bd :<br> `sqlite3`<br> `.databases`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moyaxzan/42-ft_transcendence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Moyaxzan/42-ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/Moyaxzan/42-ft_transcendence#readme"
+}
