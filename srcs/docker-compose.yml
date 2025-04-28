@@ -1,0 +1,8 @@
+services:
+  sqlite:
+    hostname: sqlite
+    build:
+      context: requirements/sqlite
+    container_name: sqlite
+    stdin_open: true
+    tty: true

@@ -7,3 +7,9 @@ FROM	alpine:3.20@sha256:de4fe7064d8f98419ea6b49190df1abbf43450c1702eeb864fe9ced4
 RUN apk add --no-cache sqlite
 
 WORKDIR /database
+
+CMD ["sqlite3", "database.db"]
+
+HEALTHCHECK	--interval=10s --timeout=1s --start-period=10s --retries=3 \
+	CMD sqlite3 /database/database.db "SELECT 1" | grep -qE "sqlite is alive"; \
+	if [ $? -eq 0 ]; then exit 0; else exit 1; fi
