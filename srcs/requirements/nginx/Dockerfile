@@ -10,8 +10,8 @@ FROM	nginx:1.25-alpine
 
 # Copy files from the host and put them into the container image
 COPY	--chmod=644 ./conf/nginx.conf /etc/nginx/http.d/
-#COPY	--chmod=644 ../secrets/inception.crt ./etc/nginx/inception.crt
-#COPY	--chmod=644 ../secrets/inception.key ./etc/nginx/inception.key
+COPY	--chmod=644 ../secrets/transcendence.crt ./etc/nginx/transcendence.crt
+COPY	--chmod=644 ../secrets/transcendence.key ./etc/nginx/transcendence.key
 
 # Sets configuration on the image that indicates a port the image would like to expose
 EXPOSE	443

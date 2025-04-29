@@ -6,6 +6,8 @@ RESET := \e[0m
 NAME = transcendence
 
 all:
+	@echo "$(GRAY)Creating /srcs/requirements/transcendence.sqlite$(RESET)"
+	@touch ./srcs/requirements/sqlite/transcendence.sqlite
 	@echo "$(GRAY)Copying HOME/secrets into /srcs/requirements/nginx/secrets$(RESET)"
 	@cp -r $(HOME)/secrets ./srcs/requirements/nginx/secrets
 	@echo "$(BLUE)HOME/secrets$(RESET) copied into /srcs/requirements/nginx/secrets: $(GREEN)Success$(RESET)"
