@@ -8,13 +8,18 @@ NAME = transcendence
 all:
 	@echo "$(GRAY)Creating /srcs/requirements/transcendence.sqlite$(RESET)"
 	@touch ./srcs/requirements/sqlite/transcendence.sqlite
+	@echo "$(BLUE)/srcs/requirements/transcendence.sqlite$(RESET) created: $(GREEN)Success$(RESET)"
+	@echo  "$(GRAY)Copying HOME/.env into /srcs$(RESET)"
+	@cp $(HOME)/.env srcs/.env
+	@echo "$(BLUE)HOME/.env$(RESET) copied into /srcs: $(GREEN)Success$(RESET)\n"
 	@echo "$(GRAY)Copying HOME/secrets into /srcs/requirements/nginx/secrets$(RESET)"
 	@cp -r $(HOME)/secrets ./srcs/requirements/nginx/secrets
 	@echo "$(BLUE)HOME/secrets$(RESET) copied into /srcs/requirements/nginx/secrets: $(GREEN)Success$(RESET)"
-
+	@echo "\n$(NAME) ready!"
 clean:
-	@rm -rf ./srcs/.env ./srcs/requirements/nginx/secrets $(DATA_PATH)
-	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN) Success$(RESET)"
+	@rm -rf ./srcs/.env ./srcs/requirements/nginx/secrets
+	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
+	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
 #
 #GREEN := \e[92m
 #GRAY := \e[90m
