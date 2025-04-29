@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+
+# To fully secure your supply chain integrity, you can pin the image version to a specific digest.
+# By pinning your images to a digest, you're guaranteed to always use the same image version, even if a publisher replaces the tag with a new image
+FROM	nginx:stable-alpine3.21@sha256:aed99734248e851764f1f2146835ecad42b5f994081fa6631cc5d79240891ec9
+
+COPY	--chmod=644 ./conf/default.conf /etc/nginx/conf.d/transcendence.conf
+COPY	--chmod=777 ./conf/index.html /var/www/
+COPY	--chmod=644 ../secrets/transcendence.crt /etc/nginx/transcendence.crt
+COPY	--chmod=644 ../secrets/transcendence.key /etc/nginx/transcendence.key
+
+# Sets configuration on the image that indicates a port the image would like to expose
+EXPOSE	443
+
+HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
+    CMD wget -q --tries=1 --spider --no-check-certificate https://127.0.0.1:443/health; \
+    if [ $? -eq 0 ]; then exit 0; else exit 1; fi
