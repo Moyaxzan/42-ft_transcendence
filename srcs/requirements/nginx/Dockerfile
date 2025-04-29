@@ -2,22 +2,15 @@
 
 # To fully secure your supply chain integrity, you can pin the image version to a specific digest.
 # By pinning your images to a digest, you're guaranteed to always use the same image version, even if a publisher replaces the tag with a new image
-#FROM	alpine:3.20@sha256:de4fe7064d8f98419ea6b49190df1abbf43450c1702eeb864fe9ced453c1cc5f
-FROM	nginx:1.25-alpine
+FROM	nginx:stable-alpine3.21@sha256:aed99734248e851764f1f2146835ecad42b5f994081fa6631cc5d79240891ec9
 
-# Install the application dependencies
-#RUN	apk add --no-cache nginx
-
-# Copy files from the host and put them into the container image
-COPY	--chmod=644 ./conf/nginx.conf /etc/nginx/http.d/
-COPY	--chmod=644 ../secrets/transcendence.crt ./etc/nginx/transcendence.crt
-COPY	--chmod=644 ../secrets/transcendence.key ./etc/nginx/transcendence.key
+COPY	--chmod=644 ./conf/default.conf /etc/nginx/conf.d/transcendence.conf
+COPY	--chmod=777 ./conf/index.html /var/www/
+COPY	--chmod=644 ../secrets/transcendence.crt /etc/nginx/transcendence.crt
+COPY	--chmod=644 ../secrets/transcendence.key /etc/nginx/transcendence.key
 
 # Sets configuration on the image that indicates a port the image would like to expose
 EXPOSE	443
-
-# Sets the default command a container using this image will run
-CMD ["nginx", "-g", "daemon off;"]
 
 HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
     CMD wget -q --tries=1 --spider --no-check-certificate https://127.0.0.1:443/health; \
