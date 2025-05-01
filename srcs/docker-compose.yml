@@ -1,0 +1,12 @@
+services:
+  nginx:
+    hostname: nginx
+    build:
+      context: requirements/nginx
+    container_name: nginx
+    env_file:
+     - .env
+    ports:
+     - 1083:443
+    environment:
+      - DOMAIN_NAME=$DOMAIN_NAME
