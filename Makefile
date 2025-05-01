@@ -10,7 +10,7 @@ NAME = transcendence
 all:
 	@echo "$(GRAY)Creating /srcs/requirements/transcendence_db.sqlite$(RESET)"
 	@touch ./srcs/requirements/sqlite/transcendence_db.sqlite
-	@echo "$(BLUE)/srcs/requirements/transcendence_db.sqlite$(RESET) created: $(GREEN)Success$(RESET)"
+	@echo "$(BLUE)/srcs/requirements/transcendence_db.sqlite$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo  "$(GRAY)Copying HOME/.env into /srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo "$(BLUE)HOME/.env$(RESET) copied into /srcs: $(GREEN)Success$(RESET)\n"
