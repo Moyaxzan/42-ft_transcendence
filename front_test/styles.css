@@ -1,0 +1,36 @@
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.button-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 20px;
+  }
+
+  .hover-item {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #eee;
+    padding: 8px;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+  }
+
+  .button-wrapper:hover .hover-item {
+    display: block;
+  }
+
+  button {
+    padding: 10px 20px;
+  }
