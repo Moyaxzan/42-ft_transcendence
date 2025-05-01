@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pong Game Menu</title>
+  <link href="styles_tail.css" rel="stylesheet">
+  <script src="menu.js" defer></script> <!-- menu.ts will be compiled into menu.js -->
+</head>
+<body class="bg-white h-screen flex flex-col items-center relative overflow-hidden">
+
+  <!-- Title -->
+  <h1 class="text-6xl font-black mt-10 z-20">Pong Game</h1>
+
+  <!-- Menu -->
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-5xl font-bold mb-10">Pong Game</h1>
+    <div class="relative w-80 h-80"> <!-- <--- width and height bigger -->
+      <!-- each layer -->
+      <div class="absolute top-0 left-0 w-full h-16 bg-blue-100 transform -rotate-6 shadow-lg animate-slide-in"></div>
+      <div class="absolute top-10 left-0 w-full h-16 bg-blue-300 transform -rotate-6 shadow-lg animate-slide-in delay-100"></div>
+      <div class="absolute top-20 left-0 w-full h-16 bg-blue-500 transform -rotate-6 shadow-lg animate-slide-in delay-200"></div>
+      <div class="absolute top-30 left-0 w-full h-16 bg-blue-700 transform -rotate-6 shadow-lg animate-slide-in delay-300"></div>
+      
+      <!-- text -->
+      <div class="absolute top-2 left-1/2 transform -translate-x-1/2 text-black font-custom">Settings</div>
+      <div class="absolute top-12 left-1/2 transform -translate-x-1/2 text-black font-custom">Account</div>
+      <div class="absolute top-22 left-1/2 transform -translate-x-1/2 text-black font-custom">Report</div>
+      <div class="absolute top-32 left-1/2 transform -translate-x-1/2 text-black font-custom">Game</div>
+    </div>
+  </div>
+  
+  
+  
+
+</body>
+</html>
