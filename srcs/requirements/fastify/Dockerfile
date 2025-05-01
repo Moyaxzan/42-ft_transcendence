@@ -8,11 +8,12 @@ WORKDIR	/usr/src/app
 
 COPY	package*.json ./
 
-RUN npm install #--production
+RUN 	npm install
+#	npm install fastify-sqlite
 
 COPY	. .
 
-CMD	[ "npm", "run" ]
+CMD	[ "npm", "start" ]
 
 #COPY	--chmod=755 ./conf/envsubst.sh .
 #COPY	--chmod=644 ./conf/default.conf.template /etc/nginx/conf.d/default.conf.template
