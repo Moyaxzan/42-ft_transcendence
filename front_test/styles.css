@@ -1,22 +1,13 @@
-.menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-}
+@import url('./navbar.css');
+@import url('./menu.css');
+
 
 h1 {
+    font-family:Impact;
     text-align: center;
 }
 
-.button-wrapper {
-    position: relative;
-    display: inline-block;
-    margin: 20px;
-  }
-
-  .hover-item {
+.hover-item {
     display: none;
     position: absolute;
     top: 50%;
@@ -27,10 +18,3 @@ h1 {
     white-space: nowrap;
   }
 
-  .button-wrapper:hover .hover-item {
-    display: block;
-  }
-
-  button {
-    padding: 10px 20px;
-  }
