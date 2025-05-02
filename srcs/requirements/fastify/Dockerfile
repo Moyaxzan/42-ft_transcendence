@@ -8,7 +8,11 @@ WORKDIR	/usr/src/app
 
 COPY	package*.json ./
 
-RUN 	npm install
+RUN 	npm install \
+	npm install drizzle-orm \
+	npm install -D drizzle-kit \
+	npm install @libsql/client
+#RUN	apk add sqlite --no-cache
 #	npm install fastify-sqlite
 
 COPY	. .

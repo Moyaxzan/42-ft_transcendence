@@ -15,5 +15,5 @@ fastify.listen({port: 3000, host: '0.0.0.0'}, function (err, address) {
 		fastify.log.error(err)
 		process.exit(1)
 	}
-	fastify.log.info(`coucou, le server ecoute l'adresse ${address}`)
+	fastify.log.info(`Server is now listening on ${address}`)
 })
