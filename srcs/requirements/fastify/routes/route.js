@@ -1,20 +1,8 @@
-/*
-async function routes (fastify, option) {
-	const collection = fastify()
-
-	fastify.get('/', async (request, reply) => {
-		return { hello: 'world'}
-	})
-}
-
-export default routes
-*/
-
 async function routes(fastify, options) {
   fastify.get('/', async (request, reply) => {
-//		return { hello: 'world'}
-    const users = await fastify.sqlite.all('SELECT * FROM users')
-   return { users }
+		return { hello: 'world'}
+   // const users = await fastify.sqlite.all('SELECT * FROM users')
+  // return { users }
   })
 
 /*

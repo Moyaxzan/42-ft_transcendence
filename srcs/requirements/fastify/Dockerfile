@@ -9,22 +9,13 @@ WORKDIR	/usr/src/app
 COPY	package*.json ./
 
 RUN 	npm install \
-	npm install drizzle-orm \
-	npm install -D drizzle-kit \
-	npm install @libsql/client
-#RUN	apk add sqlite --no-cache
-#	npm install fastify-sqlite
+	npm install @prisma/client@6 \
+	npm install -D prisma@6
 
 COPY	. .
 
 CMD	[ "npm", "start" ]
 
-#COPY	--chmod=755 ./conf/envsubst.sh .
-#COPY	--chmod=644 ./conf/default.conf.template /etc/nginx/conf.d/default.conf.template
-#COPY	--chmod=777 ./conf/index.html /var/www/
-#COPY	--chmod=644 ../secrets/transcendence.crt /etc/nginx/transcendence.crt
-#COPY	--chmod=644 ../secrets/transcendence.key /etc/nginx/transcendence.key
-#
 ## Sets configuration on the image that indicates a port the image would like to expose
 #EXPOSE	443
 #
