@@ -1,19 +1,25 @@
 // ESM
 import Fastify from 'fastify'
-import dbConnector from './db_connection/sqlite-connector.js'
-import index from './routes/route.js'
+import fastifySqlite from 'fastify-sqlite'
+import dbConnector from './db_connection/db.js'
+import routes from './routes/route.js'
 
 const fastify = Fastify({
 	logger: true
 })
 
-fastify.register(dbConnector)
-fastify.register(index)
+fastify.register(fastifySqlite, {
+	dbFile: './db_connection/transcendence_db.db'
+})
 
-fastify.listen({port: 3000, host: '0.0.0.0'}, function (err, address) {
+fastify.register(dbConnector)
+fastify.register(routes)
+
+fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
 	if (err) {
 		fastify.log.error(err)
 		process.exit(1)
+	} else {
+		fastify.log.info(`server is listening on ${address}`)
 	}
-	fastify.log.info(`Server is now listening on ${address}`)
 })

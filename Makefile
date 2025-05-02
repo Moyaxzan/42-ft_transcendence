@@ -8,9 +8,9 @@ RESET := \e[0m
 NAME = transcendence
 
 all:
-	@echo "$(GRAY)Creating ./srcs/requirements/fastify/db_connection/transcendence_db.sqlite$(RESET)"
-	@touch ./srcs/requirements/fastify/db_connection/transcendence_db.sqlite
-	@echo "$(BLUE)./srcs/requirements/fastify/db_connection/transcendence_db.sqlite$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@echo "$(GRAY)Creating ./srcs/requirements/fastify/db_connection/transcendence_db.db$(RESET)"
+	@touch ./srcs/requirements/fastify/db_connection/transcendence_db.db
+	@echo "$(BLUE)./srcs/requirements/fastify/db_connection/transcendence_db.db$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
