@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Moyaxzan/42-ft_transcendence/issues"
   },
-  "homepage": "https://github.com/Moyaxzan/42-ft_transcendence#readme"
+  "homepage": "https://github.com/Moyaxzan/42-ft_transcendence#readme",
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
 }
