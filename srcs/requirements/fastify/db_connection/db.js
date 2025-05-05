@@ -7,17 +7,20 @@ async function dbConnector (fastify, options) {
 			return
 		}
 		fastify.sqlite.exec(`
-		create table if not exists test ( \
+		create table if not exists users ( \
 		id integer primary key autoincrement, \
 		name text
-		);`
+		);
+		insert into users (id, name) values (0, "Antoine");
+		insert into users (name) values ("Jovica");`
 		, (err) => {
-//		fastify.sqlite.all('select * from test', (err, rows) => {
-			if (err) {
-				fastify.log.warn("Table 'test' introuvable" + err.message)
-			//}  else {
-			//	fastify.log.info({rows}, "contenu de la table test")
-			}
+			fastify.sqlite.all('select * from users', (err, rows) => {
+				if (err) {
+					fastify.log.warn("Table 'users' introuvable" + err.message)
+				}  else {
+					fastify.log.info({rows}, "contenu de la table users")
+				}
+			})
 		})
 	})
 }
