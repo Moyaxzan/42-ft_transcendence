@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'persona_font';
+    src: url('./fonts/Persona5MenuFontPrototype-Regular.woff') format('woff');
+}  
+
+button {
+    font-family: persona_font;
+    padding: 10px 20px;
+}
+
+.button-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 20px;
+}
+
+.button-wrapper:hover .hover-item {
+    display: block;
+}

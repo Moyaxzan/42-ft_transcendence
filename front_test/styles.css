@@ -18,3 +18,25 @@
     @apply skew-y-[6deg];
   }
 }
+/* =======
+@import url('./navbar.css');
+@import url('./menu.css');
+
+
+h1 {
+    font-family:Impact;
+    text-align: center;
+}
+
+.hover-item {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #eee;
+    padding: 8px;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+  }
+
+>>>>>>> cc9feb73e82ba53366e54d303ea2272a89fc22b1 */
