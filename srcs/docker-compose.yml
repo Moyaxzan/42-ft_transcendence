@@ -10,3 +10,21 @@ services:
      - 1083:443
     environment:
       - DOMAIN_NAME=$DOMAIN_NAME
+    networks:
+      - transcendence
+    restart: unless-stopped
+
+  fastify:
+    hostname: fastify
+    build:
+      context: requirements/fastify
+    container_name: fastify
+    env_file:
+     - .env
+    networks:
+      - transcendence
+    restart: unless-stopped
+
+networks:
+  transcendence:
+    name: transcendence
