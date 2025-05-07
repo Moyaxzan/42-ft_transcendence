@@ -8,6 +8,10 @@ server {
 	index			index.html;
 	client_max_body_size	32m;
 	error_page		500 502 503 504 /50x.html;
+	location = /coucou {
+		fastcgi_pass fastify:3000;
+		include fastcgi_params;
+	}
 	location = /50x.html {
 		root	/var/lib/nginx/html;
 	}
