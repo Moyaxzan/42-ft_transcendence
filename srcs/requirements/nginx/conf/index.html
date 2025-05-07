@@ -12,17 +12,18 @@
 
 	<body>
 		<main>
-			<h1>Welcome to My Website</h1>  
-			<p>Ta mere</p>
+			<h1>UN lapin adulte ?</h1>  
+			<p>Un ado, entre deux ages</p>
 		</main>
 
 		<script>
 async function afficherFilms() {
-  const reponse = await fetch("http://localhost:8080/coucou");
+  const reponse = await fetch("https://localhost:8080/coucou");
   const films = await reponse.json();
   console.log(films);
 }
 		</script>
-		<script src="./assets/js/main.js"></script>
+		<script src="../../../../../assets/js/main.js"></script>
+		
 	</body>
 </html>
