@@ -1,0 +1,25 @@
+import { renderHome } from './pages/home.js';
+import { renderAbout } from './pages/about.js';
+// Define a map of paths to render functions
+const routes = {
+    '/': renderHome,
+    '/about': renderAbout,
+};
+// Run this when URL changes or app first loads
+export function router() {
+    const path = window.location.pathname;
+    const render = routes[path] || renderHome;
+    render();
+}
+// Allow click links with data-link to pushState instead of full reload
+export function enableLinkInterception() {
+    document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.matches('[data-link]')) {
+            e.preventDefault();
+            const href = target.getAttribute('href');
+            history.pushState(null, '', href);
+            router();
+        }
+    });
+}

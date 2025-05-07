@@ -1,5 +1,5 @@
-import { renderHome } from './pages/home';
-import { renderAbout } from './pages/about';
+import { renderHome } from './pages/home.js';
+import { renderAbout } from './pages/about.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
