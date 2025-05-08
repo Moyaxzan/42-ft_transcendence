@@ -6,18 +6,20 @@ BLUE := \e[94m
 RESET := \e[0m
 
 NAME = transcendence
+REQUIREMENTS = ./srcs/requirements
+FASTIFY_DATA = ./data/fastify
+NGINX_DATA = ./data/nginx
 
-#all:
-#	@echo "$(GRAY)Creating ./srcs/requirements/fastify/db_connection/transcendence_db.db$(RESET)"
-#	@touch ./srcs/requirements/fastify/db_connection/transcendence_db.db
-#	@echo "$(BLUE)./srcs/requirements/fastify/db_connection/transcendence_db.db$(RESET) created: $(GREEN)Success$(RESET)\n"
 all:
 	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
-	@echo "$(GRAY)Copying HOME/secrets into ./srcs/requirements/nginx/secrets$(RESET)"
-	@cp -r $(HOME)/secrets ./srcs/requirements/nginx/secrets
-	@echo "$(BLUE)HOME/secrets$(RESET) copied into ./srcs/requirements/nginx/secrets: $(GREEN)Success$(RESET)"
+	@echo "$(GRAY)Copying HOME/secrets into $(REQUIREMENTS)/nginx/secrets$(RESET)"
+	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
+	@echo "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
+	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
+	@mkdir -p $(FASTIFY_DATA) $(NGINX_DATA)
+	@echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	docker compose -f ./srcs/docker-compose.yml up --build
 
@@ -34,10 +36,11 @@ clean:
 	@docker stop $$(docker ps -qa) || true
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
-#	@rm	./srcs/requirements/sqlite/transcendence_db.sqlite
-	@rm -rf ./srcs/.env ./srcs/requirements/nginx/secrets
+#	@rm	$(REQUIREMENTS)/sqlite/transcendence_db.sqlite
+	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(FASTIFY_DATA) $(NGINX_DATA)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
+	@echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@docker images
 	@echo ""
 	@docker ps -a
