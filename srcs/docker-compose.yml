@@ -2,8 +2,7 @@ services:
   nginx:
     hostname: nginx
     build:
-      context: ../
-      dockerfile: ./srcs/requirements/nginx/Dockerfile
+      context: requirements/nginx
     container_name: nginx
     env_file:
      - .env
