@@ -11,8 +11,7 @@ services:
     environment:
       - DOMAIN_NAME=$DOMAIN_NAME
     volumes:
-      - ./index.html:/usr/share/nginx/var/www/index.html
-      - ./index.html:/usr/share/nginx/var/www/assets/js
+      - ./requirements/front:/var/www
     networks:
       - transcendence
     restart: unless-stopped

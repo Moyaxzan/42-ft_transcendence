@@ -1,5 +1,5 @@
 async function routes (fastify, options) {
-	fastify.get('/', async (request, reply) => {
+	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {
@@ -18,6 +18,17 @@ async function routes (fastify, options) {
 			return reply.status(500).send({error: 'database error'});
 		}
 	});
+
+/*
+	fastify.get('/users', async (request, reply) => {
+		const result = await collection.find().toArray()
+		if (result.length === 0) {
+			throw new Error('No documents found')
+		}
+		return result
+	})
+*/
+
 }
 
 export default routes
