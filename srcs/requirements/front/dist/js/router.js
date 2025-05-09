@@ -23,3 +23,22 @@ export function enableLinkInterception() {
         }
     });
 }
+
+document.querySelector("#userLoad").addEventListener('click', async () => {
+	const res = await fetch('/api/users');
+	if (!res.ok) throw new Error('Failed to load');
+	const users = await res.json();
+	const userList = document.querySelector("#userList"); 
+	userList.innerHTML = '';
+	if (users.length > 0) {
+		const list = document.createElement("ul");
+		users.forEach(user => {
+			const listItem = document.createElement("li");
+			listItem.textContent = `${user.name}`;
+			list.appendChild(listItem);
+		});
+		userList.appendChild(list);
+	} else {
+		userList.innerHTML = '<p>No users found</p>';
+	}
+});
