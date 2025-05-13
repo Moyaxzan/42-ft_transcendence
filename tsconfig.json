@@ -3,7 +3,7 @@
       "target": "es6",
       "module": "es6",
       "rootDir": "assets/js",
-      "outDir": "dist/js",
+      "outDir": "srcs/requirements/front/dist/js",
       "moduleResolution": "node",
       "strict": true
     },

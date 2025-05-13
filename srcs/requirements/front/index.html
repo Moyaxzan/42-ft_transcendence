@@ -4,17 +4,25 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>ft_transcendence</title>
+		<script src="https://cdn.tailwindcss.com"></script>
 		<!-- <link rel="stylesheet" href="./style.css"> -->
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
 	</head>
 	<body>
-		<nav class="p-4 bg-gray-800 text-white space-x-4">
-		  <a href="/" data-link>Home</a>
-		  <a href="/about" data-link>About</a>
+		<nav class="flex justify-between items-center p-4 bg-cyan-200 text-white">
+			<div class="text-lg font-bold">
+				<a href="/" data-link>Home</a>
+			</div>
+			<div>
+				<a href="/profile" data-link class="text-lg font-bold hover:underline">Profile</a>
+			</div>
 		</nav>
 		<div id="app" class="p-8"></div>
 		<button id="userLoad">Display users</button>
 		<div id="userList" style="margin-top: 10px;"></div>
 		<script type="module" src="./dist/js/main.js"></script>
+		<footer class="bg-blue-900 text-white text-center p-4">
+			<p>&copy; tsais</p>
+		</footer>
 	  </body>
 </html>

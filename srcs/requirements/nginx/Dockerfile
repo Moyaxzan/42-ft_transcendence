@@ -6,7 +6,7 @@ FROM	nginx:stable-alpine3.21@sha256:aed99734248e851764f1f2146835ecad42b5f994081f
 
 COPY	--chmod=755 ./conf/envsubst.sh .
 COPY	--chmod=644 ./conf/default.conf.template /etc/nginx/conf.d/default.conf.template
-COPY	--chmod=777 ./conf/index.html /var/www/
+# COPY	--chmod=777 ./conf/index.html /var/www/
 COPY	--chmod=644 ./secrets/transcendence.crt /etc/nginx/transcendence.crt
 COPY	--chmod=644 ./secrets/transcendence.key /etc/nginx/transcendence.key
 
