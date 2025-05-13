@@ -21,6 +21,7 @@ all:
 	@mkdir -p $(FASTIFY_DATA) $(NGINX_DATA)
 	@echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
+	@tsc
 	docker compose -f ./srcs/docker-compose.yml up --build
 
 clean:
