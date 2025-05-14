@@ -17,9 +17,9 @@ all:
 	@echo "$(GRAY)Copying HOME/secrets into $(REQUIREMENTS)/nginx/secrets$(RESET)"
 	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
 	@echo "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
-	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
+	@echo "\n$(GRAY)Creating repositories for persistent data$(RESET)"
 	@mkdir -p $(FASTIFY_DATA) $(NGINX_DATA)
-	@echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
 	docker compose -f ./srcs/docker-compose.yml up --build
@@ -41,7 +41,7 @@ clean:
 	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(FASTIFY_DATA) $(NGINX_DATA)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
-	@echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@docker images
 	@echo ""
 	@docker ps -a
