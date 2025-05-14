@@ -1,4 +1,7 @@
 async function routes (fastify, options) {
+	fastify.get('/api/health', async (request, reply) => {
+		return { hello: 'world' }
+	})
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
