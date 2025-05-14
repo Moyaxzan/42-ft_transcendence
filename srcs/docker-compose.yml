@@ -10,8 +10,8 @@ services:
      - 8080:443
     environment:
       - DOMAIN_NAME=$DOMAIN_NAME
-#    volumes:
-#      - ./requirements/front:/var/www
+    volumes:
+      - ./requirements/front:/var/www
     networks:
       - transcendence
     restart: unless-stopped
@@ -23,26 +23,26 @@ services:
     container_name: fastify
     env_file:
       - .env
- #   volumes:
- #     - fastify:/app
+    volumes:
+      - fastify:/app
     networks:
       - transcendence
     restart: unless-stopped
 
-#volumes:
-#  nginx:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: ../data/nginx
-#  fastify:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: ../data/fastify
-#
+volumes:
+  nginx:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../data/nginx
+  fastify:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../data/fastify
+
 networks:
   transcendence:
     name: transcendence
