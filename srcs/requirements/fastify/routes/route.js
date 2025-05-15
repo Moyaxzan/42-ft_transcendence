@@ -1,5 +1,5 @@
 async function routes (fastify, options) {
-	fastify.get('/api/health', async (request, reply) => {
+	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
 	})
 	fastify.get('/api/users', async (request, reply) => {
@@ -14,8 +14,7 @@ async function routes (fastify, options) {
 			if (!rows) {
 				return reply.send('No user found');
 			}
-		//	const result = rows.map(user =>`User id: ${user.id}\nUser name: ${user.name}`).join('\n');
-		//	return reply.send(rows);
+			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({error: 'database error'});

@@ -20,7 +20,4 @@ server {
 	location = /health {
 		return 204;
 	}
-	location = /api/health {
-		return 204;
-	}
 }

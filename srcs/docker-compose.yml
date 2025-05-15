@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     volumes:
-      - fastify:/app
+      - fastify:/data
     networks:
       - transcendence
     restart: unless-stopped
