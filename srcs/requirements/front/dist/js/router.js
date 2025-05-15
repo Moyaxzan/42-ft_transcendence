@@ -45,7 +45,6 @@ export function displayUser() {
         return;
     }
     userLoadBtn.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-        //    try {
         const res = yield fetch('/api/users');
         if (!res.ok)
             throw new Error('Fail to load');
@@ -63,8 +62,5 @@ export function displayUser() {
         else {
             userList.innerHTML = '<p>No users found</p>';
         }
-        //  } catch (err) {
-        //    console.error(err);
-        //  }
     }));
 }
