@@ -1,9 +1,20 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
+import { renderUser } from './pages/user.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
     '/profile': renderProfile,
+    '/api/users': renderUser,
 };
 // Run this when URL changes or app first loads
 export function router() {
@@ -25,4 +36,35 @@ export function enableLinkInterception() {
             router();
         }
     });
+}
+export function displayUser() {
+    const userLoadBtn = document.querySelector("#userLoad");
+    const userList = document.querySelector("#userList");
+    if (!userLoadBtn || !userList) {
+        console.error("#userLoad or #userList not found.");
+        return;
+    }
+    userLoadBtn.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+        //    try {
+        const res = yield fetch('/api/users');
+        if (!res.ok)
+            throw new Error('Fail to load');
+        const users = yield res.json();
+        userList.innerHTML = '';
+        if (users.length > 0) {
+            const list = document.createElement("ul");
+            users.forEach((user) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${user.name}`;
+                list.appendChild(listItem);
+            });
+            userList.appendChild(list);
+        }
+        else {
+            userList.innerHTML = '<p>No users found</p>';
+        }
+        //  } catch (err) {
+        //    console.error(err);
+        //  }
+    }));
 }

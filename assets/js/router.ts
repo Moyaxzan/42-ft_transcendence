@@ -1,10 +1,12 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
+import { renderUser } from './pages/user.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,
   '/profile': renderProfile,
+  '/api/users': renderUser,
 };
 
 // Run this when URL changes or app first loads
@@ -30,34 +32,31 @@ export function enableLinkInterception() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const userLoadButton = document.querySelector<HTMLButtonElement>("#userLoad");
-  userLoadButton?.addEventListener('click', async () => {
-    try {
-      const res = await fetch('/api/users');
-      if (!res.ok) throw new Error('Failed to load');
-      const users: { name: string }[] = await res.json();
+export function displayUser() {
+  const userLoadBtn = document.querySelector("#userLoad");
+  const userList = document.querySelector("#userList");
 
-      const userList = document.querySelector<HTMLElement>("#userList");
-      if (!userList) {
-        console.error("userList element not found");
-        return;
-      }
+  if (!userLoadBtn || !userList) {
+    console.error("#userLoad or #userList not found.");
+    return;
+  }
+
+  userLoadBtn.addEventListener('click', async () => {
+      const res = await fetch('/api/users');
+      if (!res.ok) throw new Error('Fail to load');
+      const users: { name: string }[] = await res.json();
 
       userList.innerHTML = '';
       if (users.length > 0) {
         const list = document.createElement("ul");
-        users.forEach(user => {
+        users.forEach((user) => {
           const listItem = document.createElement("li");
-          listItem.textContent = user.name;
+          listItem.textContent = `${user.name}`;
           list.appendChild(listItem);
         });
         userList.appendChild(list);
       } else {
         userList.innerHTML = '<p>No users found</p>';
       }
-    } catch (err) {
-      console.error(err);
-    }
   });
-});
+}

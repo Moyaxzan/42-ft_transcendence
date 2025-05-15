@@ -9,7 +9,7 @@ const fastify = Fastify({
 })
 
 fastify.register(fastifySqlite, {
-	dbFile: './db_connection/transcendence_db.db'
+	dbFile: './data/transcendence_db.db'
 })
 
 fastify.register(dbConnector)
