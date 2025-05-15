@@ -1,10 +1,12 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
+import { renderPong } from './pages/pong.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,
   '/profile': renderProfile,
+  '/pong': renderPong,
 };
 
 // Run this when URL changes or app first loads
