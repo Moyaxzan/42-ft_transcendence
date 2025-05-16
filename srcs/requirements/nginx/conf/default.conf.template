@@ -9,7 +9,7 @@ server {
 	client_max_body_size	32m;
 	error_page		500 502 503 504 /50x.html;
 	location = /api/users {
-		proxy_pass http://fastify:3000;
+		proxy_pass http://database:3000;
 		proxy_http_version 1.1;
 		proxy_set_header Host \$host;
 		proxy_set_header X-Real-IP \$remote_addr;
