@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Moyaxzan/42-ft_transcendence#readme",
   "dependencies": {
+    "fastify": "^5.3.3",
     "sqlite3": "^5.1.7",
     "typescript": "^5.8.3"
   }
