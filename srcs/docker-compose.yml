@@ -29,6 +29,19 @@ services:
       - transcendence
     restart: unless-stopped
 
+  pong:
+    hostname: pong
+    build:
+      context: requirements/pong
+    container_name: pong
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - transcendence
+    restart: unless-stopped
+
 volumes:
   nginx:
     driver: local
