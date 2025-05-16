@@ -7,7 +7,7 @@ RESET := \e[0m
 
 NAME = transcendence
 REQUIREMENTS = ./srcs/requirements
-FASTIFY_DATA = ./data/fastify
+DB_DATA = ./data/database
 NGINX_DATA = ./data/nginx
 
 all:
@@ -18,7 +18,7 @@ all:
 	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
 	@echo "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
 	@echo "\n$(GRAY)Creating repositories for persistent data$(RESET)"
-	@mkdir -p $(FASTIFY_DATA) $(NGINX_DATA)
+	@mkdir -p $(DB_DATA) $(NGINX_DATA)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
@@ -38,7 +38,7 @@ clean:
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
 #	@rm	$(REQUIREMENTS)/sqlite/transcendence_db.sqlite
-	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(FASTIFY_DATA) $(NGINX_DATA)
+	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
