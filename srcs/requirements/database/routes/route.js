@@ -2,7 +2,7 @@ async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
 	})
-	fastify.get('/api/users', async (request, reply) => {
+	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {

@@ -14,7 +14,7 @@ import { renderUser } from './pages/user.js';
 const routes = {
     '/': renderHome,
     '/profile': renderProfile,
-    '/api/users': renderUser,
+    '/users': renderUser,
 };
 // Run this when URL changes or app first loads
 export function router() {
@@ -45,7 +45,7 @@ export function displayUser() {
         return;
     }
     userLoadBtn.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-        const res = yield fetch('/api/users');
+        const res = yield fetch('/users');
         if (!res.ok)
             throw new Error('Fail to load');
         const users = yield res.json();
