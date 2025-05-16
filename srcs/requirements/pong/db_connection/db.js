@@ -23,8 +23,8 @@ async function dbConnector (fastify, options) {
 				}
 			})
 		})
-*/
-	})
+// */
+// 	})
 }
 
 export default fastifyPlugin(dbConnector)

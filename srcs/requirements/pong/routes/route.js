@@ -2,11 +2,11 @@ async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 			return { hello: 'world' }
 			})
-	fastify.get('/api/users', async (request, reply) => {
+	fastify.post('/users', async (request, reply) => {
 		const res = await fetch('http://database:3000/users', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: 'Leon' })
+			body: JSON.stringify(request.body)
 		});
 		const data = await res.json();
 		reply.send(data);
@@ -14,3 +14,4 @@ async function routes (fastify, options) {
 }
 
 export default routes
+
