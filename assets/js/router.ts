@@ -6,7 +6,7 @@ import { renderUser } from './pages/user.js';
 const routes: Record<string, () => void> = {
   '/': renderHome,
   '/profile': renderProfile,
-  '/api/users': renderUser,
+  '/users': renderUser,
 };
 
 // Run this when URL changes or app first loads
@@ -42,7 +42,7 @@ export function displayUser() {
   }
 
   userLoadBtn.addEventListener('click', async () => {
-      const res = await fetch('/api/users');
+      const res = await fetch('/users');
       if (!res.ok) throw new Error('Fail to load');
       const users: { name: string }[] = await res.json();
 
