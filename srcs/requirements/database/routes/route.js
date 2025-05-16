@@ -17,7 +17,24 @@ async function routes (fastify, options) {
 			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database error'});
+			return reply.status(500).send({error: 'database GET error'});
+		}
+	});
+
+	fastify.post('/users', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { name } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			db.run('insert into users(name) values(?)', [name], function (err) {
+				if (err) return reject(err);
+				resolve({ id: this.lastID, name});
+				});
+			});
+			reply.send({ message: 'User inserted successfully', name });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({error: 'database POST error'});
 		}
 	});
 }
