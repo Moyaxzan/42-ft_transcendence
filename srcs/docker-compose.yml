@@ -16,15 +16,15 @@ services:
       - transcendence
     restart: unless-stopped
 
-  fastify:
-    hostname: fastify
+  database:
+    hostname: database
     build:
-      context: requirements/fastify
-    container_name: fastify
+      context: requirements/database
+    container_name: database
     env_file:
       - .env
     volumes:
-      - fastify:/data
+      - database:/data
     networks:
       - transcendence
     restart: unless-stopped
@@ -36,12 +36,12 @@ volumes:
       type: none
       o: bind
       device: ../data/nginx
-  fastify:
+  database:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ../data/fastify
+      device: ../data/database
 
 networks:
   transcendence:
