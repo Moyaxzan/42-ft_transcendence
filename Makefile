@@ -29,15 +29,16 @@ clean:
 	@echo ""
 	@docker ps -a
 	@echo ""
-#	@docker volume ls
-#	@echo ""
-#	@docker network ls
-#	@echo ""
+	@docker volume ls
+	@echo ""
+	@docker network ls
+	@echo ""
 	@echo  "$(BLUE)Removing containers$(RESET)"
 	@docker stop $$(docker ps -qa) || true
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
-#	@rm	$(REQUIREMENTS)/sqlite/transcendence_db.sqlite
+	@docker volume rm $$(docker volume ls) || true
+	@docker network rm $(NAME) || true
 	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
@@ -46,9 +47,9 @@ clean:
 	@echo ""
 	@docker ps -a
 	@echo ""
-#	@docker volume ls
-#	@echo ""
-#	@docker network ls
+	@docker volume ls
+	@echo ""
+	@docker network ls
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
 
 down:
