@@ -1,21 +1,11 @@
 // ESM
 import Fastify from 'fastify'
-//import fastifySqlite from 'fastify-sqlite'
-//import dbConnector from './db_connection/db.js'
 import routes from './routes/route.js'
 
 const fastify = Fastify({
 	logger: true
 })
 
-/*
-fastify.register(fastifySqlite, {
-	dbFile: './data/transcendence_db.db'
-})
-
-
-fastify.register(dbConnector)
-*/
 fastify.register(routes)
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
