@@ -64,10 +64,10 @@ async function routes (fastify, options) {
 
 	fastify.post('/users/login', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { name, id_token } = request.body;
+		const { name, id_token, email } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('INSERT INTO users(name, id_token) VALUES(?, ?)', [name, id_token], function (err) {
+			db.run('INSERT INTO users(name, id_token, email) VALUES(?, ?, ?)', [name, id_token, email], function (err) {
 				if (err) return reject(err);
 				resolve({name, id_token, email});
 				});

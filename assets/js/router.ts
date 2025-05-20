@@ -46,14 +46,14 @@ export function displayUser() {
   userLoadBtn.addEventListener('click', async () => {
       const res = await fetch('/users');
       if (!res.ok) throw new Error('Fail to load');
-      const users: { id: string, name: string, id_token: string }[] = await res.json();
+      const users: { id: string, name: string, id_token: string, email: string }[] = await res.json();
 
       userList.innerHTML = '';
       if (users.length > 0) {
         const list = document.createElement("ul");
         users.forEach((user) => {
           const listItem = document.createElement("li");
-          listItem.textContent = `id: ${user.id}, name: ${user.name}, id_token: ${user.id_token}`;
+          listItem.textContent = `id: ${user.id}, name: ${user.name}, id_token: ${user.id_token}, email: ${user.email}`;
           list.appendChild(listItem);
         });
         userList.appendChild(list);
