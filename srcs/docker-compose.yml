@@ -55,6 +55,49 @@ services:
       - transcendence
     restart: unless-stopped
 
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+  #   container_name: elasticsearch
+  #   environment:
+  #     - discovery.type=single-node                # Mode non-clusterisé (utile pour le développement)
+  #     - xpack.security.enabled=false              # Désactive l'auth par défaut (plus simple pour tests)
+  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m            # Paramètres mémoire (adaptables selon ta machine)
+  #   ports:
+  #     - "9200:9200"                                # Port d'accès HTTP à Elasticsearch
+  #   volumes:
+  #     - esdata:/usr/share/elasticsearch/data     
+  #   networks:
+  #     - transcendence
+  #   restart: unless-stopped
+
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.12.2
+  #   container_name: logstash
+  #   volumes:
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
+  #   ports:
+  #     - "5000:5000"                                # Port TCP pour recevoir des logs (JSON)
+  #   depends_on:
+  #     - elasticsearch
+  #   networks:
+  #     - transcendence
+  #   restart: unless-stopped
+
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.12.2
+  #   container_name: kibana
+  #   ports:
+  #     - "5601:5601"                                # Accès Web à Kibana (dashboard)
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   depends_on:
+  #     - elasticsearch
+  #   networks:
+  #     - transcendence
+  #   restart: unless-stopped
+
 volumes:
   nginx:
     driver: local
@@ -68,6 +111,8 @@ volumes:
       type: none
       o: bind
       device: ../data/database
+  # esdata:
+  #   driver: local
 
 networks:
   transcendence:
