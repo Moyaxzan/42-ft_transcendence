@@ -7,15 +7,16 @@ async function dbConnector (fastify, options) {
 			return
 		}
 		fastify.sqlite.exec(`
-		create table if not exists users ( \
-		id integer primary key autoincrement, \
-		name text, \
-		id_token text
+		CREATE TABLE IF NOT EXISTS users ( \
+		id INTEGER PRIMARY KEY AUTOINCREMENT, \
+		name TEXT UNIQUE, \
+		id_token TEXT UNIQUE, \
+		email TEXT UNIQUE NOT NULL
 		);
-		insert into users (id, name, id_token) values (0, "Antoine", "null");
-		insert into users (name, id_token) values ("Jovica", "null");`
+		INSERT INTO users (id, name, id_token, email) VALUES (0, "Antoine", "null", "test@gmail.com");
+		INSERT INTO users (name, id_token, email) VALUES ("Jovica", "undefined", "test2");`
 		, (err) => {
-			fastify.sqlite.all('select * from users', (err, rows) => {
+			fastify.sqlite.all('SELECT * FROM users', (err, rows) => {
 				if (err) {
 					fastify.log.warn("'users' table not found" + err.message)
 				}  else {

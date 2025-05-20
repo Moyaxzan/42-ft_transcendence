@@ -9,7 +9,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--x, 5%) var(--y, 50%), rgba(100, 200, 255, 0.7), transparent 40%);
+  background: radial-gradient(circle at var(--x, 5%) var(--y, 50%), rgba(100, 100, 255, 0.4), transparent 40%);
   transition: background 0.2s ease;
   pointer-events: none;
   z-index: 1;

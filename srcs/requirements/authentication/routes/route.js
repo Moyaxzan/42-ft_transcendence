@@ -7,10 +7,11 @@ async function routes (fastify, options) {
 
 	const userBodyJsonSchema = {
 		type: 'object',
-		required: [ 'name', 'id_token' ],
+		required: [ 'name', 'id_token', 'email' ],
 		properties: {
 			name: { type: 'string' },
 			id_token: { type: 'string' },
+			email: { type: 'string' },
 		},
 	}
 
@@ -22,7 +23,7 @@ async function routes (fastify, options) {
 		const res = await fetch('http://database:3000/users/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: request.body.name, id_token: request.body.id_token })
+			body: JSON.stringify({ name: request.body.name, id_token: request.body.id_token, email: request.body.email })
 		});
  		const data = await res.json();
   		reply.send(data);
