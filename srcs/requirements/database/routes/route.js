@@ -6,7 +6,7 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.all('select * from users', (err, rows) => {
+			db.all('SELECT * FROM users', (err, rows) => {
 				if (err) return reject(err);
 				resolve(rows);
 				});
@@ -26,7 +26,7 @@ async function routes (fastify, options) {
 		const { name } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('insert into users(name) values(?)', [name], function (err) {
+			db.run('INSERT INTO users(name) VALUES(?)', [name], function (err) {
 				if (err) return reject(err);
 				resolve({ id: this.lastID, name});
 				});
@@ -43,7 +43,7 @@ async function routes (fastify, options) {
 		const { id } = request.params;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('delete from users where id = ?', [id], function (err) {
+			db.run('DELETE FROM users WHERE id = ?', [id], function (err) {
 				if (err) return reject(err);
 				resolve(id);
 				});
