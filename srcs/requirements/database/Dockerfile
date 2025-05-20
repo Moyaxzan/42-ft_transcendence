@@ -6,9 +6,6 @@ FROM	node:lts-alpine3.21@sha256:ad1aedbcc1b0575074a91ac146d6956476c1f9985994810e
 
 RUN apk add --no-cache python3 make g++ sqlite-dev
 
-
-# WORKDIR	/usr/src/app
-
 COPY	package*.json ./
 
 RUN 	npm install \
@@ -16,11 +13,10 @@ RUN 	npm install \
 
 COPY	. .
 
-
 CMD	[ "npm", "--trace-warnings", "start" ]
 
 ## Sets configuration on the image that indicates a port the image would like to expose
 EXPOSE	3000
 
 HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
-	CMD curl --fail http://localhost:3000/api/health || exit 1
+	CMD curl --fail http://localhost:3000/health || exit 1

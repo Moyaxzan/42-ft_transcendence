@@ -3,7 +3,7 @@ import fastifyPlugin from 'fastify-plugin'
 async function dbConnector (fastify, options) {
 	fastify.after(() => {
 		if (!fastify.sqlite) {
-			fastify.log.error("SQLite n'est pas dispo !")
+			fastify.log.error("SQLite unavailable")
 			return
 		}
 		fastify.sqlite.exec(`
@@ -16,9 +16,9 @@ async function dbConnector (fastify, options) {
 		, (err) => {
 			fastify.sqlite.all('select * from users', (err, rows) => {
 				if (err) {
-					fastify.log.warn("Table 'users' introuvable" + err.message)
+					fastify.log.warn("'users' table not found" + err.message)
 				}  else {
-					fastify.log.info({rows}, "contenu de la table users")
+					fastify.log.info({rows}, "'users' table content")
 				}
 			})
 		})
