@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>ft_transcendence</title>
 		<script src="https://cdn.tailwindcss.com"></script>
-		<!-- <link rel="stylesheet" href="./style.css"> -->
+		<link rel="stylesheet" href="./style.css">
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
 	</head>
 	<body>
@@ -19,9 +19,10 @@
 		</nav>
 		<div class="left-0 w-screen h-32 bg-cyan-200"></div>
 		<div id="app" class="p-8"></div>
-		<button id="userLoad">Display users</button>
+		<a href="/users" data-link><button id="userLoad" class="ml-6 px-6 py-2 rounded text-xl btn-glow"><span>Display users</span></button></a>
 		<div id="userList" style="margin-top: 10px;"></div>
 		<script type="module" src="./dist/js/main.js"></script>
+		<script type="module" src="/main.js"></script>
 		<footer class="fixed bottom-0 w-full h-40 bg-blue-900 text-white text-center p-4">
 			<p>&copy; tsais</p>
 		</footer>

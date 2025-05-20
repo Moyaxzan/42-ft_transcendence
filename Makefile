@@ -8,6 +8,7 @@ RESET := \e[0m
 NAME = transcendence
 REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
+DB_DOCKER = $(REQUIREMENTS)/database/data
 NGINX_DATA = ./data/nginx
 
 all:
@@ -18,7 +19,7 @@ all:
 	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
 	@echo "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
 	@echo "\n$(GRAY)Creating repositories for persistent data$(RESET)"
-	@mkdir -p $(DB_DATA) $(NGINX_DATA)
+	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
@@ -29,16 +30,17 @@ clean:
 	@echo ""
 	@docker ps -a
 	@echo ""
-#	@docker volume ls
-#	@echo ""
-#	@docker network ls
-#	@echo ""
+	@docker volume ls
+	@echo ""
+	@docker network ls
+	@echo ""
 	@echo  "$(BLUE)Removing containers$(RESET)"
 	@docker stop $$(docker ps -qa) || true
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
-#	@rm	$(REQUIREMENTS)/sqlite/transcendence_db.sqlite
-	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA)
+	@docker volume rm $$(docker volume ls) || true
+	@docker network rm $(NAME) || true
+	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
@@ -46,9 +48,9 @@ clean:
 	@echo ""
 	@docker ps -a
 	@echo ""
-#	@docker volume ls
-#	@echo ""
-#	@docker network ls
+	@docker volume ls
+	@echo ""
+	@docker network ls
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
 
 down:

@@ -1,0 +1,22 @@
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  background-color: #010a45;
+  transition: background-color 0.3s ease;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--x, 5%) var(--y, 50%), rgba(100, 200, 255, 0.7), transparent 40%);
+  transition: background 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-glow span {
+  position: relative;
+  z-index: 2;
+  color: #D1FFFF;
+}

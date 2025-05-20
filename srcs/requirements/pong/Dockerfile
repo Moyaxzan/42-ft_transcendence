@@ -12,6 +12,7 @@ RUN 	npm install \
 	&& apk add curl
 
 COPY	. .
+COPY	--chmod=755 edit_db.sh .
 
 CMD	[ "npm", "--trace-warnings", "start" ]
 
