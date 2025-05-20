@@ -3,4 +3,3 @@ export function renderUser() {
  app.innerHTML = `<span>Display users</span>`;
 console.log("app div found?", app);
 }
-  

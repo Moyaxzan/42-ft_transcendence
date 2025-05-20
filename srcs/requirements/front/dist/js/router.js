@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
+import { renderPong } from './pages/pong.js';
 import { renderUser } from './pages/user.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
     '/profile': renderProfile,
+    '/pong': renderPong,
     '/users': renderUser,
 };
 // Run this when URL changes or app first loads
@@ -54,7 +56,7 @@ export function displayUser() {
             const list = document.createElement("ul");
             users.forEach((user) => {
                 const listItem = document.createElement("li");
-                listItem.textContent = `${user.name}`;
+                listItem.textContent = `id: ${user.id}, name: ${user.name}, id_token: ${user.id_token}`;
                 list.appendChild(listItem);
             });
             userList.appendChild(list);

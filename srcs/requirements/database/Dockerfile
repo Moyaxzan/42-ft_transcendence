@@ -4,12 +4,11 @@
 # By pinning your images to a digest, you're guaranteed to always use the same image version, even if a publisher replaces the tag with a new image
 FROM	node:lts-alpine3.21@sha256:ad1aedbcc1b0575074a91ac146d6956476c1f9985994810e4ee02efd932a68fd
 
-RUN apk add --no-cache python3 make g++ sqlite-dev
+RUN apk add --no-cache curl python3 make g++ sqlite-dev
 
 COPY	package*.json ./
 
-RUN 	npm install \
-	&& apk add curl
+RUN 	npm install
 
 COPY	. .
 

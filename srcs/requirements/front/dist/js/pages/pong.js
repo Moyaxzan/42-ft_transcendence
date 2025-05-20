@@ -7,12 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export function renderHome() {
+export function renderPong() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = document.getElementById('app');
         if (!app)
             return;
-        const res = yield fetch('/dist/html/home.html');
+        const res = yield fetch('/dist/html/pong.html');
         const html = yield res.text();
         app.innerHTML = html;
     });

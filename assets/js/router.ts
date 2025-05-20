@@ -1,11 +1,13 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
+import { renderPong } from './pages/pong.js';
 import { renderUser } from './pages/user.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,
   '/profile': renderProfile,
+  '/pong': renderPong,
   '/users': renderUser,
 };
 
@@ -44,14 +46,14 @@ export function displayUser() {
   userLoadBtn.addEventListener('click', async () => {
       const res = await fetch('/users');
       if (!res.ok) throw new Error('Fail to load');
-      const users: { name: string }[] = await res.json();
+      const users: { id: string, name: string, id_token: string }[] = await res.json();
 
       userList.innerHTML = '';
       if (users.length > 0) {
         const list = document.createElement("ul");
         users.forEach((user) => {
           const listItem = document.createElement("li");
-          listItem.textContent = `${user.name}`;
+          listItem.textContent = `id: ${user.id}, name: ${user.name}, id_token: ${user.id_token}`;
           list.appendChild(listItem);
         });
         userList.appendChild(list);
