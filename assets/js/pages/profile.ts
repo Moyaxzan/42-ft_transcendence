@@ -1,8 +1,10 @@
-export function renderProfile() {
-    const app = document.getElementById('app')!;
-    app.innerHTML = `
-      <h1 class="text-3xl font-bold text-purple-600">profile Page</h1>
-      <p class="mt-2">Thiis is the profile page.</p>
-    `;
-  }
-  
+export async function renderProfile() {
+	const app = document.getElementById('app');
+	if (!app)
+		return;
+
+	const res = await fetch('/dist/html/profile.html');
+	const html = await res.text();
+
+	app.innerHTML = html;
+}

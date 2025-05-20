@@ -12,7 +12,7 @@ export function renderPong() {
         const app = document.getElementById('app');
         if (!app)
             return;
-        const res = yield fetch('/dist/js/pages/pong.html');
+        const res = yield fetch('/dist/html/pong.html');
         const html = yield res.text();
         app.innerHTML = html;
     });

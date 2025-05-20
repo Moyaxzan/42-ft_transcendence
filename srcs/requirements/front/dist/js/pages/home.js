@@ -1,10 +1,19 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 export function renderHome() {
-    const app = document.getElementById('app');
-    app.innerHTML = `
-    <div class="p-8">
-    	<h1 class="text-3xl font-bold text-blue-600">Home Page</h1>
-    </div>
-	<button id="userLoad">Display users</button>
-	<div id="userList" style="margin-top: 10px;"></div>
-    `;
+    return __awaiter(this, void 0, void 0, function* () {
+        const app = document.getElementById('app');
+        if (!app)
+            return;
+        const res = yield fetch('/dist/html/home.html');
+        const html = yield res.text();
+        app.innerHTML = html;
+    });
 }
