@@ -16,7 +16,8 @@ export async function renderPong() {
 	// Paddle movement setup
 	let leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	let rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
-	if (!leftPaddle || !rightPaddle) return;
+	let ball = document.getElementById("ball") as HTMLDivElement;
+	if (!leftPaddle || !rightPaddle || !ball) return;
 
 
 	let keysPressed: {[key: string] : boolean} = {};
@@ -28,6 +29,10 @@ export async function renderPong() {
 	document.addEventListener("keyup", (e) => {
 		keysPressed[e.key] = false;
 	});
+
+	let ballPosx = 50;
+	let ballPosy = 50;
+
 
 	let leftPaddlePos = 0;   // as %
 	let rightPaddlePos = 0;  // as %
@@ -60,3 +65,8 @@ export async function renderPong() {
 }
 
 
+//TODO
+// generer un nombre entre -1 et 1 (y) != 0
+// get x avec x = sqrt(1 - y**2)
+// vect(x, y) ou -vect(x, y)
+// tourner vect de 45d au contact. (faire equation)

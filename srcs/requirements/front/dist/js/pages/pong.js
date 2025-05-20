@@ -18,7 +18,8 @@ export function renderPong() {
         // Paddle movement setup
         let leftPaddle = document.getElementById("left-paddle");
         let rightPaddle = document.getElementById("right-paddle");
-        if (!leftPaddle || !rightPaddle)
+        let ball = document.getElementById("ball");
+        if (!leftPaddle || !rightPaddle || !ball)
             return;
         let keysPressed = {};
         document.addEventListener("keydown", (e) => {
@@ -27,6 +28,8 @@ export function renderPong() {
         document.addEventListener("keyup", (e) => {
             keysPressed[e.key] = false;
         });
+        let ballPosx = 50;
+        let ballPosy = 50;
         let leftPaddlePos = 0; // as %
         let rightPaddlePos = 0; // as %
         function movePaddles() {

@@ -1,5 +1,6 @@
 <!-- pong.html -->
 <div class="h-full flex items-center justify-center">
+
 	<div class="h-full flex-grow">
 		<div id="left-paddle" class="relative flex items-center justify-center h-[18%] w-5 ml-auto mr-[5%]">
 			<div class="flex-[2] h-full bg-[#1C1C1C] rounded-tl-sm rounded-bl-sm"></div>
@@ -15,8 +16,11 @@
 		<div class="absolute top-0 left-1 w-1 h-full bg-white"></div> <! bordure de gauche >
 		<div class="absolute top-0 right-1 w-1 h-full bg-white -translate-x-1"></div> <! bordure de droite >
 		<div class="absolute bottom-1 left-0 h-1 w-full bg-white -translate-y-1"></div> <! bordure du bas >
-
 		<div class="absolute top-0 left-1/2 w-2 h-full bg-[#1C1C1C] -translate-x-1/2"></div> <! bordure du filet >
+
+
+		<div id="ball" class="bg-[#F27D01] h-5 w-5 absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 rounded-full"></div>
+
 	</div>
 
 	<div class=" flex-grow h-full ">
@@ -26,6 +30,5 @@
 			<div class="flex-[2] h-full bg-[#1C1C1C] rounded-tr-sm rounded-br-sm"></div>
 		</div>
 	</div>
-</div>
 
-<! couleur balle de ping pong #F27D01 >
+</div>
