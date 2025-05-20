@@ -1,6 +1,6 @@
 // ESM
 import Fastify from 'fastify'
-import routes from './routes/pong_route.js'
+import routes from './routes/route.js'
 
 const fastify = Fastify({
 	logger: true

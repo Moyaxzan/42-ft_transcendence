@@ -42,6 +42,18 @@ services:
       - transcendence
     restart: unless-stopped
 
+  authentication:
+    hostname: authentication
+    build:
+      context: requirements/authentication
+    container_name: authentication
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - transcendence
+    restart: unless-stopped
 
   # elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
