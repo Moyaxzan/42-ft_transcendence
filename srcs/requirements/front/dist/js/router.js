@@ -56,7 +56,7 @@ export function displayUser() {
             const list = document.createElement("ul");
             users.forEach((user) => {
                 const listItem = document.createElement("li");
-                listItem.textContent = `${user.name}`;
+                listItem.textContent = `id: ${user.id}, name: ${user.name}, id_token: ${user.id_token}`;
                 list.appendChild(listItem);
             });
             userList.appendChild(list);
