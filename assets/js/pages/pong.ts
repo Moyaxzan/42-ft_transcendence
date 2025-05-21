@@ -13,11 +13,20 @@ export async function renderPong() {
 	let leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	let rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	let ball = document.getElementById("ball") as HTMLDivElement;
-	if (!leftPaddle || !rightPaddle || !ball) return;
+	if (!leftPaddle || !rightPaddle || !ball)
+		return;
+
+	const trailBalls: HTMLDivElement[] = [];
+	for (let i = 2; i <= 10; i++) {
+		const ball = document.getElementById(`ball${i}`) as HTMLDivElement | null;
+		if (!ball) {
+			return;
+		}
+		trailBalls.push(ball);
+	}
 
 	//get time of start
 	const startTime = Date.now();
-	console.log("started timer...");
 
 	// keys handling
 	let keysPressed: {[key: string] : boolean} = {};
@@ -86,6 +95,12 @@ export async function renderPong() {
 		ball.style.top = `${ballPosy[0]}%`;
 		ball.style.left = `${ballPosx[0]}%`;
 
+		//render tail balls
+		for (let index = 0; index < trailBalls.length; index++) {
+			trailBalls[index].style.top = `${ballPosy[index + 1]}%`;
+			trailBalls[index].style.left = `${ballPosx[index + 1]}%`;
+		}
+
 		//wall collisions
 		if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
 			ballVecty = -ballVecty;
@@ -98,14 +113,14 @@ export async function renderPong() {
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.015;
+				ballSpeed = ballSpeed + 0.02;
 				console.log("ball speed: ", ballSpeed);
 			} else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
 				const newAngle = reflectAngle(Math.atan2(ballVecty, ballVectx));
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.015;
+				ballSpeed = ballSpeed + 0.02;
 				console.log("ball speed: ", ballSpeed);
 			}
 		}
@@ -145,7 +160,7 @@ export async function renderPong() {
 				console.log("moveBall crashed: ", err);
 			}
 		}
-		requestAnimationFrame(framePong)
+		animationId = requestAnimationFrame(framePong)
 	}
 
 	animationId = requestAnimationFrame(framePong)

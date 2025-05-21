@@ -23,9 +23,16 @@ export function renderPong() {
         let ball = document.getElementById("ball");
         if (!leftPaddle || !rightPaddle || !ball)
             return;
+        const trailBalls = [];
+        for (let i = 2; i <= 10; i++) {
+            const ball = document.getElementById(`ball${i}`);
+            if (!ball) {
+                return;
+            }
+            trailBalls.push(ball);
+        }
         //get time of start
         const startTime = Date.now();
-        console.log("started timer...");
         // keys handling
         let keysPressed = {};
         document.addEventListener("keydown", (e) => {
@@ -88,6 +95,11 @@ export function renderPong() {
             ballPosx[0] = ballPosx[0] + ballSpeed * (ballVectx);
             ball.style.top = `${ballPosy[0]}%`;
             ball.style.left = `${ballPosx[0]}%`;
+            //render tail balls
+            for (let index = 0; index < trailBalls.length; index++) {
+                trailBalls[index].style.top = `${ballPosy[index + 1]}%`;
+                trailBalls[index].style.left = `${ballPosx[index + 1]}%`;
+            }
             //wall collisions
             if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
                 ballVecty = -ballVecty;
@@ -99,7 +111,7 @@ export function renderPong() {
                     ballVectx = Math.cos(newAngle);
                     ballVecty = Math.sin(newAngle);
                     lastbounce = Date.now();
-                    ballSpeed = ballSpeed + 0.015;
+                    ballSpeed = ballSpeed + 0.02;
                     console.log("ball speed: ", ballSpeed);
                 }
                 else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
@@ -107,7 +119,7 @@ export function renderPong() {
                     ballVectx = Math.cos(newAngle);
                     ballVecty = Math.sin(newAngle);
                     lastbounce = Date.now();
-                    ballSpeed = ballSpeed + 0.015;
+                    ballSpeed = ballSpeed + 0.02;
                     console.log("ball speed: ", ballSpeed);
                 }
             }
@@ -143,7 +155,7 @@ export function renderPong() {
                     console.log("moveBall crashed: ", err);
                 }
             }
-            requestAnimationFrame(framePong);
+            animationId = requestAnimationFrame(framePong);
         }
         animationId = requestAnimationFrame(framePong);
     });
