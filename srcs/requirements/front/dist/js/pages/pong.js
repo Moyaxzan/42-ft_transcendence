@@ -56,7 +56,7 @@ export function renderPong() {
                     break;
             } while (++tries < 10);
             if (tries == 10) {
-                return angle;
+                return -angle;
             }
             return newAngle;
         }
