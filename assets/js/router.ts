@@ -14,11 +14,11 @@ const routes: Record<string, () => void> = {
 // Run this when URL changes or app first loads
 export function router() {
   const path = window.location.pathname;
-   console.log("Routing to:", path);
+  console.log("Routing to:", path);
   const render = routes[path] || renderHome;
   render();
 }
-
+console.log("hello");
 // Allow click links with data-link to pushState instead of full reload
 export function enableLinkInterception() {
   console.log("Setting up link interception");

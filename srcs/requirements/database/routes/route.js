@@ -20,47 +20,9 @@ async function routes (fastify, options) {
 			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database GET error'});
+			return reply.status(500).send({ error: 'database GET error', details: err.message });
 		}
 	});
-
-/*
-	fastify.get('/users/:id', async (request, reply) => {
-		const db = fastify.sqlite;
-		try {pong
-			const rows = await new Promise((resolve, reject) => {
-			db.all('SELECT users(id) FROM users', (err, rows) => {
-				if (err) return reject(err);
-				resolve(rows);
-				});
-			});
-			if (!rows) {
-				return reply.send('No user found');
-			}
-			return reply.send(rows);
-		} catch (err) {
-			fastify.log.error(err);
-			return reply.status(500).send({error: 'database GET error'});
-		}
-	});
-*/
-
-	// fastify.post('/users', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { name } = request.body;
-	// 	try {
-	// 		const rows = await new Promise((resolve, reject) => {
-	// 		db.run('INSERT INTO users(name) VALUES(?)', [name], function (err) {
-	// 			if (err) return reject(err);
-	// 			resolve({ id: this.lastID, name});
-	// 			});
-	// 		});
-	// 		reply.send({ message: 'User inserted successfully', name });
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		return reply.status(500).send({error: 'database POST error'});
-	// 	}
-	// });
 
 	fastify.post('/users/login', async (request, reply) => {
 		const db = fastify.sqlite;
@@ -75,7 +37,7 @@ async function routes (fastify, options) {
 			reply.send({ message: 'User inserted successfully', name });
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database POST error'});
+			return reply.status(500).send({ error: 'database POST error', details: err.message });
 		}
 	});
 
@@ -92,41 +54,9 @@ async function routes (fastify, options) {
 			reply.send({ message: 'User deleted successfully', id });
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database DELETE error'});
+			return reply.status(500).send({ error: 'database DELETE error', details: err.message });
 		}
 	});
-
-	const userBodyJsonSchema = {
-		type: 'object',
-		required: ['name'],
-		properties: {
-		name: { type: 'string' },
-		},
-	}
-
-  const schema = {
-    body: userBodyJsonSchema,
-  }
-	fastify.post('/users', { schema }, async (request, reply) => {
-		const { name } = request.body;
-		const db = fastify.sqlite;
-		try {
-		await new Promise((resolve, reject) => {
-			db.run('INSERT INTO users (name) VALUES (?)', [name], function (err) {
-			if (err) {
-				console.error('SQLite insert error:', err);
-				return reject(err);}
-			resolve(); // Or resolve({ id: this.lastID }) if you want to return the new ID
-			});
-		});
-
-		reply.send({ success: true });
-		} catch (err) {
-			fastify.log.error(err);
-			reply.status(500).send({ error: 'Insert failed', details: err.message });
-		// reply.status(500).send({ error: 'Insert failed' });
-		}
-  });
 }
 
 export default routes
