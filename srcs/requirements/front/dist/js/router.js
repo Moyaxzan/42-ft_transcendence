@@ -25,6 +25,7 @@ export function router() {
     const render = routes[path] || renderHome;
     render();
 }
+console.log("hello");
 // Allow click links with data-link to pushState instead of full reload
 export function enableLinkInterception() {
     console.log("Setting up link interception");
