@@ -11,6 +11,7 @@ import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
 import { renderPong } from './pages/pong.js';
 import { renderUser } from './pages/user.js';
+import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
@@ -23,6 +24,12 @@ export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
     const render = routes[path] || renderHome;
+    if (path === "/pong") {
+        animateNavbarForPong();
+    }
+    else {
+        resetNavbar();
+    }
     render();
 }
 // Allow click links with data-link to pushState instead of full reload

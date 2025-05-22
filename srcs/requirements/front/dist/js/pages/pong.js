@@ -17,6 +17,12 @@ export function renderPong() {
         const res = yield fetch('/dist/html/pong.html');
         const html = yield res.text();
         app.innerHTML = html;
+        let navbar = document.getElementById("navbar");
+        let footer = document.getElementById("footer");
+        if (!navbar || !footer)
+            return;
+        // navbar.style.display = 'none';
+        // footer.style.display = 'none';
         //get elements of html
         let leftPaddle = document.getElementById("left-paddle");
         let rightPaddle = document.getElementById("right-paddle");
@@ -45,7 +51,8 @@ export function renderPong() {
         function getRandomBound(min, max) {
             return Math.random() * (max - min + 1) + min;
         }
-        function reflectAngle(angle) {
+        function reflectAngle(ballVectx, ballVecty) {
+            let angle = Math.atan2(ballVectx, ballVecty);
             let newAngle;
             let tries = 0;
             do {
@@ -56,13 +63,14 @@ export function renderPong() {
                     break;
             } while (++tries < 10);
             if (tries == 10) {
-                return angle;
+                console.log("bounce tries > 10");
+                return (Math.atan2(-ballVectx, ballVecty));
             }
             return newAngle;
         }
         //initializations
-        let leftPaddlePos = 0; // as %
-        let rightPaddlePos = 0; // as %
+        let leftPaddlePos = 41; // as %
+        let rightPaddlePos = 41; // as %
         // ballPosx[0] is the actual pos of the ball. The others are the trail.
         let ballPosx = Array(10).fill(50);
         let ballPosy = Array(10).fill(50);
@@ -73,17 +81,18 @@ export function renderPong() {
         let angle = Math.random() * 2 * Math.PI;
         let atan = Math.atan2(ballVectx, ballVecty);
         if (atan > Math.PI / 3 && atan <= Math.PI / 2) {
-            angle = Math.PI / 3 * 0.95;
+            angle = 1.5 * Math.PI / 3;
         }
         else if (atan < 2 * Math.PI / 3 && atan > Math.PI / 2) {
-            angle = 2 * Math.PI / 3 * 1.05;
+            angle = 2.5 * Math.PI / 3;
         }
         else if (atan > 4 * Math.PI / 3 && atan <= 3 * Math.PI / 2) {
-            angle = 4 * Math.PI / 3 * 0.95;
+            angle = 3.5 * Math.PI / 3;
         }
         else if (atan < 5 * Math.PI / 3 && atan > 3 * Math.PI / 2) {
-            angle = 5 * Math.PI / 3 * 1.05;
+            angle = 5.5 * Math.PI / 3;
         }
+        console.log("lunch angle: ", angle);
         ballVectx = Math.cos(angle);
         ballVecty = Math.sin(angle);
         function moveBall() {
@@ -107,7 +116,7 @@ export function renderPong() {
             //paddle collisions
             if (Date.now() - lastbounce > 100) {
                 if (ballPosx[0] >= 100 && ballPosx[0] < 102 && ballPosy[0] >= rightPaddlePos && ballPosy[0] <= rightPaddlePos + 18) {
-                    const newAngle = reflectAngle(Math.atan2(ballVecty, ballVectx));
+                    const newAngle = reflectAngle(ballVecty, ballVectx);
                     ballVectx = Math.cos(newAngle);
                     ballVecty = Math.sin(newAngle);
                     lastbounce = Date.now();
@@ -115,7 +124,7 @@ export function renderPong() {
                     console.log("ball speed: ", ballSpeed);
                 }
                 else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
-                    const newAngle = reflectAngle(Math.atan2(ballVecty, ballVectx));
+                    const newAngle = reflectAngle(ballVecty, ballVectx);
                     ballVectx = Math.cos(newAngle);
                     ballVecty = Math.sin(newAngle);
                     lastbounce = Date.now();
@@ -146,14 +155,9 @@ export function renderPong() {
         let gameStarted = false;
         function framePong() {
             movePaddles();
-            if (gameStarted || Math.floor((Date.now() - startTime) / 1000) > 5) {
+            if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startTime) / 1000) > 5) {
                 gameStarted = true;
-                try {
-                    moveBall();
-                }
-                catch (err) {
-                    console.log("moveBall crashed: ", err);
-                }
+                moveBall();
             }
             animationId = requestAnimationFrame(framePong);
         }
