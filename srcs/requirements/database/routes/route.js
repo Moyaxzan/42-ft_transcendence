@@ -26,12 +26,16 @@ async function routes (fastify, options) {
 
 	fastify.post('/users/login', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { name, id_token, email } = request.body;
+		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('INSERT INTO users(name, id_token, email) VALUES(?, ?, ?)', [name, id_token, email], function (err) {
+			const query = `INSERT INTO users(is_ia, name, email, id_token,
+					password_hash, reset_token, reset_expiry,
+					ip_address, is_log, points)
+					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
 				if (err) return reject(err);
-				resolve({name, id_token, email});
+				resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
