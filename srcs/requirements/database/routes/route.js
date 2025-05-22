@@ -26,18 +26,40 @@ async function routes (fastify, options) {
 
 	fastify.post('/users/login', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { name, id_token, email } = request.body;
+		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('INSERT INTO users(name, id_token, email) VALUES(?, ?, ?)', [name, id_token, email], function (err) {
+			const query = `INSERT INTO users(is_ia, name, email, id_token,
+					password_hash, reset_token, reset_expiry,
+					ip_address, is_log, points)
+					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
 				if (err) return reject(err);
-				resolve({name, id_token, email});
+				resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database POST error', details: err.message });
+		}
+	});
+
+	fastify.put('/users/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { points } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			db.run('UPDATE users SET points = ? WHERE id = ?', [points, id], function (err) {
+				if (err) return reject(err);
+				resolve(id, points);
+				});
+			});
+			reply.send({ message: 'Point updated successfully', points });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
 		}
 	});
 

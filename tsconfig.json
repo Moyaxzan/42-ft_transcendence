@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-      "target": "es6",
+      "target": "es2017",
+      "lib": ["dom", "es2017"],
       "module": "es6",
       "rootDir": "assets/js",
       "outDir": "srcs/requirements/front/dist/js",
