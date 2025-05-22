@@ -7,9 +7,9 @@ async function routes (fastify, options) {
 
 	const userBodyJsonSchema = {
 		type: 'object',
-		required: [ 'name' ],
+		required: [ 'points' ],
 		properties: {
-			name: { type: 'string' },
+			points: { type: 'integer' },
 		},
 	}
 
@@ -17,11 +17,11 @@ async function routes (fastify, options) {
 		body: userBodyJsonSchema,
 	}
 
-	fastify.post('/users', { schema }, async (request, reply) => {
-		const res = await fetch('http://database:3000/users', {
-			method: 'POST',
+	fastify.put('/users/:id/', { schema }, async (request, reply) => {
+		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
+			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: request.body.name })
+			body: JSON.stringify({ id: request.body.id, points: request.body.points })
 		});
  		const data = await res.json();
   		reply.send(data);

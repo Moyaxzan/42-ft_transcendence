@@ -45,6 +45,24 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.put('/users/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { points } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			db.run('UPDATE users SET points = ? WHERE id = ?', [points, id], function (err) {
+				if (err) return reject(err);
+				resolve(id, points);
+				});
+			});
+			reply.send({ message: 'Point updated successfully', points });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+		}
+	});
+
 	fastify.delete('/users/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
