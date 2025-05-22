@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	displayUser();
 	console.log("main.ts loaded");
 	document.addEventListener("click", (e) => {
-		const link = (e.target as HTMLElement).closest("a[data-link]") as HTMLAnchorElement | null;
+		const link = (e.target as HTMLElement).closest("[data-link]") as HTMLAnchorElement | null;
 		if (link) {
 			e.preventDefault();
 			const href = link.getAttribute("href");
