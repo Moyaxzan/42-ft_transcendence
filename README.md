@@ -3,7 +3,7 @@ All containers
 ```GET /health``` Check if container is connected to nginx
 
 
-batabase container
+database container
 ---------------
 In this container (in ```routes/route.js```), you will find all the routes availables <br><br>
 ```fastify.addHook``` => Middleware function <br>
