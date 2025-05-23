@@ -12,7 +12,7 @@ async function routes (fastify, options) {
 */
 	const userBodyJsonSchema = {
                 type: 'object',
-                required: ['name', 'ip_address' ],
+                required: ['name', 'ip_address'],
 		properties: {
                         is_ia: { type: 'integer' },
                         name: { type: 'string' },
@@ -31,6 +31,26 @@ async function routes (fastify, options) {
         const schema = {
                 body: userBodyJsonSchema,
         }
+
+	const updateUserSchema = {
+		body: {
+                	type: 'object',
+                	required: ['points'],
+			properties: {
+                        	points: { type: 'integer' },
+                },
+                additionalProperties: false
+		},
+		params: {
+                	type: 'object',
+                	required: ['id'],
+			properties: {
+                        	id: { type: 'integer' },
+			}
+		}
+        }
+
+
 
 
 	fastify.get('/users', async (request, reply) => {
@@ -71,7 +91,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id', async (request, reply) => {
+	fastify.patch('/users/:id', { schema: updateUserSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;
