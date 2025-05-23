@@ -5,9 +5,33 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
+/*
 	fastify.addHook('onRequest', (request, reply, done) => {
 		// authentication code
 	});
+*/
+	const userBodyJsonSchema = {
+                type: 'object',
+                required: ['name', 'ip_address' ],
+		properties: {
+                        is_ia: { type: 'integer' },
+                        name: { type: 'string' },
+                        email: { type: 'string' },
+                        id_token: { type: 'string' },
+                        password_hash : { type: 'string' },
+                        reset_token: { type: 'string' },
+                        reset_expiry: { type: 'integer' },
+                        ip_address: { type: 'string' },
+                        is_log: { type: 'integer' },
+                        points: { type: 'integer' },
+                },
+                additionalProperties: false
+        }
+
+        const schema = {
+                body: userBodyJsonSchema,
+        }
+
 
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
@@ -28,14 +52,12 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.post('/users/login', async (request, reply) => {
+	fastify.post('/users/login', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			const query = `INSERT INTO users(is_ia, name, email, id_token,
-					password_hash, reset_token, reset_expiry,
-					ip_address, is_log, points)
+			const query = `INSERT INTO users(is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points)
 					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
 				if (err) return reject(err);
