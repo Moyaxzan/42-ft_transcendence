@@ -8,7 +8,7 @@ generate_random_name() {
 }
 
 generate_random_ip() {
-    	ip_address="$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256))"
+	ip_address="$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256))"
 }
 
 run_curl() {
