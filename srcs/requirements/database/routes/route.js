@@ -5,6 +5,10 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
+	fastify.addHook('onRequest', (request, reply, done) => {
+		// authentication code
+	});
+
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
@@ -45,7 +49,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.put('/users/:id', async (request, reply) => {
+	fastify.patch('/users/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;

@@ -17,9 +17,9 @@ async function routes (fastify, options) {
 		body: userBodyJsonSchema,
 	}
 
-	fastify.put('/users/:id/', { schema }, async (request, reply) => {
+	fastify.patch('/users/:id/', { schema }, async (request, reply) => {
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
-			method: 'PUT',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ id: request.body.id, points: request.body.points })
 		});
