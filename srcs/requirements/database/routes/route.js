@@ -1,5 +1,8 @@
 // DATABASE CONTAINER
 
+import schema from '../schemas/userBodyJsonSchema.js'
+import updateUserSchema from '../schemas/updateUserSchema.js'
+
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
@@ -10,50 +13,6 @@ async function routes (fastify, options) {
 		// authentication code
 	});
 */
-	const userBodyJsonSchema = {
-                type: 'object',
-                required: ['name', 'ip_address'],
-		properties: {
-                        is_ia: { type: 'integer' },
-                        name: { type: 'string' },
-                        email: { type: 'string', format: 'email' },
-                        id_token: { type: 'string' },
-                        password_hash : { type: 'string' },
-                        reset_token: { type: 'string' },
-                        reset_expiry: { type: 'integer' },
-                        ip_address: {
-				oneOf: [
-					{ type: 'string', format: 'ipv4' },
-					{ type: 'string', format: 'ipv6' }
-				]
-			},
-                        is_log: { type: 'integer' },
-                        points: { type: 'integer' },
-                },
-                additionalProperties: false
-        }
-
-        const schema = {
-                body: userBodyJsonSchema,
-        }
-
-	const updateUserSchema = {
-		body: {
-			type: 'object',
-			required: ['points'],
-			properties: {
-				points: { type: 'integer' },
-			},
-			additionalProperties: false
-		},
-		params: {
-			type: 'object',
-			required: ['id'],
-			properties: {
-				id: { type: 'integer' },
-			}
-		}
-	}
 
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
