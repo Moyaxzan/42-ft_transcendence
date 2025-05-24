@@ -16,10 +16,4 @@ const updateUserSchema = {
 	}
 }
 
-/*
-const schema = {
-        body: userBodyJsonSchema,
-}
-*/
-
 export default updateUserSchema
