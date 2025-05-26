@@ -21,7 +21,7 @@ async function dbConnector (fastify, options) {
 		points INTEGER DEFAULT 0
 		);
 		INSERT INTO users (id, name, email, id_token, password_hash, ip_address) VALUES (0, "Antoine", "test@gmail.com", "null", "hash", "127.0.0.1");
-		INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
+		INSERT INTO users (name, ip_address) VALUES (7, "127.0.0.1");
 		
 		CREATE TABLE IF NOT EXISTS matches ( \
 		id INTEGER PRIMARY KEY AUTOINCREMENT, \
@@ -29,7 +29,7 @@ async function dbConnector (fastify, options) {
 		winner_id INTEGER, \ 
 		FOREIGN KEY (winner_id) REFERENCES users(id)  
 		);
-		INSERT INTO matches (id, status, winner_id) VALUES (0, 45);
+		INSERT INTO matches (id, winner_id) VALUES (0, 45);
 		
 		CREATE TABLE IF NOT EXISTS users_join_matches ( \
 		id INTEGER PRIMARY KEY, \
