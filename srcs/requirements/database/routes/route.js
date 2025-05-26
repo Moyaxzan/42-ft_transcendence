@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updatePointsSchema from '../schemas/updateUserSchema.js'
+import updatePointsSchema from '../schemas/updatePointsSchema.js'
 import updateNameSchema from '../schemas/updateNameSchema.js'
 
 async function routes (fastify, options) {
