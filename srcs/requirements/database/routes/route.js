@@ -1,9 +1,18 @@
 // DATABASE CONTAINER
 
+import schema from '../schemas/userBodyJsonSchema.js'
+import updateUserSchema from '../schemas/updateUserSchema.js'
+
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
 	})
+
+/*
+	fastify.addHook('onRequest', (request, reply, done) => {
+		// authentication code
+	});
+*/
 
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
@@ -24,14 +33,12 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.post('/users/login', async (request, reply) => {
+	fastify.post('/users/login', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			const query = `INSERT INTO users(is_ia, name, email, id_token,
-					password_hash, reset_token, reset_expiry,
-					ip_address, is_log, points)
+			const query = `INSERT INTO users(is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points)
 					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
 				if (err) return reject(err);
@@ -45,7 +52,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.put('/users/:id', async (request, reply) => {
+	fastify.patch('/users/:id', { schema: updateUserSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;

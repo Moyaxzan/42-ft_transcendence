@@ -5,21 +5,9 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
-	const userBodyJsonSchema = {
-		type: 'object',
-		required: [ 'points' ],
-		properties: {
-			points: { type: 'integer' },
-		},
-	}
-
-	const schema = {
-		body: userBodyJsonSchema,
-	}
-
-	fastify.put('/users/:id/', { schema }, async (request, reply) => {
+	fastify.patch('/users/:id/', async (request, reply) => {
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
-			method: 'PUT',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ id: request.body.id, points: request.body.points })
 		});
@@ -27,7 +15,7 @@ async function routes (fastify, options) {
   		reply.send(data);
 	})
 
-	fastify.delete('/users/:id', { schema }, async (request, reply) => {
+	fastify.delete('/users/:id', async (request, reply) => {
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
 			method: 'DELETE',
 			headers: { 'Content-Type': 'application/json' },
@@ -37,4 +25,3 @@ async function routes (fastify, options) {
 }
 
 export default routes
-
