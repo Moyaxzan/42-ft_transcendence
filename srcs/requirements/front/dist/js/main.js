@@ -1,8 +1,7 @@
-import { router, enableLinkInterception, displayUser } from './router.js';
+import { router, enableLinkInterception } from './router.js';
 document.addEventListener("DOMContentLoaded", () => {
     router();
     enableLinkInterception();
-    displayUser();
     console.log("main.ts loaded");
     document.addEventListener("click", (e) => {
         const link = e.target.closest("[data-link]");
