@@ -1,4 +1,4 @@
-const updatPointsSchema = {
+const updatePointsSchema = {
 	body: {
 		type: 'object',
 		required: ['points'],
@@ -16,4 +16,4 @@ const updatPointsSchema = {
 	}
 }
 
-export default updateUserSchema
+export default updatePointsSchema

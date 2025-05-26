@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updateUserSchema from '../schemas/updateUserSchema.js'
+import updatePointsSchema from '../schemas/updateUserSchema.js'
 
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
@@ -52,7 +52,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id', { schema: updatPointsSchema }, async (request, reply) => {
+	fastify.patch('/users/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;
