@@ -1,4 +1,4 @@
-const updateUserSchema = {
+const updatPointsSchema = {
 	body: {
 		type: 'object',
 		required: ['points'],
