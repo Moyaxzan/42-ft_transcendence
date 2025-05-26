@@ -53,6 +53,7 @@ async function routes (fastify, options) {
 		}
 	});
 
+
 	fastify.patch('/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
