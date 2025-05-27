@@ -12,11 +12,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "fastify": "^4.19.3",
-    "fastify-plugin": "^4.5.0",
-    "google-auth-library": "^9.15.1",
-    "bcrypt": "^5.1.0",
+    "@fastify/cookie": "^7.1.0",
     "@fastify/jwt": "^7.0.2",
-    "@fastify/cookie": "^7.1.0"
+    "bcrypt": "^5.1.0",
+    "fastify": "^4.29.1",
+    "fastify-plugin": "^4.5.0",
+    "google-auth-library": "^9.15.1"
   }
 }
