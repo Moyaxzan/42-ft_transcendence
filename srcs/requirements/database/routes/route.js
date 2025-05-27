@@ -1,12 +1,25 @@
+// DATABASE CONTAINER
+
+import schema from '../schemas/userBodyJsonSchema.js'
+import updatePointsSchema from '../schemas/updatePointsSchema.js'
+import updateNameSchema from '../schemas/updateNameSchema.js'
+
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
 	})
+
+/*
+	fastify.addHook('onRequest', (request, reply, done) => {
+		// authentication code
+	});
+*/
+
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.all('select * from users', (err, rows) => {
+			db.all('SELECT * FROM users', (err, rows) => {
 				if (err) return reject(err);
 				resolve(rows);
 				});
@@ -17,24 +30,83 @@ async function routes (fastify, options) {
 			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database GET error'});
+			return reply.status(500).send({ error: 'database GET error', details: err.message });
 		}
 	});
 
-	fastify.post('/users', async (request, reply) => {
+	fastify.get('/users/:email', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { name } = request.body;
+		const { email } = request.params;	
+  		try {
+    		const user = await new Promise((resolve, reject) => {
+    		db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
+    	    	if (err) return reject(err);
+    	    	resolve(row);
+    	  		});
+    		});
+    		if (!user) {
+    			return reply.status(404).send({ message: 'User not found' });
+    		}
+    		return reply.send(user);
+  		} catch (err) {
+    		fastify.log.error(err);
+    		return reply.status(500).send({ error: 'database GET error', details: err.message });
+  		}
+	});
+
+	fastify.post('/users/login', { schema }, async (request, reply) => {
+		const db = fastify.sqlite;
+		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('insert into users(name) values(?)', [name], function (err) {
+			const query = `INSERT INTO users(is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points)
+					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
 				if (err) return reject(err);
-				resolve({ id: this.lastID, name});
+				resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database POST error'});
+			return reply.status(500).send({ error: 'database POST error', details: err.message });
+		}
+	});
+
+
+	fastify.patch('/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { points } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			db.run('UPDATE users SET points = ? WHERE id = ?', [points, id], function (err) {
+				if (err) return reject(err);
+				resolve(id, points);
+				});
+			});
+			reply.send({ message: 'Point updated successfully', points });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+		}
+	});
+
+	fastify.patch('/users/:id', { schema: updateNameSchema }, async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { name } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+				db.run('UPDATE users SET name = ? WHERE id = ?', [name, id], function (err) {
+					if (err) return reject(err);
+					resolve(id, name);
+				});
+			});
+			reply.send({ message: 'Name updated successfully', name });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
 		}
 	});
 
@@ -43,7 +115,7 @@ async function routes (fastify, options) {
 		const { id } = request.params;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('delete from users where id = ?', [id], function (err) {
+			db.run('DELETE FROM users WHERE id = ?', [id], function (err) {
 				if (err) return reject(err);
 				resolve(id);
 				});
@@ -51,7 +123,7 @@ async function routes (fastify, options) {
 			reply.send({ message: 'User deleted successfully', id });
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database DELETE error'});
+			return reply.status(500).send({ error: 'database DELETE error', details: err.message });
 		}
 	});
 }

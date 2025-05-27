@@ -159,6 +159,7 @@ export function renderPong() {
             animationId = requestAnimationFrame(framePong);
         }
     });
+
 }
 export function stopGame() {
     cancelAnimationFrame(animationId);

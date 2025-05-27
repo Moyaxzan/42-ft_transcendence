@@ -1,19 +1,34 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-export function renderProfile() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const app = document.getElementById('app');
-        if (!app)
-            return;
-        const res = yield fetch('/dist/html/profile.html');
-        const html = yield res.text();
-        app.innerHTML = html;
+export async function renderProfile() {
+    const app = document.getElementById('app');
+    if (!app)
+        return;
+    const res = await fetch('/dist/html/profile.html');
+    const html = await res.text();
+    app.innerHTML = html;
+    const userLoadBtn = document.querySelector("#userLoad");
+    const userList = document.querySelector("#userList");
+    if (!userLoadBtn || !userList) {
+        console.error("#userLoad or #userList not found.");
+        return;
+    }
+    userLoadBtn.addEventListener('click', async () => {
+        console.log("btn clique");
+        const res = await fetch('/users');
+        if (!res.ok)
+            throw new Error('Fail to load');
+        const users = await res.json();
+        userList.innerHTML = '';
+        if (users.length > 0) {
+            const list = document.createElement("ul");
+            users.forEach((user) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = Object.entries(user).map(([key, value]) => `${key}: ${value}`).join(', ');
+                list.appendChild(listItem);
+            });
+            userList.appendChild(list);
+        }
+        else {
+            userList.innerHTML = '<p>No users found</p>';
+        }
     });
 }
