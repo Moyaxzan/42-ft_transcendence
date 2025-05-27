@@ -10,8 +10,8 @@
 	</head>
 
 	<body class="h-screen flex flex-col">
-		<nav class="flex justify-between items-center h-[15vh] bg-[#218DBE] text-white">
-			<div class="flex-1 flex items-center justify-center h-full text-lg font-bold">
+		<nav id="navbar" class="flex justify-between items-center h-[15vh] bg-[#218DBE] text-white transition-all duration-500 ease-in-out">
+			<div id="home-link" class="flex-1 flex items-center justify-center h-full text-lg font-bold transition-all duration-500 ease-in-out">
 				<a href="/" data-link>Home</a>
 			</div>
 			<div class="flex-1 flex items-center justify-center h-full">
@@ -28,7 +28,7 @@
 		<div id="app" class="flex-1 flex flex-col overflow-hidden"></div>
 		<script type="module" src="./dist/js/main.js"></script>
 		<script type="module" src="/main.js"></script>
-		<footer class="h-[15vh] bg-[#002F3B] text-white text-center p-4">
+		<footer id="footer" class="h-[15vh] bg-[#002F3B] text-white text-center p-4">
 			<p>&copy; tsais</p>
 		</footer>
 
