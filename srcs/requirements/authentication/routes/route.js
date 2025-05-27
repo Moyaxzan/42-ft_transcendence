@@ -15,11 +15,11 @@ async function routes (fastify, options) {
 		});
 
 		if (!res.ok) {
-        	return reply.status(401).send({ message: 'User not found in database' });
-    	}
+			return reply.status(401).send({ message: 'User not found in database' });
+		}
 
  		const user = await res.json();
-		console.log('User from DB:', user);
+
 		if (!user || !user.password_hash) {
 			return reply.status(401).send({ message: 'User not found in database' });
 		}
@@ -35,8 +35,36 @@ async function routes (fastify, options) {
 			name: user.name,
 		});
 
-  		return reply.send({token});
-	})
+  	return	reply
+		.setCookie('token', token, {
+	  		httpOnly: true,
+	  		secure: true, //remettre false si ça bug a cause du https
+	  		sameSite: 'strict',
+	  		path: '/'
+		})
+		.send({ success: true });
+	});
+
+	fastify.post('/refresh', async (request, reply) => {
+ 		const refreshToken = request.cookies.refreshToken;
+
+  		try {
+			const payload = fastify.jwt.verify(refreshToken);
+			const newAccessToken = fastify.jwt.sign(
+	  			{ id: payload.id, email: payload.email },
+	  			{ expiresIn: '15m' }
+			);
+			return reply.send({ accessToken: newAccessToken });
+  		} catch (err) {
+			return reply.code(401).send({ error: 'Invalid refresh token' });
+  		}
+	});
+
+	fastify.post('/logout', (request, reply) => {
+		reply
+		.clearCookie('token', { path: '/' })
+		.send({ success: true });
+	});
 
 	fastify.delete('/users/:id', async (request, reply) => {
 		const { id } = request.params;

@@ -3,11 +3,16 @@ import Fastify from 'fastify'
 import jwtPlugin from './plugins/jwt.js';
 import authRoutes from './routes/route.js';
 import protectedRoutes from './routes/protected.js';
+import cookie from '@fastify/cookie'
 
 const fastify = Fastify({
 	logger: true
 })
 
+fastify.register(cookie, {
+	// secret: 'test',
+	parseOptions: {}
+});
 fastify.register(jwtPlugin);
 fastify.register(authRoutes);
 fastify.register(protectedRoutes, { prefix: '/users' });
