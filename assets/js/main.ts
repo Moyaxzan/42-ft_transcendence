@@ -1,7 +1,7 @@
 import { router, enableLinkInterception } from './router.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-	router();
+//	router();
 	enableLinkInterception();
 	console.log("main.ts loaded");
 	document.addEventListener("click", (e) => {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (href) {
 				console.log("Intercepted link:", href);
 				history.pushState(null, "", href);
-				router();
+//				router();
 			}
 		}
 	});
