@@ -17,7 +17,7 @@ const routes: Record<string, () => void> = {
 export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
-	const render = routes[path] || renderHome;
+	
 	if (path === "/pong") {
 		animateNavbarForPong();
 	}  else { 
