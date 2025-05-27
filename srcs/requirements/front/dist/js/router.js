@@ -1,6 +1,8 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
-import { renderPong } from './pages/pong.js';
+import { renderPong, stopGame } from './pages/pong.js';
+// import { renderUser } from './pages/user.js';
+import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
 import { renderAuth } from './pages/auth.js';
 // Define a map of paths to render functions
 const routes = {
@@ -14,6 +16,14 @@ export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
     const render = routes[path] || renderHome;
+    if (path === "/pong") {
+        animateNavbarForPong();
+    }
+    else {
+        resetNavbar();
+        console.log("game should stop");
+        stopGame();
+    }
     render();
 }
 console.log("hello");
