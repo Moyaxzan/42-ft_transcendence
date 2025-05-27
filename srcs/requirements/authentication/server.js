@@ -1,12 +1,16 @@
 // ESM
 import Fastify from 'fastify'
-import routes from './routes/route.js'
+import jwtPlugin from './plugins/jwt.js';
+import authRoutes from './routes/route.js';
+import protectedRoutes from './routes/protected.js';
 
 const fastify = Fastify({
 	logger: true
 })
 
-fastify.register(routes)
+fastify.register(jwtPlugin);
+fastify.register(authRoutes);
+fastify.register(protectedRoutes, { prefix: '/users' });
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
 	if (err) {

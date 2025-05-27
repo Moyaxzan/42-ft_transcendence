@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updateUserSchema from '../schemas/updateUserSchema.js'
+import updatePointsSchema from '../schemas/updateUserSchema.js'
 
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
@@ -33,6 +33,26 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.get('/users/:email', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { email } = request.params;	
+  		try {
+    		const user = await new Promise((resolve, reject) => {
+    		db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
+    	    	if (err) return reject(err);
+    	    	resolve(row);
+    	  		});
+    		});
+    		if (!user) {
+    			return reply.status(404).send({ message: 'User not found' });
+    		}
+    		return reply.send(user);
+  		} catch (err) {
+    		fastify.log.error(err);
+    		return reply.status(500).send({ error: 'database GET error', details: err.message });
+  		}
+	});
+
 	fastify.post('/users/login', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
@@ -52,7 +72,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id', { schema: updatPointsSchema }, async (request, reply) => {
+	fastify.patch('/users/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;
