@@ -2,7 +2,6 @@ import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
 import { renderPong } from './pages/pong.js';
 import { renderAuth } from './pages/auth.js';
-
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
