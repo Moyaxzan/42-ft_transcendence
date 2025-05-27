@@ -5,9 +5,9 @@ import bcrypt from 'bcrypt'
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
 		return { hello: 'world' }
-	})
+	});
 
-	fastify.post('/auth/login', async (request, reply) => {
+	fastify.post('/auth', async (request, reply) => {
 		const { email, password } = request.body; 
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
 			method: 'GET',

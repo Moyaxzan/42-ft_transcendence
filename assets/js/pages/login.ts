@@ -1,9 +1,9 @@
-export async function renderAuth(): Promise<void> {
+export async function renderLogin(): Promise<void> {
 	const app = document.getElementById('app');
 	if (!app)
 		return;
 
-	const res = await fetch('/dist/html/auth.html');
+	const res = await fetch('/dist/html/login.html');
 	const html = await res.text();
 	app.innerHTML = html;
 
@@ -28,7 +28,7 @@ export async function renderAuth(): Promise<void> {
 		}
 
 		try {
-			const res = await fetch('/auth/login', {
+			const res = await fetch('/auth', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email, password }),

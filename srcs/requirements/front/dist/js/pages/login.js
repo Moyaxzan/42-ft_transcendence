@@ -1,8 +1,8 @@
-export async function renderAuth() {
+export async function renderLogin() {
     const app = document.getElementById('app');
     if (!app)
         return;
-    const res = await fetch('/dist/html/auth.html');
+    const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
     const loginForm = document.getElementById('loginForm');
@@ -21,7 +21,7 @@ export async function renderAuth() {
             return;
         }
         try {
-            const res = await fetch('/auth/login', {
+            const res = await fetch('/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

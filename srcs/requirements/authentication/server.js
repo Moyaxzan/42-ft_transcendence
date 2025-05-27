@@ -4,7 +4,6 @@ import jwtPlugin from './plugins/jwt.js';
 import authRoutes from './routes/route.js';
 import protectedRoutes from './routes/protected.js';
 import cookie from '@fastify/cookie'
-
 const fastify = Fastify({
 	logger: true
 })

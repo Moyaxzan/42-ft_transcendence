@@ -3,7 +3,8 @@ export function animateNavbarForPong() {
     const homeLink = document.getElementById('home-link');
     const profileLink = document.getElementById('profile-link');
     const pongLink = document.getElementById('pong-link');
-    if (!navbar || !profileLink || !pongLink || !homeLink) {
+    const authLink = document.getElementById('auth-link');
+    if (!navbar || !profileLink || !pongLink || !homeLink || !authLink) {
         return;
     }
     navbar.classList.remove('h-[15vh]');
@@ -44,7 +45,12 @@ export function resetNavbar() {
         pongDiv.id = 'pong-link';
         pongDiv.className = 'flex-1 flex items-center justify-center h-full transition-opacity duration-500';
         pongDiv.innerHTML = `<a href="/pong" data-link class="text-lg font-bold hover:underline">Play Pong</a>`;
+        const authDiv = document.createElement('div');
+        pongDiv.id = 'auth-linl';
+        pongDiv.className = 'flex-1 flex items-center justify-center h-full transition-opacity duration-500';
+        pongDiv.innerHTML = `<a href="/auth" data-link class="text-lg font-bold hover:underline">LogIn</a>`;
         navbar.appendChild(profileDiv);
         navbar.appendChild(pongDiv);
+        navbar.appendChild(authDiv);
     }
 }

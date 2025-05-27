@@ -3,13 +3,13 @@ import { renderProfile } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 // import { renderUser } from './pages/user.js';
 import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
-import { renderAuth } from './pages/auth.js';
+import { renderLogin } from './pages/login.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
     '/profile': renderProfile,
     '/pong': renderPong,
-    '/auth': renderAuth,
+    '/login': renderLogin,
 };
 // Run this when URL changes or app first loads
 export function router() {
