@@ -1,10 +1,9 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
-import { renderUser } from './pages/user.js';
+// import { renderUser } from './pages/user.js';
 import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
 import { renderAuth } from './pages/auth.js';
-
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
