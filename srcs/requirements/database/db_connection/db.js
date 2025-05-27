@@ -29,7 +29,7 @@ async function dbConnector (fastify, options) {
 		winner_id INTEGER, \ 
 		FOREIGN KEY (winner_id) REFERENCES users(id)  
 		);
-		INSERT INTO matches (id, status, winner_id) VALUES (0, 45);
+		INSERT INTO matches (id, winner_id) VALUES (0, 45);
 		
 		CREATE TABLE IF NOT EXISTS users_join_matches ( \
 		id INTEGER PRIMARY KEY, \

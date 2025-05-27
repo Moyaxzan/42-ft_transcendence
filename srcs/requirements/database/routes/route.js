@@ -1,7 +1,8 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updatePointsSchema from '../schemas/updateUserSchema.js'
+import updatePointsSchema from '../schemas/updatePointsSchema.js'
+import updateNameSchema from '../schemas/updateNameSchema.js'
 
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
@@ -72,7 +73,8 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id', { schema: updatePointsSchema }, async (request, reply) => {
+
+	fastify.patch('/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;
@@ -84,6 +86,24 @@ async function routes (fastify, options) {
 				});
 			});
 			reply.send({ message: 'Point updated successfully', points });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+		}
+	});
+
+	fastify.patch('/users/:id', { schema: updateNameSchema }, async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { name } = request.body;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+				db.run('UPDATE users SET name = ? WHERE id = ?', [name, id], function (err) {
+					if (err) return reject(err);
+					resolve(id, name);
+				});
+			});
+			reply.send({ message: 'Name updated successfully', name });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
