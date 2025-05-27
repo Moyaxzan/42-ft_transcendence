@@ -1,6 +1,6 @@
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
-import { renderPong } from './pages/pong.js';
+import { renderPong, stopGame } from './pages/pong.js';
 import { renderUser } from './pages/user.js';
 import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
 
@@ -21,6 +21,8 @@ export function router() {
 		animateNavbarForPong();
 	}  else { 
 		resetNavbar();
+		console.log("game should stop");
+		stopGame();
 	}
 	render();
 }

@@ -7,38 +7,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let animationId;
+let animationId = 0;
 export function renderPong() {
     return __awaiter(this, void 0, void 0, function* () {
         stopGame();
         const app = document.getElementById('app');
         if (!app)
             return;
-        const res = yield fetch('/dist/html/pong.html');
+        const res = yield fetch(`/dist/html/pong.html`);
         const html = yield res.text();
         app.innerHTML = html;
-        let navbar = document.getElementById("navbar");
-        let footer = document.getElementById("footer");
-        if (!navbar || !footer)
-            return;
-        // navbar.style.display = 'none';
-        // footer.style.display = 'none';
+        yield new Promise((resolve) => requestAnimationFrame(resolve));
         //get elements of html
-        let leftPaddle = document.getElementById("left-paddle");
-        let rightPaddle = document.getElementById("right-paddle");
-        let ball = document.getElementById("ball");
+        const leftPaddle = document.getElementById("left-paddle");
+        const rightPaddle = document.getElementById("right-paddle");
+        const ball = document.getElementById("ball");
         if (!leftPaddle || !rightPaddle || !ball)
             return;
         const trailBalls = [];
-        for (let i = 2; i <= 10; i++) {
-            const ball = document.getElementById(`ball${i}`);
-            if (!ball) {
+        for (let i = 1; i < 10; i++) {
+            let trail = document.getElementById(`trail${i}`);
+            if (!trail) {
                 return;
             }
-            trailBalls.push(ball);
+            trailBalls.push(trail);
         }
-        //get time of start
-        const startTime = Date.now();
         // keys handling
         let keysPressed = {};
         document.addEventListener("keydown", (e) => {
@@ -68,6 +61,7 @@ export function renderPong() {
             }
             return newAngle;
         }
+        const startTime = Date.now();
         //initializations
         let leftPaddlePos = 41; // as %
         let rightPaddlePos = 41; // as %
@@ -78,24 +72,22 @@ export function renderPong() {
         let ballVecty = 0;
         let lastbounce = startTime;
         let ballSpeed = 0.6;
-        let angle = Math.random() * 2 * Math.PI;
-        let atan = Math.atan2(ballVectx, ballVecty);
-        if (atan > Math.PI / 3 && atan <= Math.PI / 2) {
-            angle = 1.5 * Math.PI / 3;
+        function getInitialAngle() {
+            // Launch angle: avoid too vertical or horizontal
+            let angle;
+            let normalized;
+            do {
+                angle = Math.random() * 2 * Math.PI;
+                normalized = Math.abs(Math.atan2(Math.sin(angle), Math.cos(angle)));
+            } while (normalized < Math.PI / 6 || normalized > 5 * Math.PI / 6); // avoid near-horizontal/vertical
+            return angle;
         }
-        else if (atan < 2 * Math.PI / 3 && atan > Math.PI / 2) {
-            angle = 2.5 * Math.PI / 3;
-        }
-        else if (atan > 4 * Math.PI / 3 && atan <= 3 * Math.PI / 2) {
-            angle = 3.5 * Math.PI / 3;
-        }
-        else if (atan < 5 * Math.PI / 3 && atan > 3 * Math.PI / 2) {
-            angle = 5.5 * Math.PI / 3;
-        }
-        console.log("lunch angle: ", angle);
+        let angle = getInitialAngle();
         ballVectx = Math.cos(angle);
         ballVecty = Math.sin(angle);
+        console.log("launch angle:", angle);
         function moveBall() {
+            console.log("ball pos:", ballPosx[0], ", ", ballPosy[0]);
             for (let index = 9; index > 0; index--) {
                 ballPosy[index] = ballPosy[index - 1];
                 ballPosx[index] = ballPosx[index - 1];
@@ -161,9 +153,14 @@ export function renderPong() {
             }
             animationId = requestAnimationFrame(framePong);
         }
-        animationId = requestAnimationFrame(framePong);
+        //get time of start
+        if (!animationId) {
+            console.log("game should start");
+            animationId = requestAnimationFrame(framePong);
+        }
     });
 }
 export function stopGame() {
     cancelAnimationFrame(animationId);
+    animationId = 0;
 }

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { renderHome } from './pages/home.js';
 import { renderProfile } from './pages/profile.js';
-import { renderPong } from './pages/pong.js';
+import { renderPong, stopGame } from './pages/pong.js';
 import { renderUser } from './pages/user.js';
 import { animateNavbarForPong, resetNavbar } from './pages/navbar.js';
 // Define a map of paths to render functions
@@ -29,6 +29,8 @@ export function router() {
     }
     else {
         resetNavbar();
+        console.log("game should stop");
+        stopGame();
     }
     render();
 }

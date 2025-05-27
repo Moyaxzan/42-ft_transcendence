@@ -1,42 +1,32 @@
-let animationId: number;
+let animationId: number = 0;
 
 export async function renderPong() {
 	stopGame();
 	const app = document.getElementById('app');
 	if (!app)
 		return;
-	const res = await fetch('/dist/html/pong.html');
+	const res = await fetch(`/dist/html/pong.html`);
 	const html = await res.text();
 	app.innerHTML = html;
 
-	let navbar = document.getElementById("navbar") as HTMLDivElement;
-	let footer = document.getElementById("footer") as HTMLDivElement;
-	if (!navbar || !footer)
-		return;
-
-	// navbar.style.display = 'none';
-	// footer.style.display = 'none';
-
-
+	await new Promise((resolve) => requestAnimationFrame(resolve));
 
 	//get elements of html
-	let leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
-	let rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
-	let ball = document.getElementById("ball") as HTMLDivElement;
+	const leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
+	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
+	const ball = document.getElementById("ball") as HTMLDivElement;
 	if (!leftPaddle || !rightPaddle || !ball)
 		return;
 
+
 	const trailBalls: HTMLDivElement[] = [];
-	for (let i = 2; i <= 10; i++) {
-		const ball = document.getElementById(`ball${i}`) as HTMLDivElement | null;
-		if (!ball) {
+	for (let i = 1; i < 10; i++) {
+		let trail = document.getElementById(`trail${i}`) as HTMLDivElement | null;
+		if (!trail) {
 			return;
 		}
-		trailBalls.push(ball);
+		trailBalls.push(trail);
 	}
-
-	//get time of start
-	const startTime = Date.now();
 
 	// keys handling
 	let keysPressed: {[key: string] : boolean} = {};
@@ -70,6 +60,8 @@ export async function renderPong() {
 		return newAngle;
 	}
 
+	const startTime = Date.now();
+
 	//initializations
 	let leftPaddlePos = 41;   // as %
 	let rightPaddlePos = 41;  // as %
@@ -82,23 +74,24 @@ export async function renderPong() {
 	let lastbounce = startTime;
 	let ballSpeed = 0.6;
 
-	let angle = Math.random() * 2 * Math.PI;
-	let atan = Math.atan2(ballVectx, ballVecty);
-	if (atan > Math.PI / 3 && atan <= Math.PI / 2) {
-		angle = 1.5 * Math.PI / 3;
-	} else if (atan < 2 * Math.PI / 3 && atan > Math.PI / 2) {
-		angle = 2.5 * Math.PI / 3;
-	} else if (atan > 4 * Math.PI / 3 && atan <= 3 * Math.PI / 2) {
-		angle = 3.5 * Math.PI / 3;
-	} else if (atan < 5 * Math.PI / 3 && atan > 3 * Math.PI / 2) {
-		angle = 5.5 * Math.PI / 3;
+	function getInitialAngle(): number {
+		// Launch angle: avoid too vertical or horizontal
+		let angle;
+		let normalized: number;
+		do {
+			angle = Math.random() * 2 * Math.PI;
+			normalized = Math.abs(Math.atan2(Math.sin(angle), Math.cos(angle)));
+		} while (normalized < Math.PI / 6 || normalized > 5 * Math.PI / 6); // avoid near-horizontal/vertical
+		return angle;
 	}
-	console.log("lunch angle: ", angle);
+
+	let angle = getInitialAngle();
 	ballVectx = Math.cos(angle);
 	ballVecty = Math.sin(angle);
-
+	console.log("launch angle:", angle);
 
 	function moveBall() {
+		console.log("ball pos:", ballPosx[0], ", ", ballPosy[0]);
 		for (let index = 9; index > 0; index--) {
 			ballPosy[index] = ballPosy[index - 1];
 			ballPosx[index] = ballPosx[index - 1];
@@ -172,11 +165,16 @@ export async function renderPong() {
 		animationId = requestAnimationFrame(framePong)
 	}
 
-	animationId = requestAnimationFrame(framePong)
+	//get time of start
+	if (!animationId) {
+		console.log("game should start");
+		animationId = requestAnimationFrame(framePong)
+	}
 
 
 }
 
 export function stopGame() {
 	cancelAnimationFrame(animationId);
+	animationId = 0;
 }
