@@ -8,6 +8,21 @@ export async function renderPong() {
     const html = await res.text();
     app.innerHTML = html;
     await new Promise((resolve) => requestAnimationFrame(resolve));
+    const lineTop = document.getElementById('line-top');
+    const lineBottom = document.getElementById('line-bottom');
+    if (!lineTop || !lineBottom)
+        return;
+    // Reset old styles
+    lineTop.classList.remove('rotate-[-10deg]', '-translate-y-[25vh]', 'h-[50vh]');
+    lineBottom.classList.remove('rotate-[-10deg]', '-translate-y-[-25vh]', 'h-[50vh]');
+    // Apply new styles
+    lineTop.classList.add('rotate-0', 'translate-y-0', 'h-[7%]');
+    lineBottom.classList.add('rotate-0', 'translate-y-0', 'h-[23%]');
+    const home_link = document.getElementById("home-link-pong");
+    if (home_link) {
+        home_link.classList.remove("opacity-0", "translate-y-2");
+        home_link.classList.add("opacity-100", "translate-y-0");
+    }
     //get elements of html
     const leftPaddle = document.getElementById("left-paddle");
     const rightPaddle = document.getElementById("right-paddle");
