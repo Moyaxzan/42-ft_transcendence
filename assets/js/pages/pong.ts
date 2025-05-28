@@ -18,7 +18,6 @@ export async function renderPong() {
 	if (!leftPaddle || !rightPaddle || !ball)
 		return;
 
-
 	const trailBalls: HTMLDivElement[] = [];
 	for (let i = 1; i < 10; i++) {
 		let trail = document.getElementById(`trail${i}`) as HTMLDivElement | null;
@@ -43,7 +42,8 @@ export async function renderPong() {
 	}
 
 	function reflectAngle(ballVectx: number, ballVecty: number): number {
-		let angle = Math.atan2(ballVectx, ballVecty);
+		let angle = Math.atan2(ballVecty, ballVectx);
+		console.log("angle before :", angle * 180 / Math.PI);
 		let newAngle;
 		let tries = 0;
 		do {
@@ -55,12 +55,15 @@ export async function renderPong() {
 		} while (++tries < 10);
 		if (tries == 10) {
 			console.log("bounce tries > 10");
-			return (Math.atan2(-ballVectx, ballVecty))
+			return (Math.atan2(ballVecty, -ballVectx))
 		}
+		console.log("angle after :", newAngle * 180 / Math.PI);
 		return newAngle;
 	}
 
-	const startTime = Date.now();
+	let startRound = Date.now();
+	let player1Score = 0;
+	let player2Score = 0;
 
 	//initializations
 	let leftPaddlePos = 41;   // as %
@@ -71,18 +74,39 @@ export async function renderPong() {
 	let ballPosy = Array(10).fill(50); 
 	let ballVectx = 0;
 	let ballVecty = 0;
-	let lastbounce = startTime;
+	let lastbounce = startRound;
 	let ballSpeed = 0.6;
 
+	function resetBall() {
+	  ballPosx = Array(10).fill(50);
+	  ballPosy = Array(10).fill(50);
+	  ballSpeed = 0.6;
+
+	  ballVectx = 0;
+	  ballVecty = 0;
+
+	  // After a short delay, relaunch the ball at a new random angle
+		setTimeout(() => {
+			const angle = getInitialAngle();
+			ballVectx = Math.cos(angle);
+			ballVecty = Math.sin(angle);
+			lastbounce = Date.now();
+			startRound = lastbounce;
+			gameStarted = true;
+			console.log("New serve angle:", angle);
+		}, 1000); // 1 second pause before serve
+	}
+
 	function getInitialAngle(): number {
-		// Launch angle: avoid too vertical or horizontal
-		let angle;
-		let normalized: number;
+			let angle;
+		let x, y;
 		do {
 			angle = Math.random() * 2 * Math.PI;
-			normalized = Math.abs(Math.atan2(Math.sin(angle), Math.cos(angle)));
-		} while (normalized < Math.PI / 6 || normalized > 5 * Math.PI / 6); // avoid near-horizontal/vertical
+			x = Math.cos(angle);
+			y = Math.sin(angle);
+		} while (Math.abs(x) < 0.3 || Math.abs(y) < 0.3);
 		return angle;
+
 	}
 
 	let angle = getInitialAngle();
@@ -113,16 +137,18 @@ export async function renderPong() {
 		}
 
 		//paddle collisions
-		if (Date.now() - lastbounce > 100) {
-			if (ballPosx[0] >= 100 && ballPosx[0] < 102 && ballPosy[0] >= rightPaddlePos && ballPosy[0] <= rightPaddlePos + 18) {
-				const newAngle = reflectAngle(ballVecty, ballVectx);
+		if (ballPosx[0] >= 100 && ballPosx[0] < 102 && ballPosy[0] >= rightPaddlePos && ballPosy[0] <= rightPaddlePos + 18) {
+			if (Date.now() - lastbounce > 100) {
+				const newAngle = reflectAngle(ballVectx, ballVecty);
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
 				ballSpeed = ballSpeed + 0.02;
 				console.log("ball speed: ", ballSpeed);
-			} else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
-				const newAngle = reflectAngle(ballVecty, ballVectx);
+			}
+		} else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
+			if (Date.now() - lastbounce > 100) {
+				const newAngle = reflectAngle(ballVectx, ballVecty);
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
@@ -130,6 +156,7 @@ export async function renderPong() {
 				console.log("ball speed: ", ballSpeed);
 			}
 		}
+
 	}
 
 	function movePaddles() {
@@ -158,7 +185,22 @@ export async function renderPong() {
 
 	function framePong() {
 		movePaddles();
-		if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startTime) / 1000) > 5) {
+		if (ballPosx[0] > 130) {
+			gameStarted = false;
+			player1Score++;
+			console.log("player 1 scored !");
+			resetBall();
+		} else if (ballPosx[0] < -30) {
+			gameStarted = false;
+			player2Score++;
+			console.log("player 2 scored !");
+			resetBall();
+		} else if (player1Score == 6 || player2Score == 6) {
+			stopGame();
+			gameStarted = false;
+			console.log("game done !");
+			return ;
+		} else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
 			gameStarted = true;
 			moveBall();
 		}
