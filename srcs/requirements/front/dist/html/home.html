@@ -1,9 +1,33 @@
 <!-- home.html -->
-<div class="h-full flex items-center justify-center">
-	<div class="h-full flex-grow bg-blue">
+
+<div class="h-full flex flex-col items-center justify-center">
+
+	<div
+		id="line-top-overlay"
+		class="absolute top-0 left-[-25%] w-[150%] h-[50vh] rotate-[-10deg] z-50 -translate-y-[25vh] flex"
+	>
+		<div class="absolute bottom-[15%] left-[33%] justify-center items-center flex flex-1 bottom-0 londrina-solid-regular">
+			<a href="/profile" class="absolute text-5xl font-bold">Profile</a>
+		</div>
 	</div>
-	<div class="h-full flex-grow bg-white">
+
+	<div id="play-button" class="top-[50%] justify-center absolute ">
+		<!-- <a href="/pong" data-link class="font-bold text-5xl londrina-solid-regular">Play</a> -->
+		<a	href="/pong" data-link
+			class="font-bold text-5xl londrina-solid-regular transition-transform duration-300"
+		>Play</a>
 	</div>
-	<div class="h-full flex-grow bg-red">
+
+	<div	id="line-bottom-overlay"
+			class="absolute bottom-0 left-[-25%] w-[150%] h-[50vh] rotate-[-10deg] z-50 -translate-y-[-25vh] overflow-hidden flex items-center"
+	>
+		<div class="animate-marquee whitespace-nowrap translate-y-[-15vh]">
+			<span class="mx-10 inline-block font-bold text-[#F27D01] text-7xl londrina-solid-regular">
+				ft_transcendance ft_transcendance ft_transcendance
+			</span>
+			<span class="mx-10 inline-block font-bold text-[#F27D01] text-7xl londrina-solid-regular">
+				ft_transcendance ft_transcendance ft_transcendance
+			</span>
+		</div>
 	</div>
 </div>
