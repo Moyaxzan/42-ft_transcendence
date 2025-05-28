@@ -5,7 +5,12 @@ import dbConnector from './db_connection/db.js'
 import routes from './routes/route.js'
 
 const fastify = Fastify({
-	logger: true
+	logger: true,
+	ajv: {
+		customOptions: {
+			coerceTypes: false
+		}
+	}
 })
 
 fastify.register(fastifySqlite, {

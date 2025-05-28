@@ -1,165 +1,196 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
+let animationId = 0;
+export async function renderPong() {
+    stopGame();
+    const app = document.getElementById('app');
+    if (!app)
+        return;
+    const res = await fetch(`/dist/html/pong.html`);
+    const html = await res.text();
+    app.innerHTML = html;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    //get elements of html
+    const leftPaddle = document.getElementById("left-paddle");
+    const rightPaddle = document.getElementById("right-paddle");
+    const ball = document.getElementById("ball");
+    if (!leftPaddle || !rightPaddle || !ball)
+        return;
+    const trailBalls = [];
+    for (let i = 1; i < 10; i++) {
+        let trail = document.getElementById(`trail${i}`);
+        if (!trail) {
+            return;
+        }
+        trailBalls.push(trail);
+    }
+    // keys handling
+    let keysPressed = {};
+    document.addEventListener("keydown", (e) => {
+        keysPressed[e.key] = true;
     });
-};
-let animationId;
-export function renderPong() {
-    return __awaiter(this, void 0, void 0, function* () {
-        stopGame();
-        const app = document.getElementById('app');
-        if (!app)
-            return;
-        const res = yield fetch('/dist/html/pong.html');
-        const html = yield res.text();
-        app.innerHTML = html;
-        //get elements of html
-        let leftPaddle = document.getElementById("left-paddle");
-        let rightPaddle = document.getElementById("right-paddle");
-        let ball = document.getElementById("ball");
-        if (!leftPaddle || !rightPaddle || !ball)
-            return;
-        const trailBalls = [];
-        for (let i = 2; i <= 10; i++) {
-            const ball = document.getElementById(`ball${i}`);
-            if (!ball) {
-                return;
-            }
-            trailBalls.push(ball);
+    document.addEventListener("keyup", (e) => {
+        keysPressed[e.key] = false;
+    });
+    //utils
+    function getRandomBound(min, max) {
+        return Math.random() * (max - min + 1) + min;
+    }
+    function reflectAngle(ballVectx, ballVecty) {
+        let angle = Math.atan2(ballVecty, ballVectx);
+        console.log("angle before :", angle * 180 / Math.PI);
+        let newAngle;
+        let tries = 0;
+        do {
+            const offset = (Math.random() - 0.5) * (Math.PI / 6); // ±π/12
+            newAngle = Math.PI - angle + offset;
+            const a = Math.abs(Math.atan2(Math.sin(newAngle), Math.cos(newAngle))); // normalize
+            if (a < Math.PI / 3 || a > 2 * Math.PI / 3)
+                break;
+        } while (++tries < 10);
+        if (tries == 10) {
+            console.log("bounce tries > 10");
+            return (Math.atan2(ballVecty, -ballVectx));
         }
-        //get time of start
-        const startTime = Date.now();
-        // keys handling
-        let keysPressed = {};
-        document.addEventListener("keydown", (e) => {
-            keysPressed[e.key] = true;
-        });
-        document.addEventListener("keyup", (e) => {
-            keysPressed[e.key] = false;
-        });
-        //utils
-        function getRandomBound(min, max) {
-            return Math.random() * (max - min + 1) + min;
+        console.log("angle after :", newAngle * 180 / Math.PI);
+        return newAngle;
+    }
+    let startRound = Date.now();
+    let player1Score = 0;
+    let player2Score = 0;
+    //initializations
+    let leftPaddlePos = 41; // as %
+    let rightPaddlePos = 41; // as %
+    // ballPosx[0] is the actual pos of the ball. The others are the trail.
+    let ballPosx = Array(10).fill(50);
+    let ballPosy = Array(10).fill(50);
+    let ballVectx = 0;
+    let ballVecty = 0;
+    let lastbounce = startRound;
+    let ballSpeed = 0.6;
+    function resetBall() {
+        ballPosx = Array(10).fill(50);
+        ballPosy = Array(10).fill(50);
+        ballSpeed = 0.6;
+        ballVectx = 0;
+        ballVecty = 0;
+        // After a short delay, relaunch the ball at a new random angle
+        setTimeout(() => {
+            const angle = getInitialAngle();
+            ballVectx = Math.cos(angle);
+            ballVecty = Math.sin(angle);
+            lastbounce = Date.now();
+            startRound = lastbounce;
+            gameStarted = true;
+            console.log("New serve angle:", angle);
+        }, 1000); // 1 second pause before serve
+    }
+    function getInitialAngle() {
+        let angle;
+        let x, y;
+        do {
+            angle = Math.random() * 2 * Math.PI;
+            x = Math.cos(angle);
+            y = Math.sin(angle);
+        } while (Math.abs(x) < 0.3 || Math.abs(y) < 0.3);
+        return angle;
+    }
+    let angle = getInitialAngle();
+    ballVectx = Math.cos(angle);
+    ballVecty = Math.sin(angle);
+    console.log("launch angle:", angle);
+    function moveBall() {
+        console.log("ball pos:", ballPosx[0], ", ", ballPosy[0]);
+        for (let index = 9; index > 0; index--) {
+            ballPosy[index] = ballPosy[index - 1];
+            ballPosx[index] = ballPosx[index - 1];
         }
-        function reflectAngle(angle) {
-            let newAngle;
-            let tries = 0;
-            do {
-                const offset = (Math.random() - 0.5) * (Math.PI / 6); // ±π/12
-                newAngle = Math.PI - angle + offset;
-                const a = Math.abs(Math.atan2(Math.sin(newAngle), Math.cos(newAngle))); // normalize
-                if (a < Math.PI / 3 || a > 2 * Math.PI / 3)
-                    break;
-            } while (++tries < 10);
-            if (tries == 10) {
-                return -angle;
-            }
-            return newAngle;
+        ballPosy[0] = ballPosy[0] + ballSpeed * (ballVecty);
+        ballPosx[0] = ballPosx[0] + ballSpeed * (ballVectx);
+        ball.style.top = `${ballPosy[0]}%`;
+        ball.style.left = `${ballPosx[0]}%`;
+        //render tail balls
+        for (let index = 0; index < trailBalls.length; index++) {
+            trailBalls[index].style.top = `${ballPosy[index + 1]}%`;
+            trailBalls[index].style.left = `${ballPosx[index + 1]}%`;
         }
-        //initializations
-        let leftPaddlePos = 0; // as %
-        let rightPaddlePos = 0; // as %
-        // ballPosx[0] is the actual pos of the ball. The others are the trail.
-        let ballPosx = Array(10).fill(50);
-        let ballPosy = Array(10).fill(50);
-        let ballVectx = 0;
-        let ballVecty = 0;
-        let lastbounce = startTime;
-        let ballSpeed = 0.6;
-        let angle = Math.random() * 2 * Math.PI;
-        let atan = Math.atan2(ballVectx, ballVecty);
-        if (atan > Math.PI / 3 && atan <= Math.PI / 2) {
-            angle = Math.PI / 3 * 0.95;
+        //wall collisions
+        if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
+            ballVecty = -ballVecty;
         }
-        else if (atan < 2 * Math.PI / 3 && atan > Math.PI / 2) {
-            angle = 2 * Math.PI / 3 * 1.05;
-        }
-        else if (atan > 4 * Math.PI / 3 && atan <= 3 * Math.PI / 2) {
-            angle = 4 * Math.PI / 3 * 0.95;
-        }
-        else if (atan < 5 * Math.PI / 3 && atan > 3 * Math.PI / 2) {
-            angle = 5 * Math.PI / 3 * 1.05;
-        }
-        ballVectx = Math.cos(angle);
-        ballVecty = Math.sin(angle);
-        function moveBall() {
-            for (let index = 9; index > 0; index--) {
-                ballPosy[index] = ballPosy[index - 1];
-                ballPosx[index] = ballPosx[index - 1];
-            }
-            ballPosy[0] = ballPosy[0] + ballSpeed * (ballVecty);
-            ballPosx[0] = ballPosx[0] + ballSpeed * (ballVectx);
-            ball.style.top = `${ballPosy[0]}%`;
-            ball.style.left = `${ballPosx[0]}%`;
-            //render tail balls
-            for (let index = 0; index < trailBalls.length; index++) {
-                trailBalls[index].style.top = `${ballPosy[index + 1]}%`;
-                trailBalls[index].style.left = `${ballPosx[index + 1]}%`;
-            }
-            //wall collisions
-            if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
-                ballVecty = -ballVecty;
-            }
-            //paddle collisions
+        //paddle collisions
+        if (ballPosx[0] >= 100 && ballPosx[0] < 102 && ballPosy[0] >= rightPaddlePos && ballPosy[0] <= rightPaddlePos + 18) {
             if (Date.now() - lastbounce > 100) {
-                if (ballPosx[0] >= 100 && ballPosx[0] < 102 && ballPosy[0] >= rightPaddlePos && ballPosy[0] <= rightPaddlePos + 18) {
-                    const newAngle = reflectAngle(Math.atan2(ballVecty, ballVectx));
-                    ballVectx = Math.cos(newAngle);
-                    ballVecty = Math.sin(newAngle);
-                    lastbounce = Date.now();
-                    ballSpeed = ballSpeed + 0.02;
-                    console.log("ball speed: ", ballSpeed);
-                }
-                else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
-                    const newAngle = reflectAngle(Math.atan2(ballVecty, ballVectx));
-                    ballVectx = Math.cos(newAngle);
-                    ballVecty = Math.sin(newAngle);
-                    lastbounce = Date.now();
-                    ballSpeed = ballSpeed + 0.02;
-                    console.log("ball speed: ", ballSpeed);
-                }
+                const newAngle = reflectAngle(ballVectx, ballVecty);
+                ballVectx = Math.cos(newAngle);
+                ballVecty = Math.sin(newAngle);
+                lastbounce = Date.now();
+                ballSpeed = ballSpeed + 0.02;
+                console.log("ball speed: ", ballSpeed);
             }
         }
-        function movePaddles() {
-            const paddleSpeed = 0.65;
-            if ((keysPressed["s"] || keysPressed["S"]) && !(keysPressed["w"] || keysPressed["W"])) {
-                leftPaddlePos += paddleSpeed;
+        else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
+            if (Date.now() - lastbounce > 100) {
+                const newAngle = reflectAngle(ballVectx, ballVecty);
+                ballVectx = Math.cos(newAngle);
+                ballVecty = Math.sin(newAngle);
+                lastbounce = Date.now();
+                ballSpeed = ballSpeed + 0.02;
+                console.log("ball speed: ", ballSpeed);
             }
-            else if (keysPressed["w"] || keysPressed["W"] && !(keysPressed["s"] || keysPressed["S"])) {
-                leftPaddlePos -= paddleSpeed;
-            }
-            if (keysPressed["ArrowUp"] && !keysPressed["ArrowDown"]) {
-                rightPaddlePos -= paddleSpeed;
-            }
-            else if (keysPressed["ArrowDown"] && !keysPressed["ArrowUp"]) {
-                rightPaddlePos += paddleSpeed;
-            }
-            leftPaddlePos = Math.max(0, Math.min(82, leftPaddlePos));
-            rightPaddlePos = Math.max(0, Math.min(82, rightPaddlePos));
-            leftPaddle.style.top = `${leftPaddlePos}%`;
-            rightPaddle.style.top = `${rightPaddlePos}%`;
         }
-        let gameStarted = false;
-        function framePong() {
-            movePaddles();
-            if (gameStarted || Math.floor((Date.now() - startTime) / 1000) > 5) {
-                gameStarted = true;
-                try {
-                    moveBall();
-                }
-                catch (err) {
-                    console.log("moveBall crashed: ", err);
-                }
-            }
-            animationId = requestAnimationFrame(framePong);
+    }
+    function movePaddles() {
+        const paddleSpeed = 0.65;
+        if ((keysPressed["s"] || keysPressed["S"]) && !(keysPressed["w"] || keysPressed["W"])) {
+            leftPaddlePos += paddleSpeed;
+        }
+        else if (keysPressed["w"] || keysPressed["W"] && !(keysPressed["s"] || keysPressed["S"])) {
+            leftPaddlePos -= paddleSpeed;
+        }
+        if (keysPressed["ArrowUp"] && !keysPressed["ArrowDown"]) {
+            rightPaddlePos -= paddleSpeed;
+        }
+        else if (keysPressed["ArrowDown"] && !keysPressed["ArrowUp"]) {
+            rightPaddlePos += paddleSpeed;
+        }
+        leftPaddlePos = Math.max(0, Math.min(82, leftPaddlePos));
+        rightPaddlePos = Math.max(0, Math.min(82, rightPaddlePos));
+        leftPaddle.style.top = `${leftPaddlePos}%`;
+        rightPaddle.style.top = `${rightPaddlePos}%`;
+    }
+    let gameStarted = false;
+    function framePong() {
+        movePaddles();
+        if (ballPosx[0] > 130) {
+            gameStarted = false;
+            player1Score++;
+            console.log("player 1 scored !");
+            resetBall();
+        }
+        else if (ballPosx[0] < -30) {
+            gameStarted = false;
+            player2Score++;
+            console.log("player 2 scored !");
+            resetBall();
+        }
+        else if (player1Score == 6 || player2Score == 6) {
+            stopGame();
+            gameStarted = false;
+            console.log("game done !");
+            return;
+        }
+        else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
+            gameStarted = true;
+            moveBall();
         }
         animationId = requestAnimationFrame(framePong);
-    });
+    }
+    //get time of start
+    if (!animationId) {
+        console.log("game should start");
+        animationId = requestAnimationFrame(framePong);
+    }
 }
 export function stopGame() {
     cancelAnimationFrame(animationId);
+    animationId = 0;
 }
