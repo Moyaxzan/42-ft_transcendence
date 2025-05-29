@@ -17,8 +17,7 @@ async function dbConnector (fastify, options) {
 		reset_token TEXT UNIQUE DEFAULT NULL, \
 		reset_expiry NUMERIC DEFAULT 0, \
 		ip_address TEXT NOT NULL, \
-		is_log NUMERIC DEFAULT 0, \
-		points INTEGER DEFAULT 0
+		is_log NUMERIC DEFAULT 0,
 		);
 		INSERT INTO users (id, name, email, id_token, password_hash, ip_address) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1");
 		INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
@@ -26,17 +25,19 @@ async function dbConnector (fastify, options) {
 		CREATE TABLE IF NOT EXISTS matches ( \
 		id INTEGER PRIMARY KEY AUTOINCREMENT, \
 		status NUMERIC DEFAULT 0, \
-		winner_id INTEGER, \ 
-		FOREIGN KEY (winner_id) REFERENCES users(id)  
+		user_id INTEGER, \
+		score INTEGER NOT NULL, \
+		opponent_score INTEGER NOT NULL, \
+		opponent_username TEXT NOT NULL, \
+		FOREIGN KEY (user_id) REFERENCES users(id)  
 		);
-		INSERT INTO matches (id, winner_id) VALUES (0, 45);
 		
 		CREATE TABLE IF NOT EXISTS users_join_matches ( \
 		id INTEGER PRIMARY KEY, \
 		user_id INTEGER, \
 		match_id INTEGER, \
 		FOREIGN KEY (user_id) REFERENCES users(id), \
-		FOREIGN KEY (match_id) REFERENCES matches(id) \
+		FOREIGN KEY (match_id) REFERENCES matches(id)
 		);`
 		, (err) => {
 			fastify.sqlite.all('SELECT * FROM users', (err, rows) => {
