@@ -15,8 +15,11 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS matches (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  status NUMERIC DEFAULT 0,
- winner_id INTEGER,
- FOREIGN KEY (winner_id) REFERENCES users(id)
+ user_id INTEGER,
+ score INTEGER NOT NULL,
+ opponent_score INTEGER NOT NULL,
+ opponent_username INTEGER NOT NULL,
+ FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS users_join_matches (
