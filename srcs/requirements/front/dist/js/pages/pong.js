@@ -1,3 +1,4 @@
+import { animateLinesToFinalState } from './navbar.js';
 let animationId = 0;
 export async function renderPong() {
     stopGame();
@@ -8,6 +9,17 @@ export async function renderPong() {
     const html = await res.text();
     app.innerHTML = html;
     await new Promise((resolve) => requestAnimationFrame(resolve));
+    // Animate the lines
+    animateLinesToFinalState([
+        { id: "line-top", rotationDeg: 0, translateYvh: 0, height: "7%" },
+        { id: "line-bottom", rotationDeg: 0, translateYvh: 0, height: "23%" },
+    ]);
+    // Fade in the "Home" link
+    const home_link = document.getElementById("home-link-pong");
+    if (home_link) {
+        home_link.classList.remove("opacity-0", "translate-y-2");
+        home_link.classList.add("opacity-100", "translate-y-0", "transition-all", "duration-700", "ease-in-out");
+    }
     //get elements of html
     const leftPaddle = document.getElementById("left-paddle");
     const rightPaddle = document.getElementById("right-paddle");

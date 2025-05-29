@@ -1,37 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>ft_transcendence</title>
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-		<link rel="stylesheet" href="./style.css">
-		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="./style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet">
 	</head>
+	<body class="relative h-screen overflow-hidden bg-gray-100">
 
-	<body class="h-screen flex flex-col">
-		<nav class="flex justify-between items-center h-[15vh] bg-[#218DBE] text-white transition-all duration-500 ease-in-out">
-			<div id="home-link" class="flex-1 flex items-center justify-center h-full text-lg font-bold transition-all duration-500 ease-in-out">
-				<a href="/" data-link>Home</a>
-			</div>
-			<div class="flex-1 flex items-center justify-center h-full">
-				<a href="/pong" data-link class="text-lg font-bold hover:underline">Play Pong</a>
-			</div>
-			<div class="flex-1 flex items-center justify-center h-full">
-				<a href="/profile" data-link class="text-lg font-bold hover:underline">Profile</a>
-			</div>
-			<div class="flex-1 flex items-center justify-center h-full">
-				<a href="/login" data-link class="px-5 py-2 rounded bg-white text-[#218DBE] font-semibold hover:bg-gray-200 transition">Login</a>
-			</div>
-		</nav>
+		<!-- Blue Background Lines -->
+		<div
+			id="line-top"
+			style="pointer-events: auto"
+			class="absolute top-0 left-[-25%] w-[150%] h-[50vh] bg-[#218DBE] z-1 transition-all duration-700 ease-in-out -translate-y-[25vh]"
+		></div>
+		<div
+		  id="line-bottom"
+		  style="pointer-events: auto"
+		  class="absolute bottom-0 left-[-25%] w-[150%] h-[50vh] bg-[#002F3B] z-1 transition-all duration-700 ease-in-out -translate-y-[-25vh]"
+		></div>
 
-		<div id="app" class="flex-1 flex flex-col overflow-hidden"></div>
+		<!-- Main App -->
+		<div class="relative z-10 flex flex-col h-full">
+		  <div id="app" class="flex-1 overflow-hidden relative z-10"></div>
+		</div>
+
+		<!-- SPA Main Entry -->
 		<script type="module" src="./dist/js/main.js"></script>
-		<script type="module" src="/main.js"></script>
-		<footer id="footer" class="h-[15vh] bg-[#002F3B] text-white text-center p-4">
-			<p>&copy; tsais</p>
-		</footer>
-
 	</body>
-
 </html>

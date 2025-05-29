@@ -1,22 +1,42 @@
 .btn-glow {
-  position: relative;
-  overflow: hidden;
-  background-color: #010a45;
-  transition: background-color 0.3s ease;
+	position: relative;
+	overflow: hidden;
+	background-color: #010a45;
+	transition: background-color 0.3s ease;
 }
 
 .btn-glow::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--x, 5%) var(--y, 50%), rgba(100, 100, 255, 0.4), transparent 40%);
-  transition: background 0.2s ease;
-  pointer-events: none;
-  z-index: 1;
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at var(--x, 5%) var(--y, 50%), rgba(100, 100, 255, 0.4), transparent 40%);
+	transition: background 0.2s ease;
+	pointer-events: none;
+	z-index: 1;
 }
 
 .btn-glow span {
-  position: relative;
-  z-index: 2;
-  color: #D1FFFF;
+	position: relative;
+	z-index: 2;
+	color: #D1FFFF;
+}
+
+.londrina-solid-regular {
+	font-family: "Londrina Solid", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+@keyframes marquee {
+	0% {
+		transform: translateX(31%);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
 }
