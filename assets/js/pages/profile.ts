@@ -20,10 +20,8 @@ export async function renderProfile() {
 	const html = await res.text();
 	app.innerHTML = html;
 
-
 	const userLoadBtn = document.querySelector("#userLoad");
 	const userList = document.querySelector("#userList"); 
-
 	if (!userLoadBtn || !userList) {
 		console.error("#userLoad or #userList not found.");
 		return;
