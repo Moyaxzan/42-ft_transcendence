@@ -1,3 +1,5 @@
+import { animateLinesToFinalState } from './navbar.js'
+
 export async function renderHome() {
 	const app = document.getElementById('app');
 	if (!app)
@@ -19,6 +21,11 @@ export async function renderHome() {
 		console.log("html element not found");
 		return;
 	}
+
+	animateLinesToFinalState([
+		{ id: "line-top", rotationDeg: -10, translateYvh: -25, height: "50vh" },
+		{ id: "line-bottom", rotationDeg: -10, translateYvh: 25, height: "50vh" },
+	]);
 
 	function updatePlayScale(isInside: boolean) {
 		if (isInside) {

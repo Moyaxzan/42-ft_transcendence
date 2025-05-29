@@ -1,3 +1,5 @@
+import { animateLinesToFinalState } from './navbar.js';
+
 let animationId: number = 0;
 
 export async function renderPong() {
@@ -11,23 +13,18 @@ export async function renderPong() {
 
 	await new Promise((resolve) => requestAnimationFrame(resolve));
 
-	const lineTop = document.getElementById('line-top');
-	const lineBottom = document.getElementById('line-bottom');
 
-	if (!lineTop || !lineBottom) return;
+	// Animate the lines
+	animateLinesToFinalState([
+		{ id: "line-top", rotationDeg: 0, translateYvh: 0, height: "7%" },
+		{ id: "line-bottom", rotationDeg: 0, translateYvh: 0, height: "23%" },
+	]);
 
-	// Reset old styles
-	lineTop.classList.remove('rotate-[-10deg]', '-translate-y-[25vh]', 'h-[50vh]');
-	lineBottom.classList.remove('rotate-[-10deg]', '-translate-y-[-25vh]', 'h-[50vh]');
-
-	// Apply new styles
-	lineTop.classList.add('rotate-0', 'translate-y-0', 'h-[7%]');
-	lineBottom.classList.add('rotate-0', 'translate-y-0', 'h-[23%]');
-
+	// Fade in the "Home" link
 	const home_link = document.getElementById("home-link-pong");
 	if (home_link) {
 		home_link.classList.remove("opacity-0", "translate-y-2");
-		home_link.classList.add("opacity-100", "translate-y-0");
+		home_link.classList.add("opacity-100", "translate-y-0", "transition-all", "duration-700", "ease-in-out");
 	}
 
 	//get elements of html
