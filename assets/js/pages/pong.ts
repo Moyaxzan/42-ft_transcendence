@@ -2,10 +2,10 @@ import { animateLinesToFinalState } from './navbar.js';
 
 let animationId: number = 0;
 
-async function sendMatchResult(score: number, opponentScore: number, opponentUsername: string) {
+async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentUsername: string) {
 	try {
 
-		const response = await fetch('http:/database:3000/users/history', {
+		const response = await fetch(`/users/history/${encodeURIComponent(userId)}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -239,7 +239,7 @@ export async function renderPong() {
 			player2Score++;
 			console.log("player 2 scored !");
 			resetBall();
-		} else if (player1Score == 6 || player2Score == 6) {
+		} else if (player1Score == 2 || player2Score == 2) {
 			stopGame();
 			gameStarted = false;
 			console.log("game done !");
@@ -248,7 +248,7 @@ export async function renderPong() {
 			const opponentScore = player2Score;
 			const opponentUsername = "Bot";
 
-			sendMatchResult(playerScore, opponentScore, opponentUsername);
+			sendMatchResult(0, playerScore, opponentScore, opponentUsername);
 			return ;
 		} else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
 			gameStarted = true;

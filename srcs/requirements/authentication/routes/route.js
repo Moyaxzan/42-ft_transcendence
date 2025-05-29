@@ -87,6 +87,18 @@ async function routes (fastify, options) {
 		const data = await res.json();
 		reply.send(data);
 	})
+
+	fastify.get('/users/history/:id', async (request, reply) => {
+		const { id } = request.params;
+		const db = fastify.sqlite;
+
+		const matches = await db.all(`
+			SELECT score, opponent_score, opponent_username
+			FROM matches
+			WHERE user_id = ?`, [id]);
+		
+		reply.sent(matches);
+	})
 }
 
 export default routes
