@@ -92,6 +92,20 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.post('users/history/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { score, opponent_score, opponent_username } = request.body;
+
+		await db.run(`
+			INSERT INTO matches (user_id, opponent_username, score, opponent_score)
+			VALUES (?, ?, ?, ?)`,
+			[id, opponent_username, score, opponent_score]
+		);
+
+		reply.send({ success: true });
+	});
+
 	fastify.patch('/users/:id', { schema: updateNameSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;

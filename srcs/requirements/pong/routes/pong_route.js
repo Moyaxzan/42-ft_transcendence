@@ -22,6 +22,16 @@ async function routes (fastify, options) {
 	});
 	 	const data = await res.json();
 	})
+
+	fastify.post('/users/history/:id', async (request, reply) => {
+		const res = await fetch(`http://database:3000/users/history/${encodeURIComponent(id)}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: request.body.id, score: request.body.score, opponent_score: request.body.opponent_score })
+		});
+ 		const data = await res.json();
+  		reply.send(data);
+	})
 }
 
 export default routes
