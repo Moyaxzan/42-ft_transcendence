@@ -27,10 +27,7 @@ CREATE TABLE IF NOT EXISTS users_join_matches (
  FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-
 INSERT INTO users (id, name, email, id_token, password_hash, ip_address) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1");
 INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
 
 INSERT INTO matches (id, winner_id) VALUES (0, 45);
- 
-
