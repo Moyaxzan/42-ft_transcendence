@@ -6,6 +6,7 @@ import userRoutes from './routes/user.js';
 import protectedRoutes from './routes/protected.js';
 import authRoutes from './routes/auth.js';
 import cookie from '@fastify/cookie'
+
 const fastify = Fastify({
 	logger: true
 })
