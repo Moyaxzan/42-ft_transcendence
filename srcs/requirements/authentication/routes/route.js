@@ -37,9 +37,9 @@ async function routes (fastify, options) {
 
   	return	reply
 		.setCookie('token', token, {
-	  		httpOnly: true,
+	  		httpOnly: true, //protege du xss
 	  		secure: true, //remettre false si ça bug a cause du https
-	  		sameSite: 'strict',
+	  		sameSite: 'None',
 	  		path: '/'
 		})
 		.send({ success: true });
