@@ -1,3 +1,6 @@
+import { renderProfile } from './profile.js'
+import { renderHome } from './home.js'
+
 export async function renderLogin(): Promise<void> {
 	const app = document.getElementById('app');
 	if (!app)
@@ -6,6 +9,11 @@ export async function renderLogin(): Promise<void> {
 	const res = await fetch('/dist/html/login.html');
 	const html = await res.text();
 	app.innerHTML = html;
+
+	const backBtn = document.getElementById('backHomeBtn');
+	backBtn?.addEventListener('click', () => {
+		renderHome();
+	});
 
 	const loginForm = document.getElementById('loginForm') as HTMLFormElement | null;
 	const messageEl = document.getElementById('loginMessage') as HTMLElement | null;
@@ -46,6 +54,9 @@ export async function renderLogin(): Promise<void> {
 			messageEl.textContent = 'Connexion successful';
 
 			console.log('JWT received:', data.token);
+			setTimeout(() => {
+				renderProfile();
+			}, 500);
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error, please try again later';

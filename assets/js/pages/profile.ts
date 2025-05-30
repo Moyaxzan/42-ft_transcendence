@@ -1,3 +1,5 @@
+import { renderHome } from './home.js'
+
 interface User {
 	id: string;
 	is_ia: string | null;
@@ -24,12 +26,20 @@ export async function renderProfile() {
 	const html = await htmlRes.text();
 	app.innerHTML = html;
 
+	const authActionContainer = document.getElementById('authActionContainer');
 	const profileArea = document.querySelector("#profileArea");
 
-	if (!profileArea) {
+	if (!profileArea || !authActionContainer) {
 		console.error("#profileArea not found in profile.html");
 		return;
 	}
+
+	const backBtn = document.getElementById('backHomeBtn');
+	backBtn?.addEventListener('click', () => {
+		renderHome();
+	});
+
+
 
 	try {
 		const res = await fetch('/auth/me', {
@@ -48,7 +58,11 @@ export async function renderProfile() {
 				<li><strong>IP:</strong> ${user.ip_address}</li>
 				<li><strong>Points:</strong> ${user.points}</li>
 			</ul>
-			<button id="logoutBtn">Log out</button>
+		`;
+			authActionContainer.innerHTML = `
+			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
+				Log out
+			</button>
 		`;
 
 		const logoutBtn = document.getElementById('logoutBtn');
@@ -63,11 +77,11 @@ export async function renderProfile() {
 	} catch (error) {
 		console.error("Error retrieving profile :", error);
 		profileArea.innerHTML = "<p>Error: you're not logged in</p>";
-
-		const loginLink = document.getElementById('loginLink');
-		if (loginLink) {
-			loginLink.classList.remove('hidden');
-	}
+		authActionContainer.innerHTML = `
+			<a href="/login" id="loginLink" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
+				Go to Login
+			</a>
+		`;
 	}
 }
 
