@@ -19,9 +19,9 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.all('SELECT * FROM users', (err, rows) => {
-				if (err) return reject(err);
-				resolve(rows);
+				db.all('SELECT * FROM users', (err, rows) => {
+					if (err) return reject(err);
+					resolve(rows);
 				});
 			});
 			if (!rows) {
@@ -38,19 +38,19 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { email } = request.params;	
   		try {
-    		const user = await new Promise((resolve, reject) => {
-    		db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
-    	    	if (err) return reject(err);
-    	    	resolve(row);
-    	  		});
-    		});
-    		if (!user) {
-    			return reply.status(404).send({ message: 'User not found' });
-    		}
-    		return reply.send(user);
+	    		const user = await new Promise((resolve, reject) => {
+    				db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
+    	   		 		if (err) return reject(err);
+    	    				resolve(row);
+    	  			});
+    			});
+    			if (!user) {
+    				return reply.status(404).send({ message: 'User not found' });
+    			}
+    			return reply.send(user);
   		} catch (err) {
-    		fastify.log.error(err);
-    		return reply.status(500).send({ error: 'database GET error', details: err.message });
+    			fastify.log.error(err);
+    			return reply.status(500).send({ error: 'database GET error', details: err.message });
   		}
 	});
 
@@ -76,11 +76,15 @@ async function routes (fastify, options) {
 		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			const query = `INSERT INTO users(is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points)
+			const query = `INSERT INTO users(is_ia, name, email, id_token, \
+					password_hash, reset_token, reset_expiry, \
+					ip_address, is_log, points)
 					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-			db.run(query, [is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points], function (err) {
-				if (err) return reject(err);
-				resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
+			db.run(query, [is_ia, name, email, id_token, password_hash,
+					reset_token, reset_expiry, ip_address, is_log,
+				points], function (err) {
+					if (err) return reject(err);
+					resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
