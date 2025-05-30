@@ -35,7 +35,7 @@ async function authRoutes (fastify, options) {
 		.setCookie('token', token, {
 	  		httpOnly: true, //protege du xss
 	  		secure: true, //remettre false si ça bug a cause du https
-	  		sameSite: 'None',
+	  		sameSite: 'lax',
 	  		path: '/'
 		})
 		.send({ success: true });
@@ -56,7 +56,7 @@ async function authRoutes (fastify, options) {
   		}
 	});
 
-	fastify.post('/logout', (request, reply) => {
+	fastify.post('/auth/logout', (request, reply) => {
 		reply
 		.clearCookie('token', { path: '/' })
 		.send({ success: true });

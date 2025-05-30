@@ -53,7 +53,7 @@ export async function renderProfile() {
 
 		const logoutBtn = document.getElementById('logoutBtn');
 		logoutBtn?.addEventListener('click', async () => {
-			await fetch('/logout', {
+			await fetch('/auth/logout', {
 				method: 'POST',
 				credentials: 'include'
 			});
