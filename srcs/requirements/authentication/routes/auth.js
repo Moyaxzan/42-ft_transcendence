@@ -2,11 +2,7 @@
 
 import bcrypt from 'bcrypt'
 
-async function routes (fastify, options) {
-	fastify.get('/health', async (request, reply) => {
-		return { hello: 'world' }
-	});
-
+async function authRoutes (fastify, options) {
 	fastify.post('/auth', async (request, reply) => {
 		const { email, password } = request.body; 
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
@@ -65,28 +61,43 @@ async function routes (fastify, options) {
 		.clearCookie('token', { path: '/' })
 		.send({ success: true });
 	});
+// <<<<<<< HEAD:srcs/requirements/authentication/routes/route.js
 
-	fastify.delete('/users/:id', async (request, reply) => {
-		const { id } = request.params;
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json' },
-	});
-	 	const data = await res.json();
-		return reply.send(data);
-	})
+// 	fastify.delete('/users/:id', async (request, reply) => {
+// 		const { id } = request.params;
+// 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
+// 			method: 'DELETE',
+// 			headers: { 'Content-Type': 'application/json' },
+// 	});
+// 	 	const data = await res.json();
+// 		return reply.send(data);
+// 	})
 
-	fastify.patch('/users/:id', async (request, reply) => {
-		const { id } = request.params;
-		const { name } = request.body;
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: request.body.name })
-		});
-		const data = await res.json();
-		reply.send(data);
-	})
+// 	fastify.patch('/users/:id', async (request, reply) => {
+// 		const { id } = request.params;
+// 		const { name } = request.body;
+// 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
+// 			method: 'PATCH',
+// 			headers: { 'Content-Type': 'application/json' },
+// 			body: JSON.stringify({ name: request.body.name })
+// 		});
+// 		const data = await res.json();
+// 		reply.send(data);
+// 	})
+
+// 	fastify.get('/users/history/:id', async (request, reply) => {
+// 		const { id } = request.params;
+// 		const db = fastify.sqlite;
+
+// 		const matches = await db.all(`
+// 			SELECT score, opponent_score, opponent_username
+// 			FROM matches
+// 			WHERE user_id = ?`, [id]);
+		
+// 		reply.sent(matches);
+// 	})
+// =======
+// >>>>>>> 85a24b70484f1f70ce8c5c67164290f23f4d2651:srcs/requirements/authentication/routes/auth.js
 }
 
-export default routes
+export default authRoutes

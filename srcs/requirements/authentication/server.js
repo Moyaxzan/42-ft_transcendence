@@ -1,8 +1,10 @@
 // ESM
 import Fastify from 'fastify'
 import jwtPlugin from './plugins/jwt.js';
-import authRoutes from './routes/route.js';
+import healthRoutes from './routes/health.js';
+import userRoutes from './routes/user.js';
 import protectedRoutes from './routes/protected.js';
+import authRoutes from './routes/auth.js';
 import cookie from '@fastify/cookie'
 import cors from '@fastify/cors';
 
@@ -20,7 +22,10 @@ fastify.register(cookie, {
 	// secret: 'test',
 	parseOptions: {}
 });
+
 fastify.register(jwtPlugin);
+fastify.register(healthRoutes);
+fastify.register(userRoutes);
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);
 

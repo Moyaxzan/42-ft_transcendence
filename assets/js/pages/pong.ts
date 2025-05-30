@@ -2,6 +2,34 @@ import { animateLinesToFinalState } from './navbar.js';
 
 let animationId: number = 0;
 
+async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentUsername: string) {
+	try {
+
+		const response = await fetch(`/users/history/${encodeURIComponent(userId)}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				score,
+				opponent_score: opponentScore,
+				opponent_username: opponentUsername
+			})
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error('Erreur lors de l’envoi du score :', errorText);
+			return;
+		}
+
+		const result = await response.json();
+		console.log('Score enregistré avec succès :', result);
+	} catch (err) {
+		console.error('Erreur réseau ou serveur :', err);
+	}
+}
+
 export async function renderPong() {
 	stopGame();
 	const app = document.getElementById('app');
@@ -211,10 +239,16 @@ export async function renderPong() {
 			player2Score++;
 			console.log("player 2 scored !");
 			resetBall();
-		} else if (player1Score == 6 || player2Score == 6) {
+		} else if (player1Score == 2 || player2Score == 2) {
 			stopGame();
 			gameStarted = false;
 			console.log("game done !");
+
+			const playerScore = player1Score;
+			const opponentScore = player2Score;
+			const opponentUsername = "Bot";
+
+			sendMatchResult(0, playerScore, opponentScore, opponentUsername);
 			return ;
 		} else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
 			gameStarted = true;
