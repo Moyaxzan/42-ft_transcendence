@@ -34,6 +34,8 @@ services:
     container_name: elasticsearch
     env_file:
       - .env
+    environment:
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     networks:
       - transcendence
     restart: unless-stopped

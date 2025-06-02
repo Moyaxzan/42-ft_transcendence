@@ -12,4 +12,4 @@ RUN apk add --no-cache curl
 EXPOSE	9200
 
 HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
-	CMD curl localhost:9200/_cat/health || exit 1
+	CMD curl localhost:9200/_cluster/health || exit 1
