@@ -31,7 +31,8 @@ export async function renderPong() {
 	const leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	const ball = document.getElementById("ball") as HTMLDivElement;
-	if (!leftPaddle || !rightPaddle || !ball)
+	const scoreDiv = document.getElementById("score") as HTMLDivElement;
+	if (!leftPaddle || !rightPaddle || !ball || !scoreDiv)
 		return;
 
 	const trailBalls: HTMLDivElement[] = [];
@@ -80,6 +81,7 @@ export async function renderPong() {
 	let startRound = Date.now();
 	let player1Score = 0;
 	let player2Score = 0;
+	scoreDiv.innerText = `${player1Score} - ${player2Score}`;
 
 	//initializations
 	let leftPaddlePos = 41;   // as %
@@ -205,11 +207,13 @@ export async function renderPong() {
 			gameStarted = false;
 			player1Score++;
 			console.log("player 1 scored !");
+			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
 			resetBall();
 		} else if (ballPosx[0] < -30) {
 			gameStarted = false;
 			player2Score++;
 			console.log("player 2 scored !");
+			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
 			resetBall();
 		} else if (player1Score == 6 || player2Score == 6) {
 			stopGame();
