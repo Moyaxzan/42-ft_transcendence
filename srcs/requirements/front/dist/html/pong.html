@@ -1,7 +1,7 @@
 <!-- pong.html -->
 <div class="flex w-full h-[7%]">
 	<a href="/home" id="home-link-pong" class="londrina-solid-regular text-[36px] font-bold left-[5%] relative
-		 transition-all duration-[1s] ease-in-out opacity-0 translate-y-2">Home</a>
+		 transition-all will-change-transform will-change-transformduration-[1s] ease-in-out opacity-0 translate-y-2">Home</a>
 </div>
 <div class="h-full flex items-center justify-center relative h-[70%]">
 
@@ -45,4 +45,8 @@
 		</div>
 	</div>
 </div>
-<div class="flex items-center justify-center w-full h-[23%]"></div>
+<div id="score-bottom-line" class="flex flex-row items-center justify-center w-full h-[23%]">
+	<div id="player1-name" class="londrina-solid-regular text-[64px] font-bold text-center text-[#FFFFFF] flex-grow">player1</div>
+	<div id="score" class="londrina-solid-regular text-[64px] font-bold  text-center text-[#FFFFFF] flex-grow">1-0</div>
+	<div id="player1-name" class="londrina-solid-regular text-[64px] font-bold text-center text-[#FFFFFF] flex-grow">player2</div>
+</div>
