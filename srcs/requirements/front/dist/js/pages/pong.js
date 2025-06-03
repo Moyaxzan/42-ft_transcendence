@@ -79,6 +79,7 @@ export async function renderPong() {
     let ballVectx = 0;
     let ballVecty = 0;
     let lastbounce = startRound;
+    let lastWallTouch = startRound;
     let ballSpeed = 0.6;
     function resetBall() {
         ballPosx = Array(10).fill(50);
@@ -127,7 +128,7 @@ export async function renderPong() {
             trailBalls[index].style.left = `${ballPosx[index + 1]}%`;
         }
         //wall collisions
-        if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
+        if ((ballPosy[0] <= 2 || ballPosy[0] >= 98) && Date.now() - lastWallTouch > 100) {
             ballVecty = -ballVecty;
         }
         //paddle collisions

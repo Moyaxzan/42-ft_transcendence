@@ -93,6 +93,7 @@ export async function renderPong() {
 	let ballVectx = 0;
 	let ballVecty = 0;
 	let lastbounce = startRound;
+	let lastWallTouch = startRound;
 	let ballSpeed = 0.6;
 
 	function resetBall() {
@@ -150,7 +151,7 @@ export async function renderPong() {
 		}
 
 		//wall collisions
-		if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
+		if ((ballPosy[0] <= 2 || ballPosy[0] >= 98) && Date.now() - lastWallTouch > 100) {
 			ballVecty = -ballVecty;
 		}
 
