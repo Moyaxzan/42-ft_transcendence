@@ -17,5 +17,5 @@ CMD	[ "npm", "--trace-warnings", "start" ]
 ## Sets configuration on the image that indicates a port the image would like to expose
 EXPOSE	3000
 
-HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=3s --timeout=1s --start-period=10s --retries=3 \
 	CMD curl --fail http://localhost:3000/health || exit 1

@@ -5,9 +5,32 @@ services:
     container_name: elasticsearch
     env_file:
       - .env
-      - elasticsearch.yml
     environment:
+      - node.name=node-1
+      - cluster.name=docker-elasticsearch
+      - discovery.type=single-node
+      - network.host=0.0.0.0
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - transcendence
+    healthcheck:
+      test: curl --fail http://localhost:9200 || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana@sha256:fbc1f4807090f044397cf7d5d5c0272075b9ead9657043f5c1d467bb9a7ea81e
+    platform: linux/amd64
+    container_name: kibana
+    env_file:
+      - .env
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
     networks:
       - transcendence
     restart: unless-stopped

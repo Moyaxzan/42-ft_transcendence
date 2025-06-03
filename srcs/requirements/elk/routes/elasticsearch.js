@@ -1,4 +1,8 @@
 async function elasticsearchRoutes (fastify, options) {
+	fastify.get('/health', async (request, reply) => {
+		return { hello: 'world' }
+	})
+
 	fastify.get('/users/name', async (request, reply) => {
 		const {name} = request.query;
 		const res = await fetch('http://elasticsearch:9200/users/_search', {
