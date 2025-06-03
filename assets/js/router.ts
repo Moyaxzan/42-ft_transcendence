@@ -33,7 +33,7 @@ export function enableLinkInterception() {
       const href = target.getAttribute('href')!;
       console.log("Intercepted navigation to:", href);
       history.pushState(null, '', href);
-      router();
+//      router();
     }
   });
 }
