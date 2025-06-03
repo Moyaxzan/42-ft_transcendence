@@ -22,7 +22,6 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana@sha256:fbc1f4807090f044397cf7d5d5c0272075b9ead9657043f5c1d467bb9a7ea81e
-    platform: linux/amd64
     container_name: kibana
     env_file:
       - .env
@@ -39,7 +38,6 @@ services:
     hostname: elk
     build:
       context: requirements/elk
-    platform: linux/amd64
     container_name: elk
     env_file:
       - .env
