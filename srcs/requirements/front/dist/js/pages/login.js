@@ -7,6 +7,22 @@ export async function renderLogin() {
     const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
+    window.handleGoogleCredentialResponse = async function (response) {
+        const { credential } = response;
+        console.log("Received credential from Google:", credential);
+        const res = await fetch('/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: credential }),
+        });
+        if (!res.ok) {
+            console.error(await res.text());
+            return;
+        }
+        const data = await res.json();
+        console.log('Connected via Google, got token:', data);
+        renderProfile();
+    };
     const backBtn = document.getElementById('backHomeBtn');
     backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
         renderHome();

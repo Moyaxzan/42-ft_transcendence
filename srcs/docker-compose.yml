@@ -3,7 +3,7 @@ services:
     hostname: nginx
     build:
       context: requirements/nginx
-    container_name: nginx
+    container_name: nginxy
     env_file:
      - .env
     ports:
