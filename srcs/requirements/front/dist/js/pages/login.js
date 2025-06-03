@@ -1,5 +1,20 @@
 import { renderProfile } from './profile.js';
 import { renderHome } from './home.js';
+function loadGoogleSdk() {
+    return new Promise((resolve, reject) => {
+        if (window.google && window.google.accounts) {
+            resolve();
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load Google SDK'));
+        document.head.appendChild(script);
+    });
+}
 export async function renderLogin() {
     const app = document.getElementById('app');
     if (!app)
@@ -7,22 +22,6 @@ export async function renderLogin() {
     const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
-    window.handleGoogleCredentialResponse = async function (response) {
-        const { credential } = response;
-        console.log("Received credential from Google:", credential);
-        const res = await fetch('/auth/google', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: credential }),
-        });
-        if (!res.ok) {
-            console.error(await res.text());
-            return;
-        }
-        const data = await res.json();
-        console.log('Connected via Google, got token:', data);
-        renderProfile();
-    };
     const backBtn = document.getElementById('backHomeBtn');
     backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
         renderHome();
@@ -67,4 +66,33 @@ export async function renderLogin() {
             console.error(err);
         }
     });
+    try {
+        await loadGoogleSdk();
+        const clientIdRes = await fetch('/auth/google/client-id');
+        const { clientId } = await clientIdRes.json();
+        console.log('Id received:', clientId);
+        window.handleGoogleCredentialResponse = async function (response) {
+            const { credential } = response;
+            const res = await fetch('/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: credential }),
+            });
+            if (!res.ok) {
+                console.error(await res.text());
+                return;
+            }
+            const data = await res.json();
+            console.log('Connected via Google, got token:', data);
+            renderProfile();
+        };
+        window.google.accounts.id.initialize({
+            client_id: clientId,
+            callback: window.handleGoogleCredentialResponse,
+        });
+        window.google.accounts.id.renderButton(document.getElementById('googleSignInDiv'), { theme: 'outline', size: 'large' });
+    }
+    catch (err) {
+        console.error("Error loading Google Sign-In", err);
+    }
 }

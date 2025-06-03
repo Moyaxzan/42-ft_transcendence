@@ -72,14 +72,22 @@ async function authRoutes (fastify, options) {
 		if (res.ok) {
 			user = await res.json();
 		} else {
-			res = await fetch(`http://database:3000/users`, {
+			res = await fetch(`http://database:3000/users/google-signin`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, name, google_user: true }) // À toi de voir ton modèle exact
+				body: JSON.stringify({ email, name, google_user: true, ip_address: request.ip || '0.0.0.0' })
 			});
-			if (!res.ok)
-				return reply.code(500).send({ error: 'Could not create user' });
-			user = await res.json();
+			if (!res.ok) {
+				const text = await res.text();
+				console.error("Error creating user:", text);
+				return reply.code(500).send({ error: 'Could not create user', details: text });
+		}
+			try {
+				user = await res.json();
+			} catch (e) {
+				console.error("Failed to parse user JSON:", e);
+				return reply.code(500).send({ error: 'Invalid JSON from user creation' });
+			}
 		}
 
 		const jwt = fastify.jwt.sign({
@@ -97,6 +105,11 @@ async function authRoutes (fastify, options) {
 			})
 			.send({ success: true });
 	});
+
+	fastify.get('/auth/google/client-id', async (request, reply) => {
+		return { clientId: process.env.GOOGLE_CLIENT_ID };
+	});
+
 
 	fastify.post('/refresh', async (request, reply) => {
  		const refreshToken = request.cookies.refreshToken;

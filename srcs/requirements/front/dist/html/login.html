@@ -7,16 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <style>
-    .btn-glow {
-      background: linear-gradient(to right, #667eea, #764ba2);
-      transition: background 0.3s ease;
-    }
-    .btn-glow:hover {
-      background: linear-gradient(to right, #5a67d8, #6b46c1);
-    }
-  </style>
+  <link rel="stylesheet" href="/dist/css/styles.css" />
 </head>
 <body>
   <div class="mt-4 max-w-md mx-auto p-6 bg-gray-100 rounded shadow-md">
@@ -61,14 +52,8 @@
     </div>
 
     <div class="mt-6 text-center">
-      <div
-        id="g_id_onload"
-        data-client_id="925376903763-vielkbl3i9ik93em1ogn6sgsv3kr5rui.apps.googleusercontent.com"
-        data-context="signin"
-        data-ux_mode="popup"
-        data-callback="handleGoogleCredentialResponse">
-      </div>
-      <div class="g_id_signin" data-type="standard" data-size="large"></div>
+      <p class="mb-2">ou</p>
+      <div id="googleSignInDiv"></div>
     </div>
   </div>
 </body>
