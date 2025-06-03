@@ -1,0 +1,28 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch@sha256:577b382dda5d05385aea8c7b60dad97e02ff41ca0da54f723151c2aed9ac8f54
+    platform: linux/amd64
+    container_name: elasticsearch
+    env_file:
+      - .env
+      - elasticsearch.yml
+    environment:
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    networks:
+      - transcendence
+    restart: unless-stopped
+
+  elk:
+    hostname: elk
+    build:
+      context: requirements/elk
+    platform: linux/amd64
+    container_name: elk
+    env_file:
+      - .env
+    depends_on:
+      - database
+      - elasticsearch
+    networks:
+      - transcendence
+    restart: unless-stopped

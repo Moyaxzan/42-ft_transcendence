@@ -5,7 +5,6 @@ import healthRoutes from './routes/health.js';
 import userRoutes from './routes/user.js';
 import protectedRoutes from './routes/protected.js';
 import authRoutes from './routes/auth.js';
-import elasticsearchRoutes from './routes/elasticsearch.js';
 import cookie from '@fastify/cookie'
 
 const fastify = Fastify({
@@ -21,7 +20,6 @@ fastify.register(jwtPlugin);
 fastify.register(healthRoutes);
 fastify.register(userRoutes);
 fastify.register(authRoutes);
-fastify.register(elasticsearchRoutes);
 fastify.register(protectedRoutes, { prefix: '/users' });
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
