@@ -31,6 +31,7 @@ services:
     hostname: elasticsearch
     build:
       context: requirements/elk
+    platform: linux/amd64
     container_name: elasticsearch
     env_file:
       - .env

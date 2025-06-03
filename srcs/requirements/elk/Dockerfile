@@ -11,5 +11,5 @@ RUN apk add --no-cache curl
 ## Sets configuration on the image that indicates a port the image would like to expose
 EXPOSE	9200
 
-HEALTHCHECK --interval=3s --timeout=1s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=3s --timeout=1s --start-period=20s --retries=3 \
 	CMD curl localhost:9200/_cluster/health || exit 1
