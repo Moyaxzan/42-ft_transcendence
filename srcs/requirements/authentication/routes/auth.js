@@ -1,6 +1,7 @@
 // AUTHENTIFICATION CONTAINER
 
 import bcrypt from 'bcrypt'
+import { OAuth2Client } from 'google-auth-library';
 
 async function authRoutes (fastify, options) {
 	fastify.post('/auth', async (request, reply) => {
@@ -41,6 +42,62 @@ async function authRoutes (fastify, options) {
 		.send({ success: true });
 	});
 
+	fastify.post('/auth/google', async (request, reply) => {
+		const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+		const { token } = request.body;
+		if (!token)
+			return reply.code(400).send({ error: 'Missing Google token' });
+
+		let ticket;
+		try {
+			ticket = await client.verifyIdToken({
+				idToken: token,
+				audience: process.env.GOOGLE_CLIENT_ID
+			});
+		} catch (e) {
+			console.error("Google token verification failed:", e);
+			return reply.code(401).send({ error: 'Invalid Google token' });
+		}
+
+		const payload = ticket.getPayload();
+		if (!payload)
+			return reply.code(400).send({ error: 'Invalid Google payload' });
+
+		const email = payload.email;
+		const name = payload.name;
+
+		let res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`);
+		let user;
+
+		if (res.ok) {
+			user = await res.json();
+		} else {
+			res = await fetch(`http://database:3000/users`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, name, google_user: true }) // À toi de voir ton modèle exact
+			});
+			if (!res.ok)
+				return reply.code(500).send({ error: 'Could not create user' });
+			user = await res.json();
+		}
+
+		const jwt = fastify.jwt.sign({
+			id: user.id,
+			email: user.email,
+			name: user.name
+		});
+
+		reply
+			.setCookie('token', jwt, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/'
+			})
+			.send({ success: true });
+	});
+
 	fastify.post('/refresh', async (request, reply) => {
  		const refreshToken = request.cookies.refreshToken;
 
@@ -61,6 +118,7 @@ async function authRoutes (fastify, options) {
 		.clearCookie('token', { path: '/' })
 		.send({ success: true });
 	});
+
 // <<<<<<< HEAD:srcs/requirements/authentication/routes/route.js
 
 // 	fastify.delete('/users/:id', async (request, reply) => {
