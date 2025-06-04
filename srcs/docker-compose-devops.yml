@@ -34,6 +34,20 @@ services:
       - transcendence
     restart: unless-stopped
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash@sha256:096bb59d75d886c6de299b651c41af697a960559c1b90d0ba3652b60b6ac4007
+    container_name: logstash
+    env_file:
+      - .env
+    environment:
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence
+    restart: unless-stopped
+
   elk:
     hostname: elk
     build:
