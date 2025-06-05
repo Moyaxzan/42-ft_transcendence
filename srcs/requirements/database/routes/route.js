@@ -181,22 +181,30 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { score, opponent_score, opponent_username } = request.body;
-
+		const insertMatch = `INSERT INTO matches (opponent_username, score, opponent_score) VALUES (?, ?, ?)`;
+		const joinMatchToUser = `INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)`;
 		try {
-			const rows = await new Promise((resolve, reject) => {
-			db.run(`INSERT INTO matches (user_id, opponent_username, score, opponent_score)
-			VALUES (?, ?, ?, ?)`,
-			[id, opponent_username, score, opponent_score], function (err) {
-				if (err) return reject(err);
-				resolve(id, score, opponent_score, opponent_username);
-				}); 
+			const matchId = await new Promise((resolve, reject) => {
+				db.run(insertMatch, [opponent_username, score, opponent_score],
+				function (err) {
+					if (err) return reject(err);
+					resolve(this.lastID);
+				});
 			});
-			reply.send({message: 'Match result succesfully added', score, opponent_score});
+			await new Promise((resolve, reject) => {
+				db.run(joinMatchToUser, [id, matchId], function (err) {
+					if (err) return reject(err);
+					resolve();
+					});
+			});
+			reply.send({message: 'Match result succesfully added', matchId, score, opponent_score});
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
 		}
 	});
+
+
 
 	fastify.patch('/users/:id', { schema: updateNameSchema }, async (request, reply) => {
 		const db = fastify.sqlite;

@@ -10,6 +10,9 @@ services:
      - 8080:443
     volumes:
       - ./requirements/front:/var/www
+    depends_on:
+      - elasticsearch
+      - kibana
     networks:
       - transcendence
     restart: unless-stopped
