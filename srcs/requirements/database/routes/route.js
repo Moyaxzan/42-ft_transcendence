@@ -125,6 +125,39 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.patch('/users/:id/2fa-secret', async (request, reply) =>
+	{
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		const { secret } = request.body;
+	
+		if (!secret) {
+			return reply.status(400).send({ error: 'Missing 2FA secret' });
+		}
+	
+		try {
+			await new Promise((resolve, reject) =>
+			{
+				db.run('UPDATE users SET twofa_secret = ? WHERE id = ?', [secret, id], function (err)
+				{
+					if (err) return reject(err);
+					if (this.changes === 0)
+						return reject(new Error('User not found'));
+					resolve();
+				});
+			});
+			return reply.send({ message: '2FA secret updated successfully' });
+		}
+		catch (err)
+		{
+			fastify.log.error(err);
+			if (err.message === 'User not found')
+				return reply.status(404).send({ error: 'User not found' });
+			return reply.status(500).send({ error: 'Database update error', details: err.message });
+		}
+	});
+
+
 
 	fastify.patch('/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;

@@ -28,15 +28,37 @@ export async function renderLogin() {
     });
     const loginForm = document.getElementById('loginForm');
     const messageEl = document.getElementById('loginMessage');
-    if (!loginForm || !messageEl)
+    const twofaSection = document.getElementById('twofa-section');
+    const submit2FABtn = document.getElementById('submit2FA');
+    const totpInput = document.getElementById('totp');
+    const twofaSetupModal = document.getElementById('twofa-setup-modal');
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
+    const close2FAModalBtn = document.getElementById('close2FAModal');
+    const googleDiv = document.getElementById('googleSignInDiv');
+    if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.renderButton(googleDiv, {
+            theme: 'outline',
+            size: 'large',
+            width: 280
+        });
+    }
+    let pendingEmail = '';
+    let pendingPassword = '';
+    if (!loginForm || !messageEl || !twofaSection || !submit2FABtn || !totpInput || !twofaSetupModal || !qrCodeContainer || !close2FAModalBtn)
         return;
+    close2FAModalBtn.addEventListener('click', () => {
+        twofaSetupModal.classList.add('hidden');
+        qrCodeContainer.innerHTML = '';
+    });
     loginForm.addEventListener('submit', async (e) => {
         var _a, _b;
         e.preventDefault();
         const target = e.target;
         const email = (_a = target.elements.namedItem('email')) === null || _a === void 0 ? void 0 : _a.value.trim();
         const password = (_b = target.elements.namedItem('password')) === null || _b === void 0 ? void 0 : _b.value.trim();
+        messageEl.style.color = 'red';
         messageEl.textContent = '';
+        twofaSection.classList.add('hidden');
         if (!email || !password) {
             messageEl.textContent = 'Please fill all the fields';
             return;
@@ -47,22 +69,80 @@ export async function renderLogin() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
+            const data = await res.json().catch(() => null);
             if (!res.ok) {
-                const errorData = await res.json().catch(() => null);
-                messageEl.textContent = (errorData === null || errorData === void 0 ? void 0 : errorData.message) || 'Authentication failed: wrong credentials.';
+                if ((data === null || data === void 0 ? void 0 : data.error) === '2FA_REQUIRED') {
+                    messageEl.textContent = 'Two-factor authentication required';
+                    twofaSection.classList.remove('hidden');
+                    pendingEmail = email;
+                    pendingPassword = password;
+                    return;
+                }
+                if ((data === null || data === void 0 ? void 0 : data.error) === '2FA_SETUP_REQUIRED') {
+                    messageEl.textContent = 'Two-factor authentication setup required';
+                    pendingEmail = email;
+                    pendingPassword = password;
+                    twofaSetupModal.classList.remove('hidden');
+                    qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+                    try {
+                        const qrRes = await fetch('/auth/2fa/setup', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password }),
+                        });
+                        const qrData = await qrRes.json();
+                        if (!qrRes.ok || !qrData.qrCodeUrl) {
+                            qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+                            return;
+                        }
+                        qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
+                    }
+                    catch (err) {
+                        qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+                        console.error(err);
+                    }
+                    return;
+                }
+                messageEl.textContent = (data === null || data === void 0 ? void 0 : data.message) || 'Authentication failed.';
                 return;
             }
-            const data = await res.json();
-            localStorage.setItem('token', data.token);
             messageEl.style.color = 'green';
             messageEl.textContent = 'Connexion successful';
-            console.log('JWT received:', data.token);
-            setTimeout(() => {
-                renderProfile();
-            }, 500);
+            setTimeout(() => renderProfile(), 500);
         }
         catch (err) {
             messageEl.textContent = 'Network error, please try again later';
+            console.error(err);
+        }
+    });
+    submit2FABtn.addEventListener('click', async () => {
+        const code = totpInput === null || totpInput === void 0 ? void 0 : totpInput.value.trim();
+        if (!code || !pendingEmail || !pendingPassword) {
+            messageEl.textContent = 'Please enter the 2FA code';
+            return;
+        }
+        try {
+            const res = await fetch('/auth/2fa/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: pendingEmail,
+                    password: pendingPassword,
+                    token: code
+                }),
+            });
+            const data = await res.json().catch(() => null);
+            if (!res.ok) {
+                messageEl.style.color = 'red';
+                messageEl.textContent = (data === null || data === void 0 ? void 0 : data.message) || 'Invalid 2FA code';
+                return;
+            }
+            messageEl.style.color = 'green';
+            messageEl.textContent = 'Connexion successful';
+            setTimeout(() => renderProfile(), 500);
+        }
+        catch (err) {
+            messageEl.textContent = 'Network error during 2FA';
             console.error(err);
         }
     });

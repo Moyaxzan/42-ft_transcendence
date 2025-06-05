@@ -1,11 +1,14 @@
 // AUTHENTIFICATION CONTAINER
 
 import bcrypt from 'bcrypt'
+import qrcode from 'qrcode'
+import speakeasy from 'speakeasy'
 import { OAuth2Client } from 'google-auth-library';
 
 async function authRoutes (fastify, options) {
 	fastify.post('/auth', async (request, reply) => {
-		const { email, password } = request.body; 
+		const { email, password } = request.body;
+
 		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
@@ -15,15 +18,22 @@ async function authRoutes (fastify, options) {
 			return reply.status(401).send({ message: 'User not found in database' });
 		}
 
- 		const user = await res.json();
+		const user = await res.json();
 
 		if (!user || !user.password_hash) {
 			return reply.status(401).send({ message: 'User not found in database' });
 		}
-		
+
 		const match = await bcrypt.compare(password, user.password_hash);
 		if (!match) {
 			return reply.status(401).send({ message: 'Incorrect password' });
+		}
+
+		if (user.twofa_enabled) {
+			if (!user.twofa_secret) {
+				return reply.status(403).send({ error: '2FA_SETUP_REQUIRED' });
+			}
+			return reply.status(403).send({ error: '2FA_REQUIRED' });
 		}
 
 		const token = fastify.jwt.sign({
@@ -32,15 +42,16 @@ async function authRoutes (fastify, options) {
 			name: user.name,
 		});
 
-  	return	reply
-		.setCookie('token', token, {
-	  		httpOnly: true, //protege du xss
-	  		secure: true, //remettre false si ça bug a cause du https
-	  		sameSite: 'lax',
-	  		path: '/'
-		})
-		.send({ success: true });
+		return reply
+			.setCookie('token', token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/',
+			})
+			.send({ success: true });
 	});
+
 
 	fastify.post('/auth/google', async (request, reply) => {
 		const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -97,6 +108,88 @@ async function authRoutes (fastify, options) {
 		});
 
 		reply
+			.setCookie('token', jwt, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/'
+			})
+			.send({ success: true });
+	});
+
+
+	fastify.post('/auth/2fa/setup', async (request, reply) => {
+		const { email, password } = request.body;
+
+		if (!email || !password)
+			return reply.code(400).send({ error: 'Email and password required' });
+
+		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+		});
+
+		if (!res.ok)
+			return reply.code(401).send({ error: 'User not found' });
+
+		const user = await res.json();
+
+		const secret = speakeasy.generateSecret({ name: `ft_transcendance (${user.email})` });
+		console.log("ERROR : Generated otpauth URL:", secret.otpauth_url);
+
+		const patchRes = await fetch(`http://database:3000/users/${user.id}/2fa-secret`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ secret: secret.base32 }),
+		});
+
+		if (!patchRes.ok) {
+			const errText = await patchRes.text();
+			console.error('ERROR : failed to save 2FA secret:', patchRes.status, errText);
+			return reply.code(500).send({ error: 'Failed to update 2FA secret in database' });
+		}
+
+		let qrCodeUrl;
+		try {
+			qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
+		}
+		catch (err) {
+			console.error("Failed to generate QR code:", err);
+			return reply.code(500).send({ error: 'Failed to generate QR code' });
+		}
+
+		return reply.send({ qrCodeUrl, secret: secret.base32 });
+	});
+
+	fastify.post('/auth/2fa/verify', async (request, reply) => {
+		const { token, email, password } = request.body;
+
+		const resUser = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`);
+		if (!resUser.ok)
+			return reply.code(401).send({ error: 'User not found' });
+
+		const user = await resUser.json();
+
+		if (!user.twofa_secret)
+			return reply.code(400).send({ error: '2FA not set up' });
+
+		const verified = speakeasy.totp.verify({
+			secret: user.twofa_secret,
+			encoding: 'base32',
+			token,
+			window: 1
+		});
+
+		if (!verified)
+			return reply.code(400).send({ error: 'Invalid 2FA code' });
+
+		const jwt = fastify.jwt.sign({
+			id: user.id,
+			email: user.email,
+			name: user.name
+		});
+
+		return reply
 			.setCookie('token', jwt, {
 				httpOnly: true,
 				secure: true,

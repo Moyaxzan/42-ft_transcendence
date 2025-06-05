@@ -51,9 +51,39 @@
       </button>
     </div>
 
+    <div id="twofa-section" class="hidden space-y-4">
+      <label for="totp" class="block font-medium">Code 2FA :</label>
+      <input
+        type="text"
+        id="totp"
+        name="totp"
+        maxlength="6"
+        inputmode="numeric"
+        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="123456"
+      />
+      <button
+        id="submit2FA"
+        type="button"
+        class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Verify code
+      </button>
+    </div>
+    
+
     <div class="mt-6 text-center">
-      <p class="mb-2">ou</p>
+      <p class="mb-2">or</p>
       <div id="googleSignInDiv"></div>
+    </div>
+  </div>
+  <div id="twofa-setup-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
+    <div class="bg-white rounded p-6 max-w-sm w-full relative">
+      <button id="close2FAModal" class="absolute top-2 right-2 text-gray-700 hover:text-black text-xl font-bold">&times;</button>
+      <h3 class="text-lg font-semibold mb-4 text-center">Configure Two-Factor Authentication</h3>
+      <p class="mb-4 text-center">Scan this QR code with your authentication app:</p>
+      <div id="qrCodeContainer" class="flex justify-center mb-4"></div>
+      <p class="text-center text-sm text-gray-600">Then enter the code below to verify.</p>
     </div>
   </div>
 </body>

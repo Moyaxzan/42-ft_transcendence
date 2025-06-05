@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
  password_hash TEXT UNIQUE DEFAULT NULL,
  reset_token TEXT UNIQUE DEFAULT NULL,
  reset_expiry NUMERIC DEFAULT 0,
+ twofa_enabled NUMERIC DEFAULT 1,
+ twofa_secret TEXT DEFAULT NULL,
  ip_address TEXT NOT NULL,
  is_log NUMERIC DEFAULT 0,
  points INTEGER DEFAULT 0
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS users_join_matches (
  FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-INSERT INTO users (id, name, email, id_token, password_hash, ip_address) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1");
+INSERT INTO users (id, name, email, id_token, password_hash, ip_address, twofa_enabled) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1", 1);
 INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
 
 INSERT INTO matches (id, winner_id) VALUES (0, 45);
