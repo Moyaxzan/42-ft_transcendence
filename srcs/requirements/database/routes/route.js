@@ -34,6 +34,27 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.get('/matches/:match_round/:match_index', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { match_round, match_index } = request.params;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			const query = `SELECT users.* FROM matches JOIN users ON users.id = matches.user_id OR users.id = matches.opponent_id WHERE matches.match_round = ? AND matches.match_index = ?`
+				db.all(query, [match_round, match_index], (err, rows) => {
+					if (err) return reject(err);
+					resolve(rows);
+				});
+			});
+			if (!rows) {
+				return reply.send('No match found');
+			}
+			return reply.send(rows);
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database GET error', details: err.message });
+		}
+	});
+
 	fastify.get('/users/:email', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { email } = request.params;	
@@ -180,18 +201,24 @@ async function routes (fastify, options) {
 	fastify.post('/users/history/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
-		const { score, opponent_score, opponent_username } = request.body;
-
+		const { user_id, score, opponent_score, opponent_id } = request.body;
+		const insertMatch = `INSERT INTO matches (user_id, opponent_id, score, opponent_score) VALUES (?, ?, ?, ?)`;
+		const joinMatchToUser = `INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)`;
 		try {
-			const rows = await new Promise((resolve, reject) => {
-			db.run(`INSERT INTO matches (user_id, opponent_username, score, opponent_score)
-			VALUES (?, ?, ?, ?)`,
-			[id, opponent_username, score, opponent_score], function (err) {
-				if (err) return reject(err);
-				resolve(id, score, opponent_score, opponent_username);
-				}); 
+			const matchId = await new Promise((resolve, reject) => {
+				db.run(insertMatch, [user_id, opponent_id, score, opponent_score],
+				function (err) {
+					if (err) return reject(err);
+					resolve(this.lastID);
+				});
 			});
-			reply.send({message: 'Match result succesfully added', score, opponent_score});
+			await new Promise((resolve, reject) => {
+				db.run(joinMatchToUser, [user_id, matchId], function (err) {
+					if (err) return reject(err);
+					resolve();
+					});
+			});
+			reply.send({message: 'Match result succesfully added', matchId, score, opponent_score});
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });

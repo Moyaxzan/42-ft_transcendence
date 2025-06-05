@@ -3,13 +3,16 @@ services:
     hostname: nginx
     build:
       context: requirements/nginx
-    container_name: nginxy
+    container_name: nginx
     env_file:
      - .env
     ports:
      - 8080:443
     volumes:
       - ./requirements/front:/var/www
+    depends_on:
+      - elasticsearch
+      - kibana
     networks:
       - transcendence
     restart: unless-stopped

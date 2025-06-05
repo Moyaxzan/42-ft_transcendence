@@ -1,6 +1,6 @@
 import { animateLinesToFinalState } from './navbar.js';
 let animationId = 0;
-async function sendMatchResult(userId, score, opponentScore, opponentUsername) {
+async function sendMatchResult(userId, score, opponentScore, opponentId) {
     try {
         const response = await fetch(`/users/history/${encodeURIComponent(userId)}`, {
             method: 'POST',
@@ -8,9 +8,10 @@ async function sendMatchResult(userId, score, opponentScore, opponentUsername) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                user_id: userId,
                 score,
                 opponent_score: opponentScore,
-                opponent_username: opponentUsername
+                opponent_id: opponentId
             })
         });
         if (!response.ok) {
@@ -213,14 +214,14 @@ export async function renderPong() {
             scoreDiv.innerText = `${player1Score} - ${player2Score}`;
             resetBall();
         }
-        else if (player1Score == 2 || player2Score == 2) {
+        else if (player1Score == 1 || player2Score == 1) {
             stopGame();
             gameStarted = false;
             console.log("game done !");
             const playerScore = player1Score;
             const opponentScore = player2Score;
-            const opponentUsername = "Bot";
-            sendMatchResult(0, playerScore, opponentScore, opponentUsername);
+            const opponentId = 0;
+            sendMatchResult(0, playerScore, opponentScore, opponentId);
             return;
         }
         else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
