@@ -34,6 +34,27 @@ async function routes (fastify, options) {
 		}
 	});
 
+	fastify.get('/matches/:match_round/:match_index', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { match_round, match_index } = request.params;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			const query = `SELECT users.* FROM matches JOIN users ON users.id = matches.user_id OR users.id = matches.opponent_id WHERE matches.match_round = ? AND matches.match_index = ?`
+				db.all(query, [match_round, match_index], (err, rows) => {
+					if (err) return reject(err);
+					resolve(rows);
+				});
+			});
+			if (!rows) {
+				return reply.send('No match found');
+			}
+			return reply.send(rows);
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database GET error', details: err.message });
+		}
+	});
+
 	fastify.get('/users/:email', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { email } = request.params;	

@@ -8,6 +8,7 @@ async function sendMatchResult(userId, score, opponentScore, opponentId) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                user_id: userId,
                 score,
                 opponent_score: opponentScore,
                 opponent_id: opponentId
