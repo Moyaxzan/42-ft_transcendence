@@ -1,5 +1,5 @@
 import { renderHome } from './pages/home.js';
-import { renderProfile } from './pages/profile.js';
+import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { renderLogin } from './pages/login.js';
 
@@ -9,6 +9,8 @@ const routes: Record<string, () => void> = {
   '/profile': renderProfile,
   '/pong': renderPong,
   '/login': renderLogin,
+  '/users': renderUser,
+  '/matches': renderMatch,
 };
 
 // Run this when URL changes or app first loads

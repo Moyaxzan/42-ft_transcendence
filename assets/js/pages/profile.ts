@@ -14,6 +14,18 @@ interface User {
 	points: string;
 }
 
+interface Match {
+	id: string;
+	status: string | null;
+	user_id: string | null;
+	winner_id: string | null;
+	score: string;
+	opponent_score: string;
+	opponent_id: string;
+	match_round: string | null;
+	match_index: string;
+}
+
 export async function renderProfile() {
 	const app = document.getElementById('app');
 	if (!app) return;
@@ -85,40 +97,79 @@ export async function renderProfile() {
 	}
 }
 
-// export async function renderProfile() {
-// 	const app = document.getElementById('app');
-// 	if (!app)
-// 		return;
-// 	const res = await fetch('/dist/html/profile.html');
-// 	const html = await res.text();
-// 	app.innerHTML = html;
+export async function renderUser() {
+ 	const app = document.getElementById('app');
+ 	if (!app)
+ 		return;
+ 	const res = await fetch('/dist/html/profile.html');
+ 	const html = await res.text();
+ 	app.innerHTML = html;
+
+ 	const userLoadBtn = document.querySelector("#userLoad");
+ 	const userList = document.querySelector("#userList"); 
+
+ 	if (!userLoadBtn || !userList) {
+ 		console.error("#userLoad or #userList not found.");
+ 		return;
+ 	}
+
+ 	userLoadBtn.addEventListener('click', async () => {
+ 		console.log("btn clique");
+ 		const res = await fetch('/users');
+ 		if (!res.ok) throw new Error('Fail to load');
+ 		const users: User[] = await res.json();
+ 		userList.innerHTML = '';
+ 		if (users.length > 0) {
+ 			const list = document.createElement("ul");
+ 			users.forEach((user) => {
+ 				const listItem = document.createElement("li");
+ 				listItem.textContent = Object.entries(user).map(([key, value]) =>
+ 					`${key}: ${value}`).join(', ');
+ 					list.appendChild(listItem);
+ 			});
+ 			userList.appendChild(list);
+ 		} else {
+ 			userList.innerHTML = '<p>No users found</p>';
+ 		}
+ 	});
+}
+  
+export async function renderMatch() {
+ 	const app = document.getElementById('app');
+ 	if (!app)
+ 		return;
+ 	const res = await fetch('/dist/html/profile.html');
+ 	const html = await res.text();
+ 	app.innerHTML = html;
 
 
-// 	const userLoadBtn = document.querySelector("#userLoad");
-// 	const userList = document.querySelector("#userList"); 
+ 	const userLoadBtn = document.querySelector("#matchLoad");
+ 	const userList = document.querySelector("#matchList"); 
+	const match_round = 0; 
+	const match_index = 2; 
 
-// 	if (!userLoadBtn || !userList) {
-// 		console.error("#userLoad or #userList not found.");
-// 		return;
-// 	}
+ 	if (!userLoadBtn || !userList) {
+ 		console.error("#matchLoad or #matchList not found.");
+ 		return;
+ 	}
 
-// 	userLoadBtn.addEventListener('click', async () => {
-// 		console.log("btn clique");
-// 		const res = await fetch('/users');
-// 		if (!res.ok) throw new Error('Fail to load');
-// 		const users: User[] = await res.json();
-// 		userList.innerHTML = '';
-// 		if (users.length > 0) {
-// 			const list = document.createElement("ul");
-// 			users.forEach((user) => {
-// 				const listItem = document.createElement("li");
-// 				listItem.textContent = Object.entries(user).map(([key, value]) =>
-// 					`${key}: ${value}`).join(', ');
-// 					list.appendChild(listItem);
-// 			});
-// 			userList.appendChild(list);
-// 		} else {
-// 			userList.innerHTML = '<p>No users found</p>';
-// 		}
-// 	});
-// }
+ 	userLoadBtn.addEventListener('click', async () => {
+ 		console.log("btn clique");
+ 		const res = await fetch(`/matches/${match_round}/${match_index}`);
+ 		if (!res.ok) throw new Error('Fail to load');
+ 		const matches: Match[] = await res.json();
+ 		userList.innerHTML = '';
+ 		if (matches.length > 0) {
+ 			const list = document.createElement("ul");
+ 			matches.forEach((match) => {
+ 				const listItem = document.createElement("li");
+ 				listItem.textContent = Object.entries(match).map(([key, value]) =>
+ 					`${key}: ${value}`).join(', ');
+ 					list.appendChild(listItem);
+ 			});
+ 			userList.appendChild(list);
+ 		} else {
+ 			userList.innerHTML = '<p>No matches found</p>';
+ 		}
+ 	});
+}
