@@ -38,7 +38,7 @@ clean:
 	@docker stop $$(docker ps -qa) || true
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
-	@docker volume rm $$(docker volume ls) || true
+	@docker volume rm $$(docker volume ls -q) || true
 	@docker network rm $(NAME) || true
 	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
