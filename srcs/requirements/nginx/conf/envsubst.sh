@@ -24,5 +24,4 @@ http {
 }
 EOF
 
-# Lancer Nginx
 exec nginx -g "daemon off;"

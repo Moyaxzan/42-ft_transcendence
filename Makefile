@@ -26,6 +26,7 @@ all:
 #@npm install -g typescript
 	@npm install canvas-confetti
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
+	@rm -f ./srcs/requirements/nginx/modsec_logs/*
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@tsc
 	@docker $(COMPOSE) up --build
