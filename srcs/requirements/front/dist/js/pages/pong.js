@@ -80,11 +80,11 @@ export async function renderPong() {
     let ballVecty = 0;
     let lastbounce = startRound;
     let lastWallTouch = startRound;
-    let ballSpeed = 0.6;
+    let ballSpeed = 0.666;
     function resetBall() {
         ballPosx = Array(10).fill(50);
         ballPosy = Array(10).fill(50);
-        ballSpeed = 0.6;
+        ballSpeed = 0.666;
         ballVectx = 0;
         ballVecty = 0;
         // After a short delay, relaunch the ball at a new random angle
@@ -138,7 +138,7 @@ export async function renderPong() {
                 ballVectx = Math.cos(newAngle);
                 ballVecty = Math.sin(newAngle);
                 lastbounce = Date.now();
-                ballSpeed = ballSpeed + 0.02;
+                ballSpeed = ballSpeed + 0.03;
                 console.log("ball speed: ", ballSpeed);
             }
         }
@@ -148,7 +148,7 @@ export async function renderPong() {
                 ballVectx = Math.cos(newAngle);
                 ballVecty = Math.sin(newAngle);
                 lastbounce = Date.now();
-                ballSpeed = ballSpeed + 0.02;
+                ballSpeed = ballSpeed + 0.03;
                 console.log("ball speed: ", ballSpeed);
             }
         }
