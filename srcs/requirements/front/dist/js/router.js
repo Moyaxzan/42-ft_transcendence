@@ -2,6 +2,7 @@ import { renderHome } from './pages/home.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { renderLogin } from './pages/login.js';
+import { renderPlay } from './pages/play.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
@@ -10,6 +11,7 @@ const routes = {
     '/login': renderLogin,
     '/users': renderUser,
     '/matches': renderMatch,
+    '/play': renderPlay,
 };
 // Run this when URL changes or app first loads
 export function router() {

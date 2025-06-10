@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS matches (
  match_index INTEGER,
  FOREIGN KEY (user_id) REFERENCES users(id)
  FOREIGN KEY (opponent_id) REFERENCES users(id)
+ FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
 );
 
 CREATE TABLE IF NOT EXISTS users_join_matches (

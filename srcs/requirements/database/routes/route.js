@@ -3,6 +3,7 @@
 import schema from '../schemas/userBodyJsonSchema.js'
 import updatePointsSchema from '../schemas/updatePointsSchema.js'
 import updateNameSchema from '../schemas/updateNameSchema.js'
+import generateBracket from '../utils/bracket.js'
 
 async function routes (fastify, options) {
 	fastify.get('/health', async (request, reply) => {
@@ -14,6 +15,55 @@ async function routes (fastify, options) {
 		// authentication code
 	});
 */
+
+
+	const userIds = [1, 2, 3, 4, 5, 6];
+	fastify.log.info(generateBracket(userIds));
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
+	fastify.log.info("prout");
 
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
@@ -257,6 +307,54 @@ async function routes (fastify, options) {
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database DELETE error', details: err.message });
+		}
+	});
+
+
+	fastify.post('/tournaments', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { players } = request.body;
+
+		if (!Array.isArray(players) || players.length < 2) {
+			return reply.status(400).send({ error: "At least two player names are required." });
+		}
+
+		try {
+			await new Promise((resolve, reject) => {
+				db.serialize(() => {
+					// Step 1: Insert a new tournament
+					db.run(`INSERT INTO tournaments (user_id) VALUES (NULL)`,
+						function (err) {
+							if (err) return reject(err);
+							const tournamentId = this.lastID;
+
+							// Step 2: Insert users if they don't exist
+							const insertUser = db.prepare(`INSERT OR IGNORE INTO users (name, ip_address) VALUES (?, '0.0.0.0')`);
+							players.forEach(name => insertUser.run(name));
+							insertUser.finalize(() => {
+								// Step 3: Retrieve user IDs
+								db.all(
+									`SELECT id FROM users WHERE name IN (${players.map(() => '?').join(',')})`,
+									players,
+									(err, rows) => {
+										if (err) return reject(err);
+
+										// Step 4: Link users to the tournament
+										const link = db.prepare(`INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`);
+										rows.forEach(({ id }) => link.run(id, tournamentId));
+										link.finalize(resolve);
+									}
+								);
+							});
+						}
+					);
+				});
+			});
+
+			reply.send({ message: "Tournament created with users." });
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(500).send({ error: "Database error", details: err.message });
 		}
 	});
 }
