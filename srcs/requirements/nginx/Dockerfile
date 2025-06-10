@@ -5,10 +5,11 @@
 FROM	nginx:stable-alpine3.21@sha256:aed99734248e851764f1f2146835ecad42b5f994081fa6631cc5d79240891ec9
 
 RUN apk add --no-cache \
-    build-base pcre-dev libxml2-dev git cmake \
+    build-base pcre-dev pcre2-dev libxml2-dev git cmake \
     curl ca-certificates linux-headers yajl-dev \
     geoip-dev zlib-dev curl-dev lua5.3-dev \
-    libmaxminddb-dev lmdb-dev
+    libmaxminddb-dev lmdb-dev \
+    autoconf automake libtool
 
 RUN git clone --depth 1 -b v3/master --single-branch https://github.com/owasp-modsecurity/ModSecurity /opt/ModSecurity && \
 cd /opt/ModSecurity && \
@@ -23,7 +24,7 @@ make && make install
 RUN git clone --depth 1 https://github.com/owasp-modsecurity/ModSecurity-nginx.git /opt/ModSecurity-nginx
 
 # Download and build nginx with modsecurity module
-ENV NGINX_VERSION=1.24.0
+ENV NGINX_VERSION=1.28.0
 
 RUN curl -L http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zx && \
     cd nginx-$NGINX_VERSION && \
@@ -31,11 +32,15 @@ RUN curl -L http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zx && \
     make modules && \
     cp objs/ngx_http_modsecurity_module.so /etc/nginx/modules
 
+RUN mkdir -p /etc/nginx/crs && \
+curl -L https://github.com/coreruleset/coreruleset/archive/refs/tags/v4.0.0.tar.gz | tar xz --strip-components=1 -C /etc/nginx/crs && \
+mv /etc/nginx/crs/crs-setup.conf.example /etc/nginx/crs/crs-setup.conf
+
 # Clean and copy nginx config
 RUN mkdir -p /etc/nginx/modules && mkdir -p /etc/nginx/conf.d
 
 COPY modsecurity.conf /etc/nginx/modsecurity.conf
-COPY crs /etc/nginx/crs/
+# COPY crs /etc/nginx/crs/
 
 COPY	--chmod=755 ./conf/envsubst.sh .
 COPY	--chmod=644 ./conf/default.conf.template /etc/nginx/conf.d/default.conf.template

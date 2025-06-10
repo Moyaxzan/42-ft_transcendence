@@ -52,6 +52,7 @@ clean:
 	@echo ""
 	@docker network ls
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
+	@rm -f ./srcs/requirements/nginx/modsec_logs/*
 
 down:
 	@docker compose -f ./srcs/docker-compose.yml stop
