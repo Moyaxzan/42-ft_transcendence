@@ -2,7 +2,7 @@ import { animateLinesToFinalState } from './navbar.js';
 let animationId = 0;
 async function sendMatchResult(userId, score, opponentScore, opponentId) {
     try {
-        const response = await fetch(`/users/history/${encodeURIComponent(userId)}`, {
+        const response = await fetch(`/api/users/history/${encodeURIComponent(userId)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

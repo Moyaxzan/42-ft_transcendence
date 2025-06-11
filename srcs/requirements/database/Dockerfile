@@ -11,7 +11,6 @@ COPY	package*.json ./
 RUN 	npm install
 
 COPY	. .
-COPY	--chmod=755 edit_db.sh .
 
 CMD	[ "npm", "--trace-warnings", "start" ]
 

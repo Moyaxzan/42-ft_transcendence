@@ -19,8 +19,10 @@ async function routes (fastify, options) {
 
 	const userIds = [1, 2, 3, 4, 5, 6];
 	fastify.log.info(generateBracket(userIds));
+	//fastify.log.info("prout");
 
-	fastify.get('/users', async (request, reply) => {
+
+	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
 			const rows = await new Promise((resolve, reject) => {
@@ -39,7 +41,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.get('/matches/:match_round/:match_index', async (request, reply) => {
+	fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { match_round, match_index } = request.params;
 		try {
@@ -60,7 +62,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.get('/users/:email', async (request, reply) => {
+	fastify.get('/api/users/:email', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { email } = request.params;	
   		try {
@@ -97,7 +99,7 @@ async function routes (fastify, options) {
 	// 	}
 	// })
 
-	fastify.post('/users/google-signin', async (request, reply) => {
+	fastify.post('/api/users/google-signin', async (request, reply) => {
 	const db = fastify.sqlite;
 	const { email, name, google_user, ip_address } = request.body;
 
@@ -128,7 +130,7 @@ async function routes (fastify, options) {
 	}
 });
 
-	fastify.post('/users/signin', { schema }, async (request, reply) => {
+	fastify.post('/api/users/signin', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
@@ -151,7 +153,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id/2fa-secret', async (request, reply) =>
+	fastify.patch('/api/users/:id/2fa-secret', async (request, reply) =>
 	{
 		const db = fastify.sqlite;
 		const { id } = request.params;
@@ -185,7 +187,7 @@ async function routes (fastify, options) {
 
 
 
-	fastify.patch('/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
+	fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { points } = request.body;
@@ -203,7 +205,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.post('/users/history/:id', async (request, reply) => {
+	fastify.post('/api/users/history/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { user_id, score, opponent_score, opponent_id } = request.body;
@@ -230,7 +232,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.patch('/users/:id', { schema: updateNameSchema }, async (request, reply) => {
+	fastify.patch('/api/users/:id', { schema: updateNameSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		const { name } = request.body;
@@ -248,7 +250,7 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.delete('/users/:id', async (request, reply) => {
+	fastify.delete('/api/users/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		try {
@@ -266,7 +268,7 @@ async function routes (fastify, options) {
 	});
 
 
-	fastify.post('/tournaments', async (request, reply) => {
+	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { players } = request.body;
 
