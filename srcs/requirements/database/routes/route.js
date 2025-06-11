@@ -21,6 +21,7 @@ async function routes (fastify, options) {
 	fastify.log.info(generateBracket(userIds));
 	//fastify.log.info("prout");
 
+
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
