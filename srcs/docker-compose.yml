@@ -10,7 +10,7 @@ services:
      - 8080:443
     volumes:
       - ./requirements/front:/var/www
-      - ./requirements/nginx/modsec_logs:/var/log
+      - nginx:/modsec_logs
     depends_on:
       - elasticsearch
       - kibana
@@ -65,7 +65,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ../data/nginx
+      device: ../data/modsec_logs
   database:
     driver: local
     driver_opts:

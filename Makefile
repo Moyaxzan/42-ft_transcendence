@@ -9,7 +9,7 @@ NAME = transcendence
 REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
-NGINX_DATA = ./data/nginx
+NGINX_DATA = ./data/modsec_logs
 
 all:
 	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
@@ -52,7 +52,6 @@ clean:
 	@echo ""
 	@docker network ls
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
-	@rm -f ./srcs/requirements/nginx/modsec_logs/*
 
 down:
 	@docker compose -f ./srcs/docker-compose.yml stop

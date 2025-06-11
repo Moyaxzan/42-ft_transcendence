@@ -1,7 +1,7 @@
 #!bin/ash
 
 envsubst '${DOMAIN_NAME}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
-# Générer nginx.conf avec modsecurity
+
 cat <<EOF > /etc/nginx/nginx.conf
 load_module /etc/nginx/modules/ngx_http_modsecurity_module.so;
 
@@ -23,5 +23,5 @@ http {
     include /etc/nginx/conf.d/*.conf;
 }
 EOF
-
+echo "bonjour 😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
 exec nginx -g "daemon off;"
