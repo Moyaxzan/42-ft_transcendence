@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS matches (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  status NUMERIC DEFAULT 0,
  user_id INTEGER,
+ tournament_id INTEGER,
  winner_id INTEGER,
  score INTEGER NOT NULL,
  opponent_score INTEGER NOT NULL,
