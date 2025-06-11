@@ -10,7 +10,7 @@ services:
      - 8080:443
     volumes:
       - ./requirements/front:/var/www
-      - ./requirements/nginx/modsec_logs:/var/log
+      - nginx:/modsec_logs
     depends_on:
       - logstash
     networks:
