@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS matches (
  match_round INTEGER,
  match_index INTEGER,
  FOREIGN KEY (user_id) REFERENCES users(id)
+ FOREIGN KEY (opponent_id) REFERENCES users(id)
+ FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
 );
 
 CREATE TABLE IF NOT EXISTS users_join_matches (
@@ -65,3 +67,5 @@ CREATE TABLE IF NOT EXISTS user_stats (
 INSERT INTO users (id, name, email, id_token, password_hash, ip_address, twofa_enabled) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1", 1);
 
 INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
+
+INSERT INTO matches (user_id, score, opponent_score, opponent_id, match_round, match_index) VALUES (0, 0, 0, 1, 0, 2);

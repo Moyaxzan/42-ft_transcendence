@@ -28,6 +28,13 @@ async function dbConnector (fastify, options) {
 					fastify.log.info({rows}, "'users' table content")
 				}
 			})
+			fastify.sqlite.all('SELECT * FROM matches', (err, rows) => {
+				if (err) {
+					fastify.log.warn("'matches' table not found" + err.message)
+				}  else {
+					fastify.log.info({rows}, "'matches' table content")
+				}
+			})
 		})
 	})
 }

@@ -33,6 +33,13 @@ async function routes (fastify, options) {
   		reply.send(data);
 	})
 
+	 fastify.get('/matches/:match_round/:match_index', async (request, reply) => {
+		const res = await fetch(`http://database:3000/matches/${match_round}/${match_index}`);
+		if (!res.ok) return reply.code(res.status).send(await res.text());
+		const matches = await res.json();
+		reply.send(matches);
+	 });
+
 	// fastify.get('/users/history/:id', async (request, reply) => {
 	// 	const { id } = request.params;
 	// 	const res = await fetch(`http://database:3000/users/history/${encodeURIComponent(id)}`);
