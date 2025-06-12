@@ -5,7 +5,7 @@ let animationId: number = 0;
 async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentId: number) {
 	try {
 
-		const response = await fetch(`/users/history/${encodeURIComponent(userId)}`, {
+		const response = await fetch(`/api/users/history/${encodeURIComponent(userId)}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

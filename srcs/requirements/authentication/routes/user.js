@@ -1,9 +1,9 @@
 // AUTHENTIFICATION CONTAINER
 
 async function userRoutes (fastify, options) {
-	fastify.delete('/users/:id', async (request, reply) => {
+	fastify.delete('/api/users/:id', async (request, reply) => {
 		const { id } = request.params;
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
+		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(id)}`, {
 			method: 'DELETE',
 			headers: { 'Content-Type': 'application/json' },
 	});
@@ -11,10 +11,10 @@ async function userRoutes (fastify, options) {
 		return reply.send(data);
 	})
 
-	fastify.patch('/users/:id', async (request, reply) => {
+	fastify.patch('/api/users/:id', async (request, reply) => {
 		const { id } = request.params;
 		const { name } = request.body;
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(id)}`, {
+		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(id)}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ name: request.body.name })

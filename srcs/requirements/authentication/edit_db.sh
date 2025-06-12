@@ -1,6 +1,6 @@
 #!/bin/ash
 
-url="http://database:3000/users/signin"
+url="http://database:3000/api/users/signin"
 header="Content-Type: application/json"
 
 generate_random_name() {
