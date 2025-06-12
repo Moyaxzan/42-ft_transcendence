@@ -17,8 +17,9 @@ async function routes (fastify, options) {
 */
 
 
-	const userIds = [1, 2, 3, 4, 5, 6];
+	const userIds = [0, 1];
 	fastify.log.info(generateBracket(userIds));
+	
 
 	fastify.get('/users', async (request, reply) => {
 		const db = fastify.sqlite;
