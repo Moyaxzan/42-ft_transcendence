@@ -24,17 +24,20 @@ RUN apk add --no-cache \
     cd nginx-$NGINX_VERSION && \
     ./configure --with-compat --add-dynamic-module=/opt/ModSecurity-nginx && \
     make modules && \
-    cp objs/ngx_http_modsecurity_module.so /etc/nginx/modules
+    cp objs/ngx_http_modsecurity_module.so /etc/nginx/modules && \
+    mkdir -p /etc/nginx/crs
 
 
-RUN mkdir -p /etc/nginx/crs && \
-curl -L https://github.com/coreruleset/coreruleset/archive/refs/tags/v4.0.0.tar.gz | tar xz --strip-components=1 -C /etc/nginx/crs && \
-mv /etc/nginx/crs/crs-setup.conf.example /etc/nginx/crs/crs-setup.conf
+# RUN mkdir -p /etc/nginx/crs && 
+# curl -L https://github.com/coreruleset/coreruleset/archive/refs/tags/v4.0.0.tar.gz | tar xz --strip-components=1 -C /etc/nginx/crs && \
+# mv /etc/nginx/crs/crs-setup.conf.example /etc/nginx/crs/crs-setup.conf
 
 # Clean and copy nginx config
 RUN mkdir -p /etc/nginx/modules && mkdir -p /etc/nginx/conf.d
 
 COPY modsecurity.conf /etc/nginx/modsecurity.conf
+
+COPY ./CRS/ /etc/nginx/crs/
 
 COPY	--chmod=755 ./conf/envsubst.sh .
 COPY	--chmod=644 ./conf/default.conf.template /etc/nginx/conf.d/default.conf.template
