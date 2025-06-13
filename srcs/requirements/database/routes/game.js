@@ -28,6 +28,25 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
+	fastify.get('/api/play', async (request, reply) => {
+		const db = fastify.sqlite;
+		try {
+			const rows = await new Promise((resolve, reject) => {
+				db.all('SELECT * FROM matches', (err, rows) => {
+					if (err) return reject(err);
+					resolve(rows);
+				});
+			});
+			if (!rows) {
+				return reply.send('No matches found');
+			}
+			reply.send(rows);
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.send(500).send({error: 'database GET error', details: err.message});
+		}
+	});
+
 	fastify.get('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {

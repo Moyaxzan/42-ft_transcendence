@@ -71,4 +71,4 @@ INSERT OR IGNORE INTO users (id, name, email, id_token, password_hash, ip_addres
 
 INSERT OR IGNORE INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
 
-INSERT INTO matches (user_id, score, opponent_score, opponent_id, match_round, match_index) VALUES (0, 0, 0, 1, 0, 2);
+INSERT OR IGNORE INTO matches (id, user_id, score, opponent_score, opponent_id, match_round, match_index) VALUES (0, 0, 0, 0, 1, 0, 2);
