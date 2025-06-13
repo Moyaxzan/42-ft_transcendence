@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS user_stats (
  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-INSERT INTO users (id, name, email, id_token, password_hash, ip_address, twofa_enabled) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1", 1);
+INSERT OR IGNORE INTO users (id, name, email, id_token, password_hash, ip_address, twofa_enabled) VALUES (0, "Antoine", "test@gmail.com", "null", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", "127.0.0.1", 1);
 
-INSERT INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
+INSERT OR IGNORE INTO users (name, ip_address) VALUES ("Jovica", "127.0.0.1");
 
 INSERT INTO matches (user_id, score, opponent_score, opponent_id, match_round, match_index) VALUES (0, 0, 0, 1, 0, 2);
