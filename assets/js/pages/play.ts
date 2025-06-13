@@ -11,7 +11,7 @@ export async function renderPlay() {
 	app.innerHTML = html;
 
 	//when page is loaded :
-	document.addEventListener("DOMContentLoaded", () => {
+//	document.addEventListener("DOMContentLoaded", () => {
 		const form = document.getElementById("tournament-form")!;
 		const playerInputs = document.getElementById("player-inputs")!;
 		const addButton = document.getElementById("add-player")!;
@@ -23,8 +23,9 @@ export async function renderPlay() {
 			input.className = "player-input border p-1 rounded w-full";
 			playerInputs.appendChild(input);
 		});
-
+		
 		form.addEventListener("submit", async (e) => {
+			console.log("je passe ici");
 			e.preventDefault();
 			const inputs = playerInputs.querySelectorAll<HTMLInputElement>(".player-input");
 			const names = Array.from(inputs).map(input => input.value.trim()).filter(name => name !== "");
@@ -34,7 +35,7 @@ export async function renderPlay() {
 				return;
 			}
 
-			const response = await fetch("/tournaments", {
+			const response = await fetch("api/tournaments", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ players: names })
@@ -46,5 +47,5 @@ export async function renderPlay() {
 				alert("Failed to create tournament");
 			}
 		});
-	});
+//	});
 }

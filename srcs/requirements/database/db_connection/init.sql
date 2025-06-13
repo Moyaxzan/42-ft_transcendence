@@ -42,7 +42,9 @@ CREATE TABLE IF NOT EXISTS users_join_matches (
 CREATE TABLE IF NOT EXISTS tournaments (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  user_id INTEGER,
- FOREIGN KEY (user_id) REFERENCES users(id)
+ match_id INTEGER,
+ FOREIGN KEY (user_id) REFERENCES users(id),
+ FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
 CREATE TABLE IF NOT EXISTS users_join_tournaments (

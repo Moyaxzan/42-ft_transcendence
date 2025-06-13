@@ -21,21 +21,23 @@ async function dbConnector (fastify, options) {
 			return
 		}
 		fastify.sqlite.exec(db, (err) => {
-			fastify.sqlite.all('SELECT * FROM users', (err, rows) => {
-				if (err) {
-					fastify.log.warn("'users' table not found" + err.message)
-				}  else {
-					fastify.log.info({rows}, "'users' table content")
-				}
-			})
-			fastify.sqlite.all('SELECT * FROM matches', (err, rows) => {
-				if (err) {
-					fastify.log.warn("'matches' table not found" + err.message)
-				}  else {
-					fastify.log.info({rows}, "'matches' table content")
-				}
-			})
+			if (err) {
+				fastify.log.error("Error: " + err.message)
+				return
+			}
+			const tables = ['users', 'matches', 'tournaments']
+			tables.forEach((table) => logTable(fastify, table))
 		})
+	})
+}
+
+function logTable(fastify, tableName) {
+	fastify.sqlite.all(`SELECT * FROM ${tableName}`, (err, rows) => {
+		if (err) {
+			fastify.log.warn(`${tableName} not found` + err.message)
+		}  else {
+			fastify.log.info({rows}, `${tableName} content`)
+		}
 	})
 }
 

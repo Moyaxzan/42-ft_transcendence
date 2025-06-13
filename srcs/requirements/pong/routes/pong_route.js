@@ -33,7 +33,8 @@ async function routes (fastify, options) {
   		reply.send(data);
 	})
 
-	 fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
+	 //fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
+	 fastify.get('/api/play/:match_round/:match_index', async (request, reply) => {
 		const res = await fetch(`http://database:3000/api/matches/${match_round}/${match_index}`);
 		if (!res.ok) return reply.code(res.status).send(await res.text());
 		const matches = await res.json();
