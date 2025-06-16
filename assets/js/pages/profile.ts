@@ -2,7 +2,7 @@ import { renderHome } from './home.js'
 
 interface User {
 	id: string;
-	is_ia: string | null;
+	is_guest: string | null;
 	name: string;
 	email: string | null;
 	id_token: string | null;

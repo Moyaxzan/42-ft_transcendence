@@ -62,54 +62,50 @@ async function gameRoutes (fastify, options) {
 			reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.send(500).send({error: 'database GET error', details: err.message});
+			return reply.status(500).send({error: 'database GET error', details: err.message});
 		}
 	});
 
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { players } = request.body;
-
+		const { user_id, players, tournamentID } = request.body;
 		if (!Array.isArray(players) || players.length < 2) {
-			return reply.status(400).send({ error: "At least two player names are required." });
+			return reply.status(400).send({ error: "COUCOU" });
+		//	return reply.status(400).send({ error: "At least two player names are required." });
 		}
-
 		try {
-			await new Promise((resolve, reject) => {
-				db.serialize(() => {
-					// Step 1: Insert a new tournament
-					db.run(`INSERT INTO tournaments (user_id, match_id) VALUES (4, 1)`,
-						function (err) {
-							if (err) return reject(err);
-							const tournamentId = this.lastID;
-
-							// Step 2: Insert users if they don't exist
-							const insertUser = db.prepare(`INSERT OR IGNORE INTO users (name, ip_address) VALUES (?, '0.0.0.0')`);
-							players.forEach(name => insertUser.run(name));
-							insertUser.finalize(() => {
-								// Step 3: Retrieve user IDs
-								db.all(
-									`SELECT id FROM users WHERE name IN (${players.map(() => '?').join(',')})`,
-									players,
-									(err, rows) => {
-										if (err) return reject(err);
-
-										// Step 4: Link users to the tournament
-										const link = db.prepare(`INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`);
-										rows.forEach(({ id }) => link.run(id, tournamentId));
-										link.finalize(resolve);
-									}
-								);
-							});
-						}
-					);
+			const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
+			const insertTourn = `INSERT INTO tournaments (user_id) VALUES (?)`;
+			const joinTourntoUser = `INSERT INTO users_join_tournaments (user_id) VALUES (?)`; 
+			const is_guest = true;
+			for (const name of players) {
+				 await new Promise ((resolve, reject) => {
+					db.run(insertGuest, [name, is_guest], function (err) {
+						if (err) return reject(err);
+						resolve({name, is_guest});
+					});
+				})
+			}
+			for (const name of players) {
+				 const rows = await new Promise ((resolve, reject) => {
+					db.run(insertTourn, [user_id], function (err) {
+						if (err) return reject(err);
+						resolve({user_id});
+					});
 				});
-			});
-
-			reply.send({ message: "Tournament created with users." });
+		//	}
+		//	for (const name of players) {
+				await new Promise ((resolve, reject) => {
+					db.run(joinTourntoUser, [user_id, rows], function (err) {
+						if (err) return reject(err);
+						resolve();
+					});
+				});
+			}
+			reply.send({message: 'Guests successfully added', user_id, players, tournamentID});
 		} catch (err) {
 			fastify.log.error(err);
-			reply.status(500).send({ error: "Database error", details: err.message });
+			return reply.status(500).send({error: 'database POST error', details: err.message});
 		}
 	});
 

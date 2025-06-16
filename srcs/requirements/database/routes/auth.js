@@ -36,18 +36,18 @@ async function authRoutes (fastify, options) {
 
 	fastify.post('/api/users/signin', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
-		const { is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
+		const { is_guest, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			const query = `INSERT INTO users(is_ia, name, email, id_token, \
+			const query = `INSERT INTO users(is_guest, name, email, id_token, \
 					password_hash, reset_token, reset_expiry, \
 					ip_address, is_log, points)
 					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-			db.run(query, [is_ia, name, email, id_token, password_hash,
+			db.run(query, [is_guest, name, email, id_token, password_hash,
 					reset_token, reset_expiry, ip_address, is_log,
 				points], function (err) {
 					if (err) return reject(err);
-					resolve({is_ia, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
+					resolve({is_guest, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
