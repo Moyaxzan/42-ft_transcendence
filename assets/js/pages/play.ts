@@ -28,6 +28,7 @@ export async function renderPlay() {
 		const inputs = playerInputs.querySelectorAll<HTMLInputElement>(".player-input");
 		const names = Array.from(inputs).map(input => input.value.trim()).filter(name => name !== "");
 		const tournaments = null;
+		const user_id = parseInt(localStorage.getItem("user_id") || "0", 10);
 
 		if (names.length < 2) {
 			alert("Please enter at least two players.");

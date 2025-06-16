@@ -68,16 +68,21 @@ async function gameRoutes (fastify, options) {
 
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { user_id, players, tournamentID } = request.body;
+		db.run(`PRAGMA foreign_keys = ON`);
+		const { players, tournamentId } = request.body;
+		console.log("📦 Contenu complet du body :", request.body);
 		if (!Array.isArray(players) || players.length < 2) {
 			return reply.status(400).send({ error: "COUCOU" });
-		//	return reply.status(400).send({ error: "At least two player names are required." });
 		}
+
 		try {
 			const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
-			const insertTourn = `INSERT INTO tournaments (user_id) VALUES (?)`;
-			const joinTourntoUser = `INSERT INTO users_join_tournaments (user_id) VALUES (?)`; 
+			const getUserId = `SELECT id FROM users WHERE name = ?`;
+			const insertTourn = `INSERT INTO tournaments (user_id, match_id) VALUES (?, ?)`;
+			const joinTourntoUser = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`; 
 			const is_guest = true;
+			const userIds = [];
+
 			for (const name of players) {
 				 await new Promise ((resolve, reject) => {
 					db.run(insertGuest, [name, is_guest], function (err) {
@@ -85,24 +90,30 @@ async function gameRoutes (fastify, options) {
 						resolve({name, is_guest});
 					});
 				})
-			}
-			for (const name of players) {
-				 const rows = await new Promise ((resolve, reject) => {
-					db.run(insertTourn, [user_id], function (err) {
+				const 	userId = await new Promise((resolve, reject) => {
+					db.get(getUserId, [name], (err, row) => {
 						if (err) return reject(err);
-						resolve({user_id});
+						resolve(row.id);
 					});
 				});
-		//	}
-		//	for (const name of players) {
+				userIds.push(userId);
+			}
+			const ownerId = userIds[0];
+			const tournamentId = await new Promise ((resolve, reject) => {
+				db.run(insertTourn, [ownerId, null], function (err) {
+					if (err) return reject(err);
+					resolve(this.lastID);
+				});
+			});
+			for (const uid of userIds) {
 				await new Promise ((resolve, reject) => {
-					db.run(joinTourntoUser, [user_id, rows], function (err) {
+					db.run(joinTourntoUser, [uid, tournamentId], function (err) {
 						if (err) return reject(err);
 						resolve();
 					});
 				});
 			}
-			reply.send({message: 'Guests successfully added', user_id, players, tournamentID});
+			reply.send({message: 'Guests successfully added', players, tournamentId});
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({error: 'database POST error', details: err.message});

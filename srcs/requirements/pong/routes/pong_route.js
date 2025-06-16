@@ -53,7 +53,7 @@ async function routes (fastify, options) {
 		const res = await fetch(`http://database:3000/api/tournaments`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ user_id: request.body.user_id, match_id: request.body.match_id })
+			body: JSON.stringify({ user_id: request.body.user_id, tournament_id: request.body.tournament_id })
 		});
  		const data = await res.json();
   		reply.send(data);
