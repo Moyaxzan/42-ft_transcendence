@@ -62,6 +62,26 @@ async function routes (fastify, options) {
   		}
 	});
 
+	fastify.get('/api/users/profil/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;	
+  		try {
+	    		const user = await new Promise((resolve, reject) => {
+    				db.get('SELECT * FROM users WHERE id = ?', [id], (err, row) => {
+    	   		 		if (err) return reject(err);
+    	    				resolve(row);
+    	  			});
+    			});
+    			if (!user) {
+    				return reply.status(404).send({ message: 'User not found' });
+    			}
+    			return reply.send(user);
+  		} catch (err) {
+    			fastify.log.error(err);
+    			return reply.status(500).send({ error: 'database GET error', details: err.message });
+  		}
+	});
+
 	// fastify.get('/users/history/:id', async (request, reply) => {
 	// 	const db = fastify.sqlite;
 	// 	const { id } = request.params;
@@ -90,6 +110,9 @@ async function routes (fastify, options) {
 				resolve(id, points);
 				});
 			});
+    			if (!rows) {
+    				return reply.status(404).send({ message: 'User not found' });
+    			}
 			reply.send({ message: 'Point updated successfully', points });
 		} catch (err) {
 			fastify.log.error(err);
@@ -114,7 +137,7 @@ async function routes (fastify, options) {
 			await new Promise((resolve, reject) => {
 				db.run(joinMatchToUser, [user_id, matchId], function (err) {
 					if (err) return reject(err);
-					resolve();
+					resolve(user_id, matchId);
 					});
 			});
 			reply.send({message: 'Match result succesfully added', matchId, score, opponent_score});
@@ -132,9 +155,15 @@ async function routes (fastify, options) {
 			const rows = await new Promise((resolve, reject) => {
 				db.run('UPDATE users SET name = ? WHERE id = ?', [name, id], function (err) {
 					if (err) return reject(err);
+					if (this.changes === 0) {
+						return reject(new Error('User not found'));
+					}
 					resolve(id, name);
 				});
 			});
+    			if (!rows) {
+    				return reply.status(404).send({ message: 'User not found' });
+    			}
 			reply.send({ message: 'Name updated successfully', name });
 		} catch (err) {
 			fastify.log.error(err);

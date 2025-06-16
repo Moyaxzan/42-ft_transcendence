@@ -68,7 +68,6 @@ async function gameRoutes (fastify, options) {
 
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
-		db.run(`PRAGMA foreign_keys = ON`);
 		const { players, tournamentId } = request.body;
 		console.log("📦 Contenu complet du body :", request.body);
 		if (!Array.isArray(players) || players.length < 2) {
