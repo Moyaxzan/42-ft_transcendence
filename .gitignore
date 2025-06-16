@@ -4,4 +4,5 @@ secrets/
 data/
 hash.js
 hashcmp.js
-client_secret_OAuth.json
+client_secret_OAuth.js
+srcs/requirements/hashicorp-vault/certs

@@ -10,6 +10,9 @@ REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
 NGINX_DATA = ./data/modsec_logs
+VAULT_CERT_DIR = ./srcs/requirements/hashicorp-vault/certs
+VAULT_CERT = $(VAULT_CERT_DIR)/vault.crt
+VAULT_KEY = $(VAULT_CERT_DIR)/vault.key
 
 all:
 	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
@@ -23,7 +26,17 @@ all:
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
+	vault-certs
 	docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
+
+vault-certs: $(VAULT_CERT) $(VAULT_KEY)
+
+$(VAULT_CERT) $(VAULT_KEY):
+	openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+		-keyout $(VAULT_KEY) \
+		-out $(VAULT_CERT) \
+		-subj "/CN=loclhost" \
+		-addext "subjectAltName=DNS:localhost"
 
 clean:
 	@docker images
@@ -52,6 +65,7 @@ clean:
 	@echo ""
 	@docker network ls
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
+	@rm -rf $(VAULT_CERT_DIR)/vault.crt $(VAULT_CERT_DIR)/vault.key
 
 down:
 	@docker compose -f ./srcs/docker-compose.yml stop
