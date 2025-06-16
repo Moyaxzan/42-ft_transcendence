@@ -1,17 +1,19 @@
 import { renderHome } from './pages/home.js';
+import { renderGameMode } from './pages/gameMode.js';
+import { renderPlay } from './pages/play.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { renderLogin } from './pages/login.js';
-import { renderPlay } from './pages/play.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
+    '/game-mode': renderGameMode,
+    '/play': renderPlay,
     '/profile': renderProfile,
     '/pong': renderPong,
     '/login': renderLogin,
     '/users': renderUser,
     '/matches': renderMatch,
-    '/play': renderPlay,
 };
 // Run this when URL changes or app first loads
 export function router() {
@@ -35,7 +37,7 @@ export function enableLinkInterception() {
             const href = target.getAttribute('href');
             console.log("Intercepted navigation to:", href);
             history.pushState(null, '', href);
-            //      router();
+            router();
         }
     });
 }

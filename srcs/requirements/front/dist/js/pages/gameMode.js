@@ -1,12 +1,11 @@
 import { animateLinesToFinalState } from './navbar.js';
-export async function renderHome() {
+export async function renderGameMode() {
     const app = document.getElementById('app');
     if (!app)
         return;
-    const res = await fetch('/dist/html/home.html');
+    const res = await fetch('/dist/html/gameMode.html');
     const html = await res.text();
     app.innerHTML = html;
-    // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
     const navbar = document.getElementById("line-top");
     const footer = document.getElementById("line-bottom");
     if (!navbar || !footer) {
