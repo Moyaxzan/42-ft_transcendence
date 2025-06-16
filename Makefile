@@ -23,11 +23,6 @@ all:
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
-#@npm install -g typescript
-	@npm install canvas-confetti
-	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
-	@rm -f ./srcs/requirements/nginx/modsec_logs/*
-	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@tsc
 	@docker $(COMPOSE) up --build
 
@@ -63,6 +58,7 @@ clean:
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
+	@rm -rf $(VAULT_CERT_DIR)/vault.crt $(VAULT_CERT_DIR)/vault.key
 
 down:
 	@docker $(COMPOSE) stop
