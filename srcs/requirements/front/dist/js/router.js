@@ -1,6 +1,6 @@
 import { renderHome } from './pages/home.js';
 import { renderGameMode } from './pages/gameMode.js';
-import { renderPlay } from './pages/play.js';
+import { renderPlayers } from './pages/players.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { renderLogin } from './pages/login.js';
@@ -8,7 +8,7 @@ import { renderLogin } from './pages/login.js';
 const routes = {
     '/': renderHome,
     '/game-mode': renderGameMode,
-    '/play': renderPlay,
+    '/players': renderPlayers,
     '/profile': renderProfile,
     '/pong': renderPong,
     '/login': renderLogin,

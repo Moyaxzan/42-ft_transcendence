@@ -1,5 +1,12 @@
 import { animateLinesToFinalState } from './navbar.js';
 
+interface GameMode {
+	type: '1vs1' | 'tournament';
+	minPlayers: number;
+	maxPlayers: number;
+	subtitle: string;
+}
+
 // Interface pour définir les joueurs
 interface Player {
 	id: number;
@@ -11,41 +18,105 @@ interface Player {
 let players: Player[] = [];
 let nextPlayerId = 1;
 
-export async function	renderPlay() {
+export async function	renderPlayers() {
 	// Récupération de l'élément app principal
 	const app = document.getElementById('app');
 	if (!app)
 		return;
 
-	// Chargement du HTML de la page alias
-	const res = await fetch('/dist/html/play.html');
-	console.log("Rendering alias.html");
-	const html = await res.text();
+	// Récupérer le mode depuis sessionStorage
+	const mode = sessionStorage.getItem('gameMode') || '1vs1';
+
+	const	gameModes: Record<string, GameMode> = {
+		'1vs1': {
+			type: '1vs1',
+			minPlayers: 2,
+			maxPlayers: 2,
+			subtitle: 'Match 1 vs 1'
+		},
+		'tournament': {
+			type: 'tournament',
+			minPlayers: 3,
+			maxPlayers: 8,
+			subtitle: 'Tournament Mode'
+		}
+	};
+
+	const	currentMode = gameModes[mode];
+
+	// Chargement du HTML de la page players
+	const	res = await fetch('/dist/html/players.html');
+	console.log("Rendering players.html");
+	const	html = await res.text();
 
 	// Injection du HTML dans l'app
 	app.innerHTML = html;
 
-	// Animation des lignes de fond
-	// animateLinesToFinalState([
-	// 	{ id: "line-top", rotationDeg: 0, translateYvh: -50, height: "25vh" },
-	// 	{ id: "line-bottom", rotationDeg: 0, translateYvh: 50, height: "25vh" },
-	// ]);
+	setTimeout(() => {
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
 	]);
 
+	// Réinitialiser les joueurs
+	players = [];
+	nextPlayerId = 1;
+
+	// Initialisation de la logique selon le mode de jeu
+	initialisePlayersLogic(currentMode);
+	}, 10);
+}
+
+function	initialisePlayersLogic(gameMode: GameMode) {	
+
 	// Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
-	const	aliasInput = document.getElementById("alias-input") as HTMLInputElement;
-	const	addAliasBtn = document.getElementById("add-alias-btn") as HTMLButtonElement;
+    const	modeIndicator = document.getElementById('mode-indicator') as HTMLParagraphElement;
+    const	playerLimits = document.getElementById('player-limits') as HTMLParagraphElement;
+    const	playerCount = document.getElementById('player-count') as HTMLSpanElement;
+	const	playerInput = document.getElementById("player-input") as HTMLInputElement;
+	const	addPlayerBtn = document.getElementById("add-player-btn") as HTMLButtonElement;
 	const	playersList = document.getElementById("players-list") as HTMLDivElement;
 	const	noPlayersMsg = document.getElementById("no-players") as HTMLDivElement;
 	const	beginGameBtn = document.getElementById("begin-game-btn") as HTMLButtonElement;
 
 	// Vérification que tous les éléments existent
-	if (!aliasInput || !addAliasBtn || !playersList || !noPlayersMsg || !beginGameBtn) {
+	if (!modeIndicator || !playerLimits || !playerCount || !playerInput || !addPlayerBtn || !playersList || !noPlayersMsg || !beginGameBtn) {
 		console.error("Some DOM elements have not been found");
+		console.log("Missing elements:", {
+			modeIndicator: !!modeIndicator,
+			playerLimits: !!playerLimits,
+			playerCount: !!playerCount,
+			playerInput: !!playerInput,
+			addPlayerBtn: !!addPlayerBtn,
+			playersList: !!playersList,
+			noPlayersMsg: !!noPlayersMsg,
+			beginGameBtn: !!beginGameBtn
+		});
 		return;
+	}
+
+	// Définir le sous-titre du mode
+	modeIndicator.textContent = gameMode.subtitle;
+	console.log("Mode indicator set to:", gameMode.subtitle);
+
+	function	updateUI() {
+		// Mettre à jour les textes informatifs
+		playerLimits.textContent = gameMode.type === '1vs1' ? 'Exactly 2 players required' 
+			: `${gameMode.minPlayers} to ${gameMode.maxPlayers} players required`;
+
+		// Mettre à jour le compteur
+		playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
+
+		// État des boutons
+		const	atMaxCapacity = players.length >= gameMode.maxPlayers; // variable booléenne
+		playerInput.disabled = atMaxCapacity;
+		addPlayerBtn.disabled = atMaxCapacity;
+		
+		if (atMaxCapacity) {
+			addPlayerBtn.textContent = gameMode.type === '1vs1' ? 'Players Complete' : 'Tournament Full';
+		} else {
+			addPlayerBtn.textContent = 'Add player';
+		}
 	}
 
 	// Fonction pour valider un alias
@@ -64,11 +135,16 @@ export async function	renderPlay() {
 		// Trim pour enlever les espaces au début et à la fin
 		const trimmedAlias = alias.trim();
 
-		if (!isValidAlias(trimmedAlias)) {
 		// Affichage d'une alerte en cas d'alias invalide
+		if (!isValidAlias(trimmedAlias)) {
 			alert("Alias invalid or already used !");
 			return;
 		}
+		// Affichage d'une alerte en cas de joueurs max atteint
+		if (players.length >= gameMode.maxPlayers) {
+            alert(`Maximum ${gameMode.maxPlayers} players allowed for ${gameMode.type}`);
+            return;
+        }
 		// Création du nouveau joueur
 		const newPlayer: Player = {
 			id: nextPlayerId++,
@@ -80,9 +156,10 @@ export async function	renderPlay() {
 		// Mise à jour de l'affichage
 		updatePlayersDisplay();
 		// Reset du champ input
-		aliasInput.value = "";
+		playerInput.value = "";
 		// Mise à jour du bouton BEGIN
 		updateBeginButton();
+		updateUI();
 		console.log("Added player:", newPlayer);
 	}
 
@@ -94,6 +171,7 @@ export async function	renderPlay() {
 		updatePlayersDisplay();
 		// Mise à jour du bouton BEGIN
 		updateBeginButton();
+		updateUI();
 		console.log("Deleted player, ID:", playerId);
 	}
 
@@ -132,10 +210,12 @@ export async function	renderPlay() {
 
 	// Fonction pour mettre à jour le bouton BEGIN
 	function	updateBeginButton() {
-		if (players.length >= 2) { // Au moins 2 joueurs : activer le bouton
+		const	hasMinimumPlayers = players.length >= gameMode.minPlayers;
+
+		if (hasMinimumPlayers) { // activer le bouton
 			beginGameBtn.disabled = false;
 			beginGameBtn.classList.remove("opacity-50", "cursor-not-allowed");
-		} else { // Moins de 2 joueurs : désactiver le bouton
+		} else { // désactiver le bouton
 			beginGameBtn.disabled = true;
 			beginGameBtn.classList.add("opacity-50", "cursor-not-allowed");
 		}
@@ -144,19 +224,24 @@ export async function	renderPlay() {
 	// EVENT LISTENERS
 
 	// Clic sur le bouton "Ajouter joueur"
-	addAliasBtn.addEventListener("click", () => {
-		addPlayer(aliasInput.value);
+	addPlayerBtn.addEventListener("click", (e) => {
+		e.preventDefault();
+		console.log("Add player button clicked");
+		addPlayer(playerInput.value);
 	});
 
 	// Appui sur Entrée dans le champ input
-	aliasInput.addEventListener("keypress", (e) => {
+	playerInput.addEventListener("keypress", (e) => {
 		if (e.key === "Enter")
-			addPlayer(aliasInput.value);
+			e.preventDefault();
+			console.log("Enter key pressed");
+			addPlayer(playerInput.value);
 	});
 
 	// Clic sur le bouton BEGIN
-	beginGameBtn.addEventListener("click", () => {
-		if (players.length >= 2) {
+	beginGameBtn.addEventListener("click", (e) => {
+		e.preventDefault();
+		if (players.length >= gameMode.minPlayers) {
 			// Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
 			sessionStorage.setItem("gamePlayers", JSON.stringify(players));
 			
@@ -164,7 +249,7 @@ export async function	renderPlay() {
 			history.pushState(null, "", "/pong");
 			
 			// Appel du router pour charger la nouvelle page
-			const routerEvent = new CustomEvent('routeChanged');
+			const	routerEvent = new CustomEvent('routeChanged');
 			window.dispatchEvent(routerEvent);
 			
 			console.log("Lanunching the game with players:", players);
@@ -175,60 +260,11 @@ export async function	renderPlay() {
 	(window as any).removePlayerHandler = removePlayer;
 
 	// Initialisation de l'affichage au tout début
+	updateUI();
 	updatePlayersDisplay();
 	updateBeginButton();
-		
+
 	// Focus automatique sur le champ input: met automatiquement le curseur dans le champ texte
-	aliasInput.focus();
+	playerInput.focus();
+	console.log("Players logic initialized successfully");
 }
-
-// export async function renderPlay() {
-// 	const app = document.getElementById('app');
-// 	if (!app) return;
-
-// 	const htmlRes = await fetch('/dist/html/play.html');
-// 	if (!htmlRes.ok) {
-// 		app.innerHTML = "<p>Cannot charge profile page.</p>";
-// 		return;
-// 	}
-// 	const html = await htmlRes.text();
-// 	app.innerHTML = html;
-
-// 	//when page is loaded :
-// 	document.addEventListener("DOMContentLoaded", () => {
-// 		const form = document.getElementById("tournament-form")!;
-// 		const playerInputs = document.getElementById("player-inputs")!;
-// 		const addButton = document.getElementById("add-player")!;
-
-// 		addButton.addEventListener("click", () => {
-// 			const input = document.createElement("input");
-// 			input.type = "text";
-// 			input.placeholder = "Enter player name";
-// 			input.className = "player-input border p-1 rounded w-full";
-// 			playerInputs.appendChild(input);
-// 		});
-
-// 		form.addEventListener("submit", async (e) => {
-// 			e.preventDefault();
-// 			const inputs = playerInputs.querySelectorAll<HTMLInputElement>(".player-input");
-// 			const names = Array.from(inputs).map(input => input.value.trim()).filter(name => name !== "");
-
-// 			if (names.length < 2) {
-// 				alert("Please enter at least two players.");
-// 				return;
-// 			}
-
-// 			const response = await fetch("/tournaments", {
-// 				method: "POST",
-// 				headers: { "Content-Type": "application/json" },
-// 				body: JSON.stringify({ players: names })
-// 			});
-
-// 			if (response.ok) {
-// 				alert("Tournament created!");
-// 			} else {
-// 				alert("Failed to create tournament");
-// 			}
-// 		});
-// 	});
-// }
