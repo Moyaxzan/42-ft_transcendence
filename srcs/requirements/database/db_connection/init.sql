@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
  twofa_secret TEXT DEFAULT NULL,
  ip_address TEXT DEFAULT NULL,
  is_log NUMERIC DEFAULT 0,
- points INTEGER DEFAULT 0
+ points INTEGER DEFAULT 0,
+ wins INTEGER DEFAULT 0,
+ losses INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS matches (
@@ -42,9 +44,7 @@ CREATE TABLE IF NOT EXISTS users_join_matches (
 CREATE TABLE IF NOT EXISTS tournaments (
  id INTEGER PRIMARY KEY,
  user_id INTEGER,
- match_id INTEGER,
- FOREIGN KEY (user_id) REFERENCES users(id),
- FOREIGN KEY (match_id) REFERENCES matches(id)
+ FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS users_join_tournaments (

@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updatePointsSchema from '../schemas/updatePointsSchema.js'
+import updateRecordsSchema from '../schemas/updateRecordsSchema.js'
 import updateNameSchema from '../schemas/updateNameSchema.js'
 import generateBracket from '../utils/bracket.js'
 
@@ -44,7 +44,7 @@ async function routes (fastify, options) {
 
 	fastify.get('/api/users/:email', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { email } = request.params;	
+		const { email } = request.params;
   		try {
 	    		const user = await new Promise((resolve, reject) => {
     				db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
@@ -99,21 +99,54 @@ async function routes (fastify, options) {
 	// 	}
 	// })
 
-	fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
+	fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
-		const { points } = request.body;
+		let { wins, losses } = request.body;
+		console.log(`🌲🌲🌲🌲🌲${request.body} avant`);
+		wins += 1;
+		console.log(`🌲🌲🌲🌲🌲${request.body} apres`);
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('UPDATE users SET points = ? WHERE id = ?', [points, id], function (err) {
+			db.run('UPDATE users SET wins = ? WHERE id = ?', [wins, id], function (err) {
 				if (err) return reject(err);
-				resolve(id, points);
+				if (this.changes === 0) {
+						return reject(new Error('User not found'));
+				}
+				resolve(id, wins);
 				});
 			});
-    			if (!rows) {
-    				return reply.status(404).send({ message: 'User not found' });
-    			}
-			reply.send({ message: 'Point updated successfully', points });
+    		if (!rows) {
+    			return reply.status(404).send({ message: 'User not found' });
+    		}
+			reply.send({ message: 'Wins updated successfully', wins });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+		}
+	});
+
+	fastify.patch('/api/users/losses/:id', { schema: updateRecordsSchema }, async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+		let { wins, losses } = request.body;
+		console.log(`🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​${request.body} avant`);
+		losses += 1;
+		console.log(`🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​${request.body} apres`);
+		try {
+			const rows = await new Promise((resolve, reject) => {
+			db.run('UPDATE users SET losses = ? WHERE id = ?', [losses, id], function (err) {
+				if (err) return reject(err);
+				if (this.changes === 0) {
+					return reject(new Error('User not found'));
+				}
+				resolve(id, losses);
+				});
+			});
+    		if (!rows) {
+    			return reply.status(404).send({ message: 'User not found' });
+    		}
+			reply.send({ message: 'Losses updated successfully', losses });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
@@ -161,9 +194,9 @@ async function routes (fastify, options) {
 					resolve(id, name);
 				});
 			});
-    			if (!rows) {
-    				return reply.status(404).send({ message: 'User not found' });
-    			}
+    		if (!rows) {
+    			return reply.status(404).send({ message: 'User not found' });
+    		}
 			reply.send({ message: 'Name updated successfully', name });
 		} catch (err) {
 			fastify.log.error(err);
