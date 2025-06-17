@@ -4,35 +4,35 @@ import schema from '../schemas/userBodyJsonSchema.js'
 
 async function authRoutes (fastify, options) {
 	fastify.post('/api/users/google-signin', async (request, reply) => {
-	const db = fastify.sqlite;
-	const { email, name, google_user, ip_address } = request.body;
+		const db = fastify.sqlite;
+		const { email, name, google_user, ip_address } = request.body;
 
-	try {
-		const insertQuery = `INSERT INTO users (email, name, google_user, ip_address) VALUES (?, ?, ?, ?)`;
-		await new Promise((resolve, reject) => {
-			db.run(insertQuery, [email, name, google_user, ip_address ? 1 : 0], function (err) {
-				if (err) return reject(err);
-				resolve();
+		try {
+			const insertQuery = `INSERT INTO users (email, name, google_user, ip_address) VALUES (?, ?, ?, ?)`;
+			await new Promise((resolve, reject) => {
+				db.run(insertQuery, [email, name, google_user, ip_address ? 1 : 0], function (err) {
+					if (err) return reject(err);
+					resolve();
+				});
 			});
-		});
-		const user = await new Promise((resolve, reject) => {
-			db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
-				if (err) return reject(err);
-				resolve(row);
+			const user = await new Promise((resolve, reject) => {
+				db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
+					if (err) return reject(err);
+					resolve(row);
+				});
 			});
-		});
 
-		if (!user) {
-			return reply.code(500).send({ error: 'User creation failed' });
+			if (!user) {
+				return reply.code(500).send({ error: 'User creation failed' });
+			}
+
+			return reply.send(user);
+
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.code(500).send({ error: 'Database error', details: err.message });
 		}
-
-		return reply.send(user);
-
-	} catch (err) {
-		fastify.log.error(err);
-		return reply.code(500).send({ error: 'Database error', details: err.message });
-	}
-});
+	});
 
 	fastify.post('/api/users/signin', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;

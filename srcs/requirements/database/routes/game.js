@@ -82,15 +82,15 @@ async function gameRoutes (fastify, options) {
 			const is_guest = true;
 			const userIds = [];
 
-			for (const name of players) {
+			for (const player of players) {
 				 await new Promise ((resolve, reject) => {
-					db.run(insertGuest, [name, is_guest], function (err) {
+					db.run(insertGuest, [player, is_guest], function (err) {
 						if (err) return reject(err);
-						resolve({name, is_guest});
+						resolve({player, is_guest});
 					});
 				})
 				const 	userId = await new Promise((resolve, reject) => {
-					db.get(getUserId, [name], (err, row) => {
+					db.get(getUserId, [player], (err, row) => {
 						if (err) return reject(err);
 						resolve(row.id);
 					});
