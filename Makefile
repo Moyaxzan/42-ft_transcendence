@@ -14,7 +14,7 @@ VAULT_CERT_DIR = ./srcs/requirements/hashicorp-vault/certs
 VAULT_CERT = $(VAULT_CERT_DIR)/vault.crt
 VAULT_KEY = $(VAULT_CERT_DIR)/vault.key
 
-all:
+all: vault-certs
 	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
@@ -26,17 +26,18 @@ all:
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
-	vault-certs
 	docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
 
 vault-certs: $(VAULT_CERT) $(VAULT_KEY)
 
 $(VAULT_CERT) $(VAULT_KEY):
-	openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+	@openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
 		-keyout $(VAULT_KEY) \
 		-out $(VAULT_CERT) \
 		-subj "/CN=loclhost" \
 		-addext "subjectAltName=DNS:localhost"
+	@chmod 640 $(VAULT_KEY)
+	@chown $(USER):$(USER) $(VAULT_KEY)
 
 clean:
 	@docker images
