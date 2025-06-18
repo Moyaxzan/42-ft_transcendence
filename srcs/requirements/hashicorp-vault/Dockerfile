@@ -1,4 +1,4 @@
-FROM vault:1.15
+FROM hashicorp/vault:latest
 
 COPY config/vault-config.hcl /vault/config/vault-config.hcl
 
