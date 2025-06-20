@@ -103,9 +103,7 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		console.log(`🌲🌲🌲🌲🌲${request.body} avant`);
 		wins += 1;
-		console.log(`🌲🌲🌲🌲🌲${request.body} apres`);
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET wins = ? WHERE id = ?', [wins, id], function (err) {
@@ -130,9 +128,7 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		console.log(`🍄🍄🍄🍄🍄${request.body} avant`);
 		losses += 1;
-		console.log(`🍄🍄🍄🍄🍄${request.body} apres`);
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET losses = ? WHERE id = ?', [losses, id], function (err) {

@@ -5,12 +5,12 @@ import schema from '../schemas/userBodyJsonSchema.js'
 async function authRoutes (fastify, options) {
 	fastify.post('/api/users/google-signin', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { email, name, google_user, ip_address } = request.body;
+		const { email, name, google_user } = request.body;
 
 		try {
-			const insertQuery = `INSERT INTO users (email, name, google_user, ip_address) VALUES (?, ?, ?, ?)`;
+			const insertQuery = `INSERT INTO users (email, name, google_user) VALUES (?, ?, ?)`;
 			await new Promise((resolve, reject) => {
-				db.run(insertQuery, [email, name, google_user, ip_address ? 1 : 0], function (err) {
+				db.run(insertQuery, [email, name, google_user], function (err) {
 					if (err) return reject(err);
 					resolve();
 				});
@@ -36,18 +36,16 @@ async function authRoutes (fastify, options) {
 
 	fastify.post('/api/users/signin', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
-		const { is_guest, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points } = request.body;
+		const { is_guest, name, email, id_token, password_hash, reset_token, reset_expiry } = request.body;
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			const query = `INSERT INTO users(is_guest, name, email, id_token, \
-					password_hash, reset_token, reset_expiry, \
-					ip_address, is_log, points)
-					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+					password_hash, reset_token, reset_expiry)
+					VALUES(?, ?, ?, ?, ?, ?, ?)`;
 			db.run(query, [is_guest, name, email, id_token, password_hash,
-					reset_token, reset_expiry, ip_address, is_log,
-				points], function (err) {
+					reset_token, reset_expiry], function (err) {
 					if (err) return reject(err);
-					resolve({is_guest, name, email, id_token, password_hash, reset_token, reset_expiry, ip_address, is_log, points});
+					resolve({is_guest, name, email, id_token, password_hash, reset_token, reset_expiry});
 				});
 			});
 			reply.send({ message: 'User inserted successfully', name });
