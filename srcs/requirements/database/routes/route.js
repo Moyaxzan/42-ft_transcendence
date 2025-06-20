@@ -16,7 +16,6 @@ async function routes (fastify, options) {
 	});
 */
 
-
 	fastify.log.info("☺️ ☺️ ☺️");
 	const userIds = [145, 12, 33, 78798789798, 55, 56];
 	fastify.log.info(generateBracket(userIds));
@@ -81,23 +80,6 @@ async function routes (fastify, options) {
     			return reply.status(500).send({ error: 'database GET error', details: err.message });
   		}
 	});
-
-	// fastify.get('/users/history/:id', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { id } = request.params;
-	// 	try {
-	// 		const user = await new Promise((resolve, reject) => {
-	// 		db.get('SELECT * FROM matches WHERE user_id = ?', [id], (err, row) => {
-	// 			if (err) return reject(err);
-	// 			resolve(row);
-	// 			});
-	// 		});
-	// 		return reply.send(user);
-	// 	} catch (err) {
-	// 		fastigy.log.error(err);
-	// 		return reply.status(500).send({ error: 'database GET error', details: err.message });
-	// 	}
-	// })
 
 	fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;

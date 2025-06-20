@@ -1,6 +1,5 @@
 import { renderHome } from './home.js';
 export async function renderProfile() {
-    var _a;
     const app = document.getElementById('app');
     if (!app)
         return;
@@ -29,15 +28,44 @@ export async function renderProfile() {
         if (!res.ok) {
             throw new Error("User not logged or unauthorized.");
         }
-        const user = await res.json();
-        profileArea.innerHTML = `
-			<h2>Welcome, ${user.name} 👋</h2>
-			<ul>
-				<li><strong>Email:</strong> ${(_a = user.email) !== null && _a !== void 0 ? _a : 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
-			</ul>
-		`;
+        /*
+                const user: User = await res.json();
+        
+                profileArea.innerHTML = `
+                    <h2>Welcome, ${user.name} 👋</h2>
+                    <ul>
+                        <li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
+                        <li><strong>IP:</strong> ${user.wins}</li>
+                        <li><strong>Points:</strong> ${user.losses}</li>
+                    </ul>
+                `;
+        */
+        const userLoadBtn = document.querySelector("#userLoad");
+        const userList = document.querySelector("#userList");
+        if (!userLoadBtn || !userList) {
+            console.error("#userLoad or #userList not found.");
+            return;
+        }
+        userLoadBtn.addEventListener('click', async () => {
+            console.log("btn clique");
+            const res = await fetch('/api/users');
+            if (!res.ok)
+                throw new Error('Fail to load');
+            const users = await res.json();
+            userList.innerHTML = '';
+            if (users.length > 0) {
+                const list = document.createElement("ul");
+                users.forEach((user) => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = Object.entries(user).map(([key, value]) => `${key}: ${value}`).join(', ');
+                    list.appendChild(listItem);
+                });
+                userList.appendChild(list);
+            }
+            else {
+                userList.innerHTML = '<p>No users found</p>';
+            }
+        });
         authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out
