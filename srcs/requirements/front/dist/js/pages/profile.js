@@ -28,44 +28,14 @@ export async function renderProfile() {
         if (!res.ok) {
             throw new Error("User not logged or unauthorized.");
         }
-        /*
-                const user: User = await res.json();
-        
-                profileArea.innerHTML = `
-                    <h2>Welcome, ${user.name} 👋</h2>
-                    <ul>
-                        <li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-                        <li><strong>IP:</strong> ${user.wins}</li>
-                        <li><strong>Points:</strong> ${user.losses}</li>
-                    </ul>
-                `;
-        */
-        const userLoadBtn = document.querySelector("#userLoad");
-        const userList = document.querySelector("#userList");
-        if (!userLoadBtn || !userList) {
-            console.error("#userLoad or #userList not found.");
-            return;
-        }
-        userLoadBtn.addEventListener('click', async () => {
-            console.log("btn clique");
-            const res = await fetch('/api/users');
-            if (!res.ok)
-                throw new Error('Fail to load');
-            const users = await res.json();
-            userList.innerHTML = '';
-            if (users.length > 0) {
-                const list = document.createElement("ul");
-                users.forEach((user) => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = Object.entries(user).map(([key, value]) => `${key}: ${value}`).join(', ');
-                    list.appendChild(listItem);
-                });
-                userList.appendChild(list);
-            }
-            else {
-                userList.innerHTML = '<p>No users found</p>';
-            }
-        });
+        const user = await res.json();
+        profileArea.innerHTML = `
+			<h2>Welcome, ${user.name} 👋</h2>
+			<ul>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
+			</ul>
+		`;
         authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out

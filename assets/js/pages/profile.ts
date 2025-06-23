@@ -2,16 +2,9 @@ import { renderHome } from './home.js'
 
 interface User {
 	id: string;
-	is_guest: string | null;
 	name: string;
-	email: string | null;
-	id_token: string | null;
-	password_hash: string | null;
-	reset_token: string | null;
-	reset_expiry: string | null;
-	ip_address: string;
-	is_log: string;
-	points: string;
+	wins: string;
+	losses: string;
 }
 
 interface Match {
@@ -59,44 +52,16 @@ export async function renderProfile() {
 		if (!res.ok) {
 			throw new Error("User not logged or unauthorized.");
 		}
-/*
 		const user: User = await res.json();
 
 		profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-				<li><strong>IP:</strong> ${user.wins}</li>
-				<li><strong>Points:</strong> ${user.losses}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
-*/
-const userLoadBtn = document.querySelector("#userLoad");
- 	const userList = document.querySelector("#userList"); 
-if (!userLoadBtn || !userList) {
- 		console.error("#userLoad or #userList not found.");
- 		return;
- 	}
-	userLoadBtn.addEventListener('click', async () => {
- 		console.log("btn clique");
- 		const res = await fetch('/api/users');
- 		if (!res.ok) throw new Error('Fail to load');
- 		const users: User[] = await res.json();
- 		userList.innerHTML = '';
- 		if (users.length > 0) {
- 			const list = document.createElement("ul");
- 			users.forEach((user) => {
- 				const listItem = document.createElement("li");
- 				listItem.textContent = Object.entries(user).map(([key, value]) =>
- 					`${key}: ${value}`).join(', ');
- 					list.appendChild(listItem);
- 			});
- 			userList.appendChild(list);
- 		} else {
- 			userList.innerHTML = '<p>No users found</p>';
- 		}
- 	});
-			authActionContainer.innerHTML = `
+		authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out
 			</button>
