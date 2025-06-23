@@ -1,0 +1,109 @@
+<!-- players.html -->
+<div class="flex flex-col h-full w-full overflow-hidden relative">
+
+	<!-- Header avec Titre/navigation -->
+	<header class="relative z-50 flex justify-between items-start px-12 py-6">
+
+		<!-- Bouton back -->
+		<div class="absolute top-6 left-12 z-50">
+			<a href="/game-mode" data-link
+				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
+				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
+				← Back
+			</a>
+		</div>
+
+		<!--Titre de la page-->
+		<div class="relative z-10 pt-10 pl-36">
+			<h1 class="text-6xl font-bold text-[#FFB942] mb-4" style="font-family: 'Inter', sans-serif;">
+				Who's playing ?
+			</h1>
+			<!-- Indicateur de mode -->
+			<p id="mode-indicator" class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;"></p>
+		</div>
+
+		<div class="flex-1"></div>
+		
+		<!-- Bouton login -->
+		<div class="absolute top-6 right-32 z-50">
+			<a	href="/login" data-link
+				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
+				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
+				Login
+			</a>
+		</div>
+	</header>
+
+	<!-- Contenu principal -->
+	<main class="flex flex-1 overflow-hidden relative">
+
+		<!-- Section gauche - Image -->
+		<section class="flex-1 h-full flex flex-col items-center justify-center p-8">
+
+			<!-- Image de fond des personnages -->
+			<!-- <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80" 
+				style="background-image: url('./assets/pong-characters.png');">
+			</div>
+		  
+			Contenu optionnel par dessus l'image 
+			<div class="relative z-10"> 
+			Vous pouvez ajouter du contenu ici si nécessaire 
+			</div> -->
+			
+			<!-- Section de saisie (gauche) -->
+			<div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+				<h2 class="text-3xl font-bold londrina-solid-regular text-gray-700 mb-8 text-center">
+					New player
+				</h2>
+
+				<!-- Formulaire de saisie -->
+				<div class="w-full">
+					<input type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
+					class="w-full p-4 text-xl border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200 londrina-solid-regular">
+
+					<!-- Info sur les limites de joueurs -->
+					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
+
+					<!-- Bouton add player -->
+					<button id="add-player-btn"
+						class="w-full mt-4 p-4 bg-[#218DBE] text-white text-xl font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 londrina-solid-regular disabled:opacity-50 disabled:cursor-not-allowed">
+						Add player
+					</button>
+				</div>
+			</div>
+		</section>
+
+		<!-- Section droite -->
+		<section class="flex-1 h-full flex flex-col items-center justify-center p-8">
+			<!-- Section d'affichage (droite) -->
+			<div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+				<h2 class="text-3xl font-bold londrina-solid-regular text-gray-700 mb-8 text-center">
+					Registered players
+				</h2>
+		
+				<!-- Liste des joueurs -->
+				<div id="players-list" class="space-y-4 max-h-64 overflow-y-auto">
+				<!-- Les joueurs apparaîtront ici dynamiquement -->
+				</div>
+
+				<!-- Message si aucun joueur -->
+				<div id="no-players" class="text-center text-gray-500 text-xl londrina-solid-regular">
+					No player registered
+				</div>
+
+				<!-- Compteur de joueurs -->
+				<span id="player-count" class="text-lg font-medium text-[#145c72] bg-gray-100 px-3 py-1 rounded-full">
+					0/2
+				</span>
+			</div>
+		</section>
+	
+		<!-- Bouton Begin -->
+		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+			<button id="begin-game-btn" disabled
+					class="px-12 py-4 bg-[#F27D01] text-white text-4xl font-bold rounded-lg londrina-solid-regular transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+				BEGIN
+			</button>
+		</div>
+	</main>
+</div>
