@@ -16,7 +16,7 @@ function generateBracket(userIds) {
 	const totalPlayers = userIds.length;
 
 	// Round 0 : on crée autant de matchs que nécessaire pour placer 1 joueur par match
-	const matchCount = Math.ceil(totalPlayers / 2);
+	const matchCount = getUpperPowOfTwo(totalPlayers / 2);
 	const round0 = [];
 
 	// Étape 1 : on remplit les `user_id` d'abord (1 joueur par match)
@@ -24,8 +24,8 @@ function generateBracket(userIds) {
 		round0.push({
 			match_round: 0,
 			match_index: i,
-			user_id: userIds[i] || null,
-			opponent_id: null,
+			user_id: userIds[i],
+			opponent_id: -1,
 		});
 	}
 
@@ -49,8 +49,8 @@ function generateBracket(userIds) {
 			nextRound.push({
 				match_round: roundNumber,
 				match_index: i,
-				user_id: null,
-				opponent_id: null,
+				user_id: -1,
+				opponent_id: -1,
 			});
 		}
 
