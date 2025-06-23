@@ -3,7 +3,7 @@ async function elasticsearchRoutes (fastify, options) {
 		return { hello: 'world' }
 	})
 
-	fastify.get('/users/name', async (request, reply) => {
+	fastify.get('/api/users/name', async (request, reply) => {
 		const {name} = request.query;
 		const res = await fetch('http://elasticsearch:9200/users/_search', {
 			method: 'POST',	
@@ -22,7 +22,7 @@ async function elasticsearchRoutes (fastify, options) {
 
 	fastify.get('/sync', async (request, reply) => {
 		try {
-			const response = await fetch('http://database:3000/users');
+			const response = await fetch('http://database:3000/api/users');
 			const users = await response.json();
 			for (const user of users) {
 				await fetch(`http://elasticsearch:9200/users/user/${user.id}`, {

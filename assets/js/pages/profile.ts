@@ -2,7 +2,7 @@ import { renderHome } from './home.js'
 
 interface User {
 	id: string;
-	is_ia: string | null;
+	is_guest: string | null;
 	name: string;
 	email: string | null;
 	id_token: string | null;
@@ -115,7 +115,7 @@ export async function renderUser() {
 
  	userLoadBtn.addEventListener('click', async () => {
  		console.log("btn clique");
- 		const res = await fetch('/users');
+ 		const res = await fetch('/api/users');
  		if (!res.ok) throw new Error('Fail to load');
  		const users: User[] = await res.json();
  		userList.innerHTML = '';
@@ -155,7 +155,7 @@ export async function renderMatch() {
 
  	userLoadBtn.addEventListener('click', async () => {
  		console.log("btn clique");
- 		const res = await fetch(`/matches/${match_round}/${match_index}`);
+ 		const res = await fetch(`/api/matches/${match_round}/${match_index}`);
  		if (!res.ok) throw new Error('Fail to load');
  		const matches: Match[] = await res.json();
  		userList.innerHTML = '';

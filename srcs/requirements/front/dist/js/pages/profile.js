@@ -77,7 +77,7 @@ export async function renderUser() {
     }
     userLoadBtn.addEventListener('click', async () => {
         console.log("btn clique");
-        const res = await fetch('/users');
+        const res = await fetch('/api/users');
         if (!res.ok)
             throw new Error('Fail to load');
         const users = await res.json();
@@ -113,7 +113,7 @@ export async function renderMatch() {
     }
     userLoadBtn.addEventListener('click', async () => {
         console.log("btn clique");
-        const res = await fetch(`/matches/${match_round}/${match_index}`);
+        const res = await fetch(`/api/matches/${match_round}/${match_index}`);
         if (!res.ok)
             throw new Error('Fail to load');
         const matches = await res.json();

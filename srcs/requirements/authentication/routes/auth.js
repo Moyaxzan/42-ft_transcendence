@@ -9,7 +9,7 @@ async function authRoutes (fastify, options) {
 	fastify.post('/auth', async (request, reply) => {
 		const { email, password } = request.body;
 
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
+		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
 		});
@@ -77,13 +77,13 @@ async function authRoutes (fastify, options) {
 		const email = payload.email;
 		const name = payload.name;
 
-		let res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`);
+		let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
 		let user;
 
 		if (res.ok) {
 			user = await res.json();
 		} else {
-			res = await fetch(`http://database:3000/users/google-signin`, {
+			res = await fetch(`http://database:3000/api/users/google-signin`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email, name, google_user: true, ip_address: request.ip || '0.0.0.0' })
@@ -124,7 +124,7 @@ async function authRoutes (fastify, options) {
 		if (!email || !password)
 			return reply.code(400).send({ error: 'Email and password required' });
 
-		const res = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`, {
+		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' },
 		});
@@ -137,7 +137,7 @@ async function authRoutes (fastify, options) {
 		const secret = speakeasy.generateSecret({ name: `ft_transcendance (${user.email})` });
 		console.log("ERROR : Generated otpauth URL:", secret.otpauth_url);
 
-		const patchRes = await fetch(`http://database:3000/users/${user.id}/2fa-secret`, {
+		const patchRes = await fetch(`http://database:3000/api/users/${user.id}/2fa-secret`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ secret: secret.base32 }),
@@ -164,7 +164,7 @@ async function authRoutes (fastify, options) {
 	fastify.post('/auth/2fa/verify', async (request, reply) => {
 		const { token, email, password } = request.body;
 
-		const resUser = await fetch(`http://database:3000/users/${encodeURIComponent(email)}`);
+		const resUser = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
 		if (!resUser.ok)
 			return reply.code(401).send({ error: 'User not found' });
 
