@@ -122,12 +122,13 @@ export async function renderPong() {
 	let ballVectx = 0;
 	let ballVecty = 0;
 	let lastbounce = startRound;
-	let ballSpeed = 0.6;
+	let lastWallTouch = startRound;
+	let ballSpeed = 0.666;
 
 	function resetBall() {
 	  ballPosx = Array(10).fill(50);
 	  ballPosy = Array(10).fill(50);
-	  ballSpeed = 0.6;
+	  ballSpeed = 0.666;
 
 	  ballVectx = 0;
 	  ballVecty = 0;
@@ -179,7 +180,7 @@ export async function renderPong() {
 		}
 
 		//wall collisions
-		if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
+		if ((ballPosy[0] <= 2 || ballPosy[0] >= 98) && Date.now() - lastWallTouch > 100) {
 			ballVecty = -ballVecty;
 		}
 
@@ -190,7 +191,7 @@ export async function renderPong() {
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.02;
+				ballSpeed = ballSpeed + 0.03;
 				console.log("ball speed: ", ballSpeed);
 			}
 		} else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
@@ -199,7 +200,7 @@ export async function renderPong() {
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.02;
+				ballSpeed = ballSpeed + 0.03;
 				console.log("ball speed: ", ballSpeed);
 			}
 		}
