@@ -20,12 +20,10 @@ services:
     networks:
       - transcendence
     healthcheck:
-      test: >
-        curl -fs http://localhost:9200/_cluster/health |
-        grep -E '"status":"(green|yellow)"'
+      test: ["CMD-SHELL", "curl -fsu elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health | grep -E '\"status\":\"(green|yellow)\"'"]
       interval: 10s
       retries: 10
-      start_period: 20s
+      start_period: 60s
     restart: unless-stopped
 
   kibana:
