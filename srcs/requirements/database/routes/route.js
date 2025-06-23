@@ -186,6 +186,26 @@ async function routes (fastify, options) {
 			return reply.status(500).send({ error: 'database DELETE error', details: err.message });
 		}
 	});
+
+	fastify.post('/api/users', async (request, reply) => {
+		const { name, is_guest } = request.body;
+
+		if (typeof name !== 'string' || !name.trim()) {
+			return reply.code(400).send({ error: 'Invalid name' });
+		}
+
+		try {
+			const result = await fastify.db.run(
+				`INSERT INTO users (name, is_guest) VALUES (?, ?)`,
+				[name.trim(), is_guest ? 1 : 0]
+			);
+			const userId = result.lastID;
+			return { userId };
+		} catch (err) {
+			console.error('User creation error:', err);
+			return reply.code(500).send({ error: 'User creation failed' });
+		}
+	});
 }
 
 export default routes

@@ -2,6 +2,7 @@ import { animateLinesToFinalState } from './navbar.js';
 
 let animationId: number = 0;
 
+
 async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentId: number) {
 	try {
 
@@ -29,6 +30,11 @@ async function sendMatchResult(userId: number, score: number, opponentScore: num
 	} catch (err) {
 		console.error('Erreur réseau ou serveur :', err);
 	}
+}
+
+export function stopGame() {
+	cancelAnimationFrame(animationId);
+	animationId = 0;
 }
 
 export async function renderPong() {
@@ -231,48 +237,83 @@ export async function renderPong() {
 	
 	let gameStarted = false;
 
-	function framePong() {
-		movePaddles();
-		if (ballPosx[0] > 130) {
-			gameStarted = false;
-			player1Score++;
-			console.log("player 1 scored !");
-			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
-			resetBall();
-		} else if (ballPosx[0] < -30) {
-			gameStarted = false;
-			player2Score++;
-			console.log("player 2 scored !");
-			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
-			resetBall();
-		} else if (player1Score == 1 || player2Score == 1) {
-			stopGame();
-			gameStarted = false;
-			console.log("game done !");
+	async function playMatch(player1: any, player2: any): Promise<{ winnerId: number, loserId: number, score: [number, number] }> {
+		player1Score = 0;
+		player2Score = 0;
+		scoreDiv.innerText = "0 - 0";
+		resetBall();
 
-			const playerScore = player1Score;
-			const opponentScore = player2Score;
-			const opponentId = 0;
+		return new Promise(resolve => {
+			function frame() {
+				movePaddles();
+				if (ballPosx[0] > 130) {
+					player1Score++;
+					resetBall();
+				} else if (ballPosx[0] < -30) {
+					player2Score++;
+					resetBall();
+				} else if (player1Score === 3 || player2Score === 3) {
+					stopGame();
+					const winnerId = player1Score > player2Score ? player1.id : player2.id;
+					const loserId = player1Score > player2Score ? player2.id : player1.id;
+					sendMatchResult(winnerId, Math.max(player1Score, player2Score), Math.min(player1Score, player2Score), loserId);
+					resolve({ winnerId, loserId, score: [player1Score, player2Score] });
+					return;
+				} else if (gameStarted || keysPressed[" "] || Date.now() - startRound > 3000) {
+					gameStarted = true;
+					moveBall();
+				}
+				animationId = requestAnimationFrame(frame);
+			}
+			animationId = requestAnimationFrame(frame);
+		});
+	}
 
-			sendMatchResult(0, playerScore, opponentScore, opponentId);
-			return ;
-		} else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
-			gameStarted = true;
-			moveBall();
+
+
+	const tournamentId = window.location.hash.slice(1);
+	console.log("bonjour je suis dans renderPong");
+	if (!tournamentId) {
+		console.error("No tournament ID provided in URL");
+		return;
+	}
+
+	const tournamentResponse = await fetch(`/api/tournaments/${tournamentId}`);
+	if (!tournamentResponse.ok) {
+		console.error("Failed to load tournament");
+		return;
+	}
+
+	const tournamentData = await tournamentResponse.json();
+
+	// Si tournoi, charger les matchs
+	if (tournamentId) {
+		const res = await fetch(`/api/tournaments/${tournamentId}`);
+		if (!res.ok) {
+			console.error("Erreur tournoi");
+			return;
 		}
-		animationId = requestAnimationFrame(framePong)
+		const tournamentData = await res.json();
+		const winners = new Map<number, boolean>();
+
+		for (const match of tournamentData.matches) {
+			const { player1, player2 } = match;
+			if (!player1 || !player2) continue;
+			if (winners.has(player1.id) === false || winners.has(player2.id) === false) continue;
+
+			console.log(`Match entre ${player1.name} et ${player2.name}`);
+			const result = await playMatch(player1, player2);
+
+			winners.set(result.winnerId, true);
+			winners.set(result.loserId, false);
+
+			await new Promise(r => setTimeout(r, 1000));
+		}
+
+		const finalWinnerId = [...winners.entries()].find(([_, win]) => win)?.[0];
+		const finalWinner = tournamentData.matches.flatMap((m: any) => [m.player1, m.player2]).find((p: any) => p.id === finalWinnerId);
+		if (finalWinner)
+			alert(`🏆 Le gagnant du tournoi est : ${finalWinner.name} !`);
 	}
 
-	//get time of start
-	if (!animationId) {
-		console.log("game should start");
-		animationId = requestAnimationFrame(framePong)
-	}
-
-
-}
-
-export function stopGame() {
-	cancelAnimationFrame(animationId);
-	animationId = 0;
 }

@@ -11,9 +11,9 @@ const routes: Record<string, () => void> = {
   '/': renderHome,
   '/game-mode': renderGameMode,
   '/players': renderPlayers,
-
   '/profile': renderProfile,
   '/pong': renderPong,
+  '/pong/': renderPong,
   '/login': renderLogin,
   '/users': renderUser,
   '/matches': renderMatch,
@@ -41,7 +41,7 @@ export function enableLinkInterception() {
       const href = target.getAttribute('href')!;
       console.log("Intercepted navigation to:", href);
       history.pushState(null, '', href);
-      router();
+      // router();
     }
   });
 }
