@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updatePointsSchema from '../schemas/updatePointsSchema.js'
+import updateRecordsSchema from '../schemas/updateRecordsSchema.js'
 import updateNameSchema from '../schemas/updateNameSchema.js'
 //import generateBracket from '../utils/bracket.js'
 
@@ -71,26 +71,26 @@ async function gameRoutes (fastify, options) {
 		const { players, tournamentId } = request.body;
 		console.log("📦 Contenu complet du body :", request.body);
 		if (!Array.isArray(players) || players.length < 2) {
-			return reply.status(400).send({ error: "COUCOU" });
+			return reply.status(400).send({ error: "At least two player names are required." });
 		}
 
 		try {
 			const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
 			const getUserId = `SELECT id FROM users WHERE name = ?`;
-			const insertTourn = `INSERT INTO tournaments (user_id, match_id) VALUES (?, ?)`;
+			const insertTourn = `INSERT INTO tournaments (user_id) VALUES (?)`;
 			const joinTourntoUser = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`; 
 			const is_guest = true;
 			const userIds = [];
 
-			for (const name of players) {
+			for (const player of players) {
 				 await new Promise ((resolve, reject) => {
-					db.run(insertGuest, [name, is_guest], function (err) {
+					db.run(insertGuest, [player, is_guest], function (err) {
 						if (err) return reject(err);
-						resolve({name, is_guest});
+						resolve({player, is_guest});
 					});
 				})
-				const 	userId = await new Promise((resolve, reject) => {
-					db.get(getUserId, [name], (err, row) => {
+				const userId = await new Promise((resolve, reject) => {
+					db.get(getUserId, [player], (err, row) => {
 						if (err) return reject(err);
 						resolve(row.id);
 					});
@@ -99,7 +99,7 @@ async function gameRoutes (fastify, options) {
 			}
 			const ownerId = userIds[0];
 			const tournamentId = await new Promise ((resolve, reject) => {
-				db.run(insertTourn, [ownerId, null], function (err) {
+				db.run(insertTourn, [ownerId], function (err) {
 					if (err) return reject(err);
 					resolve(this.lastID);
 				});
@@ -113,6 +113,7 @@ async function gameRoutes (fastify, options) {
 				});
 			}
 			reply.send({message: 'Guests successfully added', players, tournamentId});
+			console.log("☺️☺️ Les players :", players);
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({error: 'database POST error', details: err.message});

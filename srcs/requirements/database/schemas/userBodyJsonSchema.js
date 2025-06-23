@@ -17,6 +17,8 @@ const userBodyJsonSchema = {
 		},
                 is_log: { type: 'integer' },
                 points: { type: 'integer' },
+                wins: { type: 'integer' },
+                losses: { type: 'integer' },
         },
         additionalProperties: false,
 };

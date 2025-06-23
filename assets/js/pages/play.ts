@@ -23,7 +23,7 @@ export async function renderPlay() {
 	});
 		
 	form.addEventListener("submit", async (e) => {
-		console.log("je passe ici");
+	//	console.log("je passe ici");
 		e.preventDefault();
 		const inputs = playerInputs.querySelectorAll<HTMLInputElement>(".player-input");
 		const names = Array.from(inputs).map(input => input.value.trim()).filter(name => name !== "");

@@ -1,9 +1,10 @@
-const updatePointsSchema = {
+const updateRecordsSchema = {
  	body: {
  		type: 'object',
- 		required: ['points'],
+ 		required: ['wins', 'losses'],
  		properties: {
- 			points: { type: 'integer' },
+ 			wins: { type: 'integer' },
+			losses: { type: 'integer' },
  		},
  		additionalProperties: false
  	},
@@ -17,4 +18,4 @@ const updatePointsSchema = {
  	}
  };
 
-export default updatePointsSchema
+export default updateRecordsSchema
