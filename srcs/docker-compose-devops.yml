@@ -1,6 +1,6 @@
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch@sha256:577b382dda5d05385aea8c7b60dad97e02ff41ca0da54f723151c2aed9ac8f54
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.21
     platform: linux/amd64
     container_name: elasticsearch
     env_file:
@@ -10,11 +10,19 @@ services:
       - cluster.name=docker-elasticsearch
       - discovery.type=single-node
       - network.host=0.0.0.0
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m -Dlog4j2.disable.jmx=true -Djdk.disabled.cgroupv2=true
+      - xpack.security.enabled=true
+      - cluster.routing.allocation.disk.watermark.low=85%
+      - cluster.routing.allocation.disk.watermark.high=90%
+      - cluster.routing.allocation.disk.watermark.flood_stage=95%
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     networks:
       - transcendence
     healthcheck:
-      test: curl --fail http://localhost:9200 || exit 1
+      test: >
+        curl -fs http://localhost:9200/_cluster/health |
+        grep -E '"status":"(green|yellow)"'
       interval: 10s
       retries: 10
       start_period: 20s
@@ -40,7 +48,7 @@ services:
     env_file:
       - .env
     environment:
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m #-Dlog4j2.disable.jmx=true -Djdk.disabled.cgroupv2=true
     depends_on:
       elasticsearch:
         condition: service_healthy
