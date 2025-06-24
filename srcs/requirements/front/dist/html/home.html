@@ -21,20 +21,19 @@
 
 		<!-- Section gauche - Image -->
 		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
-
-			<!-- Image de fond des personnages -->
-			<!-- <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80" 
-				style="background-image: url('./assets/pong-characters.png');">
-			</div> -->
-		  
-			<!-- Contenu optionnel par dessus l'image -->
-			<!-- <div class="relative z-10"> -->
-			<!-- Vous pouvez ajouter du contenu ici si nécessaire -->
-			<!-- </div> -->
+			<img src="../../characters.png" alt="Pong characters"
+				 class="absolute bottom-0 left-0 w-[90%] h-auto object-contain z-0">
+			<!-- <video	id="intro-video"
+					class="absolute inset-0 w-full h-full object-cover z-0"
+					autoplay
+					muted
+					playsinline>
+				<source src="../../home_intro.mp4" type="video/mp4">
+			</video> -->
 		</section>
 	
 		<!-- Section droite - Boutons de jeu -->
-		<section class="flex-[5] h-full flex flex-col justify-start items-end pt-8 pr-12">
+		<section class="flex-[5] h-full flex flex-col justify-start items-start pt-8">
 			<div class="w-full max-w-sm space-y-6">
 				<!-- Bouton Play -->
 				<a	href="/game-mode" data-link

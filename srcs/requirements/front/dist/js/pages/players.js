@@ -2,7 +2,14 @@ import { animateLinesToFinalState } from './navbar.js';
 // Variable globale pour stocker les joueurs
 let players = [];
 let nextPlayerId = 1;
+// Variable pour nettoyer les event listeners
+let currentEventListeners = [];
 export async function renderPlayers() {
+    // NETTOYAGE : Réinitialiser complètement à chaque rendu
+    cleanupEventListeners();
+    // Réinitialiser les joueurs
+    players = [];
+    nextPlayerId = 1;
     // Récupération de l'élément app principal
     const app = document.getElementById('app');
     if (!app)
@@ -35,14 +42,16 @@ export async function renderPlayers() {
             { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
             { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
         ]);
-        // Réinitialiser les joueurs
-        players = [];
-        nextPlayerId = 1;
         // Initialisation de la logique selon le mode de jeu
         initialisePlayersLogic(currentMode);
     }, 10);
 }
+function cleanupEventListeners() {
+    currentEventListeners.forEach(cleanup => cleanup());
+    currentEventListeners = [];
+}
 function initialisePlayersLogic(gameMode) {
+    console.log("Initialising players logic for mode:", gameMode.type);
     // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
     const modeIndicator = document.getElementById('mode-indicator');
     const playerLimits = document.getElementById('player-limits');
@@ -91,6 +100,8 @@ function initialisePlayersLogic(gameMode) {
     function isValidAlias(alias) {
         // Vérifier que l'alias n'est pas vide
         if (alias.length === 0)
+            return (false);
+        if (alias.toLowerCase() === "admin")
             return (false);
         // Vérifier que l'alias n'existe pas déjà
         if (players.some(player => player.alias.toLowerCase() === alias.toLowerCase())) // some() = verifie si un joueur a déjà cet alias, equivalent à find()
@@ -150,17 +161,17 @@ function initialisePlayersLogic(gameMode) {
             // Créer un élément pour chaque joueur
             players.forEach((player, index) => {
                 const playerElement = document.createElement("div");
-                playerElement.className = "flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200";
+                playerElement.className = "flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200";
                 playerElement.innerHTML = `
-					<div class="flex items-center space-x-4">
-						<span class="text-2xl font-bold text-[#218DBE] londrina-solid-regular">
+					<div class="flex items-center space-x-2">
+						<span class="text-sm font-bold text-[#218DBE]">
 							${index + 1}.
 						</span>
-						<span class="text-xl font-bold londrina-solid-regular text-gray-800">
+						<span class="text-sm font-bold text-gray-800">
 							${player.alias}
 						</span>
 					</div>
-					<button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 font-bold"
+					<button class="w-6 h-6 flex items-center justify-center bg-red-500 text-white texte-xs rounded hover:bg-red-600 transition-colors duration-200 font-bold"
 						onclick="window.removePlayerHandler(${player.id})">
 						✕
 					</button>`;
@@ -180,22 +191,27 @@ function initialisePlayersLogic(gameMode) {
             beginGameBtn.classList.add("opacity-50", "cursor-not-allowed");
         }
     }
-    // EVENT LISTENERS
+    // EVENT LISTENERS avec nettoyage
     // Clic sur le bouton "Ajouter joueur"
-    addPlayerBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+    const addPlayerHandler = (e) => {
         console.log("Add player button clicked");
+        e.preventDefault();
         addPlayer(playerInput.value);
-    });
+    };
+    addPlayerBtn.addEventListener("click", addPlayerHandler);
+    currentEventListeners.push(() => addPlayerBtn.removeEventListener("click", addPlayerHandler));
     // Appui sur Entrée dans le champ input
-    playerInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter")
+    const keyPressHandler = (e) => {
+        if (e.key === "Enter") {
+            console.log("Enter key pressed");
             e.preventDefault();
-        console.log("Enter key pressed");
-        addPlayer(playerInput.value);
-    });
+            addPlayer(playerInput.value);
+        }
+    };
+    playerInput.addEventListener("keypress", keyPressHandler);
+    currentEventListeners.push(() => playerInput.removeEventListener("keypress", keyPressHandler));
     // Clic sur le bouton BEGIN
-    beginGameBtn.addEventListener("click", (e) => {
+    const beginGameHandler = (e) => {
         e.preventDefault();
         if (players.length >= gameMode.minPlayers) {
             // Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
@@ -207,7 +223,9 @@ function initialisePlayersLogic(gameMode) {
             window.dispatchEvent(routerEvent);
             console.log("Lanunching the game with players:", players);
         }
-    });
+    };
+    beginGameBtn.addEventListener("click", beginGameHandler);
+    currentEventListeners.push(() => beginGameBtn.removeEventListener("click", beginGameHandler));
     // Exposer la fonction de suppression au scope global pour les boutons HTML
     window.removePlayerHandler = removePlayer;
     // Initialisation de l'affichage au tout début

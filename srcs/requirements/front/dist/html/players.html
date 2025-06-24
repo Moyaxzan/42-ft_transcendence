@@ -38,46 +38,16 @@
 	<main class="flex flex-1 overflow-hidden relative">
 
 		<!-- Section gauche - Image -->
-		<section class="flex-1 h-full flex flex-col items-center justify-center p-8">
-
-			<!-- Image de fond des personnages -->
-			<!-- <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80" 
-				style="background-image: url('./assets/pong-characters.png');">
-			</div>
-		  
-			Contenu optionnel par dessus l'image 
-			<div class="relative z-10"> 
-			Vous pouvez ajouter du contenu ici si nécessaire 
-			</div> -->
-			
-			<!-- Section de saisie (gauche) -->
-			<div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-				<h2 class="text-3xl font-bold londrina-solid-regular text-gray-700 mb-8 text-center">
-					New player
-				</h2>
-
-				<!-- Formulaire de saisie -->
-				<div class="w-full">
-					<input type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
-					class="w-full p-4 text-xl border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200 londrina-solid-regular">
-
-					<!-- Info sur les limites de joueurs -->
-					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
-
-					<!-- Bouton add player -->
-					<button id="add-player-btn"
-						class="w-full mt-4 p-4 bg-[#218DBE] text-white text-xl font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 londrina-solid-regular disabled:opacity-50 disabled:cursor-not-allowed">
-						Add player
-					</button>
-				</div>
-			</div>
+		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
+			<img src="../../characters.png" alt="Pong characters"
+				 class="absolute bottom-0 left-0 w-[90%] h-auto object-contain z-0">
 		</section>
 
-		<!-- Section droite -->
-		<section class="flex-1 h-full flex flex-col items-center justify-center p-8">
-			<!-- Section d'affichage (droite) -->
-			<div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-				<h2 class="text-3xl font-bold londrina-solid-regular text-gray-700 mb-8 text-center">
+		<!-- Section droite - Saisie/Affichage joueurs-->
+		<section class="flex-[5] h-full flex flex-col justify-between items-start">
+			<!-- Section d'affichage (haut) -->
+			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4">
+				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
 					Registered players
 				</h2>
 		
@@ -87,21 +57,43 @@
 				</div>
 
 				<!-- Message si aucun joueur -->
-				<div id="no-players" class="text-center text-gray-500 text-xl londrina-solid-regular">
+				<div id="no-players" class="text-center text-gray-500 text-base">
 					No player registered
 				</div>
 
 				<!-- Compteur de joueurs -->
-				<span id="player-count" class="text-lg font-medium text-[#145c72] bg-gray-100 px-3 py-1 rounded-full">
+				<span id="player-count" class="text-sm font-medium text-[#145c72] bg-white px-2 py-0.5 rounded-full mt-6">
 					0/2
 				</span>
+			</div>
+
+			<!-- Section de saisie (bas) -->
+			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4 mb-8">
+				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
+					New player
+				</h2>
+
+				<!-- Formulaire de saisie -->
+				<div class="w-full">
+					<input type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
+					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+
+					<!-- Info sur les limites de joueurs -->
+					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
+
+					<!-- Bouton add player -->
+					<button id="add-player-btn"
+						class="w-full mt-2 p-2 text-base bg-[#218DBE] text-white font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+						Add player
+					</button>
+				</div>
 			</div>
 		</section>
 	
 		<!-- Bouton Begin -->
 		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
 			<button id="begin-game-btn" disabled
-					class="px-12 py-4 bg-[#F27D01] text-white text-4xl font-bold rounded-lg londrina-solid-regular transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
+					class="px-12 py-4 bg-[#F27D01] text-white text-4xl font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
 				BEGIN
 			</button>
 		</div>
