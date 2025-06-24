@@ -10,70 +10,62 @@ REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
 NGINX_DATA = ./data/modsec_logs
-VAULT_CERT_DIR = ./srcs/requirements/hashicorp-vault/certs
-VAULT_CERT = $(VAULT_CERT_DIR)/vault.crt
-VAULT_KEY = $(VAULT_CERT_DIR)/vault.key
+VAULT_CERT_DIR = $(REQUIREMENTS)/hashicorp-vault
+#VAULT_CERT_DIR = $(VAULT_DIR)/certs
 
-all: vault-certs
-	@echo  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
+all: 
+	@echo -e  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
-	@echo "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
-	@echo "$(GRAY)Copying HOME/secrets into $(REQUIREMENTS)/nginx/secrets$(RESET)"
+	@echo -e "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
+	@echo -e "$(GRAY)Copying HOME/secrets into $(REQUIREMENTS)/nginx/secrets$(RESET)"
 	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
-	@echo "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
-	@echo "\n$(GRAY)Creating repositories for persistent data$(RESET)"
-	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
-	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
-	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
+	@echo -e "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
+	@echo -e  "\n$(GRAY)Copying HOME/certs into $(VAULT_CERT_DIR)/certs$(RESET)"
+	@cp -r $(HOME)/certs $(VAULT_CERT_DIR)/certs
+	@echo -e "$(BLUE)HOME/certs$(RESET) copied into $(VAULT_CERT_DIR)/certs: $(GREEN)Success$(RESET)"
+	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
+	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER) #$(VAULT_CERT_DIR)
+	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@ echo -e "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
-	docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
+	@docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
 
-vault-certs: $(VAULT_CERT) $(VAULT_KEY)
-
-$(VAULT_CERT) $(VAULT_KEY):
-	@openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
-		-keyout $(VAULT_KEY) \
-		-out $(VAULT_CERT) \
-		-subj "/CN=loclhost" \
-		-addext "subjectAltName=DNS:localhost"
-	@chmod 640 $(VAULT_KEY)
-	@chown $(USER):$(USER) $(VAULT_KEY)
 
 clean:
 	@docker images
-	@echo ""
+	@ echo -e ""
 	@docker ps -a
-	@echo ""
+	@ echo -e ""
 	@docker volume ls
-	@echo ""
+	@ echo -e ""
 	@docker network ls
-	@echo ""
-	@echo  "$(BLUE)Removing containers$(RESET)"
+	@ echo -e ""
+	@ echo -e  "$(BLUE)Removing containers$(RESET)"
 	@docker stop $$(docker ps -qa) || true
 	@docker rm $$(docker ps -qa) || true
 	@docker rmi -f $$(docker images -qa) || true
 	@docker volume rm $$(docker volume ls -q) || true
 	@docker network rm $(NAME) || true
-	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
-	@echo "$(BLUE)srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
-	@echo "$(BLUE)srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
-	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER) $(VAULT_CERT_DIR)/certs
+	@ echo -e "$(BLUE)./srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)./srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)$(VAULT_CERT_DIR)/*$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@docker images
-	@echo ""
+	@ echo -e ""
 	@docker ps -a
-	@echo ""
+	@ echo -e ""
 	@docker volume ls
-	@echo ""
+	@ echo -e ""
 	@docker network ls
-	@echo "Containers removed $(GREEN)successfully$(RESET)"
-	@rm -rf $(VAULT_CERT_DIR)/vault.crt $(VAULT_CERT_DIR)/vault.key
+	@ echo -e "Containers removed $(GREEN)successfully$(RESET)"
 
 down:
 	@docker compose -f ./srcs/docker-compose.yml stop
-	@echo -e "Containers stopped $(GREEN)successfully$(RESET)"
+	@ echo -e "Containers stopped $(GREEN)successfully$(RESET)"
 
 up:
-	@echo -e "$(BLUE)Restarting Containers$(RESET)"
+	@ echo -e "$(BLUE)Restarting Containers$(RESET)"
 	@docker compose -f ./srcs/docker-compose.yml up
 
 fclean: clean
