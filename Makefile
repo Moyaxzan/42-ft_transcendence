@@ -1,11 +1,9 @@
 GREEN := \e[92m
 GRAY := \e[90m
-#PINK := \e[38;2;255;105;180m
-PINK := \e[38;5;212m
-BLUE := \e[94m
+MAGENTA := \e[38;2;224;176;255m
+BLUE := \e[38;2;80;150;255m
 RESET := \e[0m
-
-NAME = transcendence
+NAME = Transcendence
 REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
@@ -13,7 +11,9 @@ NGINX_DATA = ./data/modsec_logs
 VAULT_CERT_DIR = $(REQUIREMENTS)/hashicorp-vault
 COMPOSE = compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml
 
-all: 
+IMAGE := pongchat-removebg-preview.png
+
+all:
 	@echo -e  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo -e "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
@@ -26,7 +26,9 @@ all:
 	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
-	@echo -e "\n$(PINK)$(NAME) ready!$(RESET)"
+	@echo -e "\n$(MAGENTA)$(NAME)$(RESET) ready!\n"
+	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
+	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@tsc
 	@docker $(COMPOSE) up --build
 
@@ -59,6 +61,7 @@ clean:
 	@echo -e ""
 	@docker network ls
 	@echo -e "Containers removed $(GREEN)successfully$(RESET)"
+	@echo -e "\n$(MAGENTA)$(NAME)$(RESET) stop: $(GREEN)Success$(RESET)"
 
 down:
 	@docker $(COMPOSE) stop
