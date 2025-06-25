@@ -62,6 +62,8 @@ clean:
 	@docker network ls
 	@echo -e "Containers removed $(GREEN)successfully$(RESET)"
 	@echo -e "\n$(MAGENTA)$(NAME)$(RESET) stop: $(GREEN)Success$(RESET)"
+	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
+	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 
 down:
 	@docker $(COMPOSE) stop
