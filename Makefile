@@ -11,6 +11,7 @@ DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
 NGINX_DATA = ./data/modsec_logs
 VAULT_CERT_DIR = $(REQUIREMENTS)/hashicorp-vault
+COMPOSE = compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml
 
 all: 
 	@echo -e  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
@@ -27,7 +28,7 @@ all:
 	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo -e "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
-	@docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
+	@docker $(COMPOSE) up --build
 
 
 clean:
@@ -60,12 +61,12 @@ clean:
 	@echo -e "Containers removed $(GREEN)successfully$(RESET)"
 
 down:
-	@docker compose -f ./srcs/docker-compose.yml stop
+	@docker $(COMPOSE) stop
 	@echo -e "Containers stopped $(GREEN)successfully$(RESET)"
 
 up:
 	@echo -e "$(BLUE)Restarting Containers$(RESET)"
-	@docker compose -f ./srcs/docker-compose.yml up
+	@docker $(COMPOSE) up
 
 fclean: clean
 	@docker system prune -af
