@@ -66,8 +66,6 @@ services:
     container_name: hashicorp-vault
     env_file:
       - .env
-    ports:
-      - "8200:8200"
     cap_add:
       - IPC_LOCK
     volumes:
@@ -77,7 +75,6 @@ services:
     networks:
       - transcendence
     restart: unless-stopped
-    
 
 volumes:
   nginx:

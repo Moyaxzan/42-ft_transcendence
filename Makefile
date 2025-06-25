@@ -11,7 +11,6 @@ DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
 NGINX_DATA = ./data/modsec_logs
 VAULT_CERT_DIR = $(REQUIREMENTS)/hashicorp-vault
-#VAULT_CERT_DIR = $(VAULT_DIR)/certs
 
 all: 
 	@echo -e  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
@@ -21,12 +20,13 @@ all:
 	@cp -r $(HOME)/secrets $(REQUIREMENTS)/nginx/secrets
 	@echo -e "$(BLUE)HOME/secrets$(RESET) copied into $(REQUIREMENTS)/nginx/secrets: $(GREEN)Success$(RESET)"
 	@echo -e  "\n$(GRAY)Copying HOME/certs into $(VAULT_CERT_DIR)/certs$(RESET)"
-	@cp -r $(HOME)/certs $(VAULT_CERT_DIR)/certs
+	@cp -r $(HOME)/certs/* $(VAULT_CERT_DIR)/certs
 	@echo -e "$(BLUE)HOME/certs$(RESET) copied into $(VAULT_CERT_DIR)/certs: $(GREEN)Success$(RESET)"
 	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
-	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER) #$(VAULT_CERT_DIR)
+	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
-	@ echo -e "\n$(PINK)$(NAME) ready!$(RESET)"
+	@export VAULT_ADDR='https://127.0.0.1:8200'
+	@echo -e "\n$(PINK)$(NAME) ready!$(RESET)"
 	@tsc
 	@docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
 
@@ -51,6 +51,11 @@ clean:
 	@ echo -e "$(BLUE)./srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
 	@ echo -e "$(BLUE)$(VAULT_CERT_DIR)/*$(RESET) removed: $(GREEN)Success$(RESET)"
 	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
+	@rm -rf ./srcs/.env $(REQUIREMENTS)/nginx/secrets $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER) $(VAULT_CERT_DIR)/certs
+	@ echo -e "$(BLUE)./srcs/.env$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)./srcs/requirements/nginx/secrets$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)$(VAULT_CERT_DIR)/certs$(RESET) removed: $(GREEN)Success$(RESET)"
+	@ echo -e "$(BLUE)Repositories for persistent data$(RESET) removed: $(GREEN)Success$(RESET)\n"
 	@docker images
 	@ echo -e ""
 	@docker ps -a

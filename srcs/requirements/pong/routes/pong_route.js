@@ -5,11 +5,21 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
-	fastify.patch('/api/users/points/:id', async (request, reply) => {
-		const res = await fetch(`http://database:3000/api/users/points/${encodeURIComponent(id)}`, {
+	fastify.patch('/api/users/wins/:id', async (request, reply) => {
+		const res = await fetch(`http://database:3000/api/users/wins/${encodeURIComponent(id)}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: request.body.id, points: request.body.points })
+			body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
+		});
+ 		const data = await res.json();
+  		reply.send(data);
+	})
+
+	fastify.patch('/api/users/losses/:id', async (request, reply) => {
+		const res = await fetch(`http://database:3000/api/users/losses/${encodeURIComponent(id)}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
 		});
  		const data = await res.json();
   		reply.send(data);
@@ -33,7 +43,8 @@ async function routes (fastify, options) {
   		reply.send(data);
 	})
 
-	 fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
+	 //fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
+	 fastify.get('/api/play/:match_round/:match_index', async (request, reply) => {
 		const res = await fetch(`http://database:3000/api/matches/${match_round}/${match_index}`);
 		if (!res.ok) return reply.code(res.status).send(await res.text());
 		const matches = await res.json();
@@ -47,6 +58,17 @@ async function routes (fastify, options) {
 	// 	const matches = await res.json();
 	// 	reply.send(matches);
 	// });
+
+	fastify.post('/api/tournaments', async (request, reply) => {
+		const res = await fetch(`http://database:3000/api/tournaments`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ user_id: request.body.user_id, tournament_id: request.body.tournament_id })
+		});
+ 		const data = await res.json();
+  		reply.send(data);
+	})
+
 }
 
 export default routes
