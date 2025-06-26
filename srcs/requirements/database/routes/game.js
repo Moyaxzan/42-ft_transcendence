@@ -249,10 +249,8 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
-
-
 	fastify.get('/api/tournaments/:id', async (request, reply) => {
-		const db = fastify.sqlite; // ou ce que tu as injecté dans Fastify
+		const db = fastify.sqlite;
 		const tournamentId = request.params.id;
 
 		try {
@@ -278,7 +276,49 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
+	//advance winner inside bracket
+	fastify.post('/api/play/resolve', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { tournament_id, match_round, match_index, winner_id } = request.body;
 
+		const updateNewUser = `
+			UPDATE matches SET user_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
+		`;
+
+		const updateNewOpponent = `
+			UPDATE matches SET opponent_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
+		`;
+
+
+		try {
+			const match = await new Promise((resolve, reject) => {
+				db.get(
+					`SELECT * FROM matches
+					 WHERE tournament_id = ? AND match_round = ? AND match_index = ?`,
+					[tournament_id, match_round + 1, Math.floor(match_index / 2)], (err, row) => {
+						if (err) return reject(err);
+						resolve(row);
+					}
+				)
+			});
+			if (!match) {
+				return ;
+			}
+
+			//if match_index % 2 === 1 -> winner is 'opponent' of the next round
+			//if match_index % 2 === 0 -> winner is 'user' of the next round
+			//see notion tournament drawing
+			if (match_index % 2) {
+				await db.run(updateNewOpponent,	[winner_id, tournament_id, match_round + 1, Math.floor(match_index / 2)]);
+			} else {
+				await db.run(updateNewUser,		[winner_id, tournament_id, match_round + 1, Math.floor(match_index / 2)]);
+			}
+			fastify.log.info("Winner successfully advanced to next round !");
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.code(500).send({ error: 'Database error' });
+		}
+	});
 
 /*
 	fastify.post('/api/tournaments', async (request, reply) => {

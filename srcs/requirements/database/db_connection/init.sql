@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS matches (
  status NUMERIC DEFAULT 0,
  user_id INTEGER,
  tournament_id INTEGER,
- winner_id INTEGER,
+ winner_id INTEGER, /* not used for now */
  score INTEGER NOT NULL,
  opponent_score INTEGER NOT NULL,
  opponent_id INTEGER NOT NULL,

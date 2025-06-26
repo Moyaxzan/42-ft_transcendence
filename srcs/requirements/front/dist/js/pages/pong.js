@@ -1,25 +1,58 @@
 import { animateLinesToFinalState } from './navbar.js';
 let animationId = 0;
-async function sendMatchResult(userId, score, opponentScore, opponentId) {
+async function sendMatchResult(userId, score, opponentScore, opponentId, tournamentId, matchRound, matchIndex) {
+    // // 1. store result inside user stats
+    // try {
+    // 	const response = await fetch(`/api/users/history/${userId}`, {
+    // 		method: 'POST',
+    // 		headers: {
+    // 			'Content-Type': 'application/json',
+    // 		},
+    // 		body: JSON.stringify({
+    // 			score,
+    // 			opponent_score: opponentScore,
+    // 			opponent_id: opponentId
+    // 		})
+    // 	});
+    // 	if (!response.ok) {
+    // 		const errorText = await response.text();
+    // 		console.error('Erreur lors de l’envoi du score :', errorText);
+    // 		return;
+    // 	}
+    // 	const result = await response.json();
+    // 	console.log('Score enregistré avec succès :', result);
+    // } catch (err) {
+    // 	console.error('Erreur réseau ou serveur :', err);
+    // }
+    //2. get winner_id
+    let winnerId = -1;
+    if (score > opponentScore) {
+        winnerId = userId;
+    }
+    else {
+        winnerId = opponentId;
+    }
+    //3. advance winner inside bracket
     try {
-        const response = await fetch(`/api/users/history/${userId}`, {
+        const response = await fetch(`/api/play/resolve`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                score,
-                opponent_score: opponentScore,
-                opponent_id: opponentId
+                tournament_id: tournamentId,
+                match_round: matchRound,
+                match_index: matchIndex,
+                winner_id: winnerId
             })
         });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Erreur lors de l’envoi du score :', errorText);
-            return;
-        }
-        const result = await response.json();
-        console.log('Score enregistré avec succès :', result);
+        // if (!response.ok) {
+        // 	const errorText = await response.text();
+        // 	console.error('Erreur lors de l’avancement du winner :', errorText);
+        // 	return;
+        // }
+        // const result = await response.json();
+        // console.log('Score enregistré avec succès :', result);
     }
     catch (err) {
         console.error('Erreur réseau ou serveur :', err);
@@ -228,7 +261,7 @@ export async function renderPong() {
         rightPaddle.style.top = `${rightPaddlePos}%`;
     }
     let gameStarted = false;
-    async function playMatch(player1, player2) {
+    async function playMatch(player1, player2, tournamentId, matchRound, matchIndex) {
         player1Score = 0;
         player2Score = 0;
         scoreDiv.innerText = "0 - 0";
@@ -244,18 +277,28 @@ export async function renderPong() {
                 if (ballPosx[0] > 130) {
                     player1Score++;
                     resetBall();
+                    scoreDiv.innerText = `${player1Score} - ${player2Score}`;
                 }
                 else if (ballPosx[0] < -30) {
                     player2Score++;
                     resetBall();
+                    scoreDiv.innerText = `${player1Score} - ${player2Score}`;
                 }
-                else if (player1Score === 3 || player2Score === 3) {
+                if (player1Score === 3 || player2Score === 3) {
                     stopGame();
-                    const winnerId = player1Score > player2Score ? player1.id : player2.id;
-                    const loserId = player1Score > player2Score ? player2.id : player1.id;
-                    sendMatchResult(winnerId, Math.max(player1Score, player2Score), Math.min(player1Score, player2Score), loserId);
-                    resolve({ winnerId, loserId, score: [player1Score, player2Score] });
-                    return;
+                    sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
+                    let winnerId;
+                    let winnerName;
+                    if (player2Score < player1Score) {
+                        winnerId = player1.id;
+                        winnerName = player1.name;
+                    }
+                    else {
+                        winnerId = player2.id;
+                        winnerName = player2.name;
+                    }
+                    resolve({ winnerId, winnerName });
+                    return (winnerId);
                 }
                 else if (gameStarted || keysPressed[" "] || Date.now() - startRound > 3000) {
                     gameStarted = true;
@@ -288,8 +331,8 @@ export async function renderPong() {
             console.error("'matches' n'est pas un tableau.");
             return;
         }
-        const winners = new Map();
-        // Trie les matchs dans l'ordre round puis index
+        let lastWinner = "None";
+        // trie les matchs dans l'ordre round puis index
         matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
         console.log(matches);
         for (const match of matches) {
@@ -307,25 +350,15 @@ export async function renderPong() {
             }
             console.log("players: ", players);
             const [player1, player2] = players;
-            // Ne joue le match que si les joueurs sont encore en course (round > 1)
-            if (match_round > 1 &&
-                (winners.get(player1.id) === false || winners.get(player2.id) === false)) {
-                console.log(`Match ${match_round}-${match_index} ignoré car un joueur est éliminé.`);
-                continue;
-            }
             console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
-            const result = await playMatch(player1, player2); // => { winnerId, loserId }
-            winners.set(result.winnerId, true);
-            winners.set(result.loserId, false);
+            const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
+            lastWinner = matchRes.winnerName;
+            // change this
             await new Promise((r) => setTimeout(r, 5000)); // Pause entre matchs
         }
-        // Trouver le gagnant final
-        const finalWinnerId = [...winners.entries()].find(([_, win]) => win)?.[0];
-        if (finalWinnerId) {
-            const allPlayers = matches.flatMap((m) => [m.user_id, m.opponent_id]);
-            const res = await fetch(`/api/users/${finalWinnerId}`);
-            const finalWinner = await res.json();
-            alert(`🏆 Le gagnant du tournoi est : ${finalWinner.name} !`);
+        // not working as i would like
+        if (lastWinner != "None") {
+            alert(`🏆 Le gagnant du tournoi est : ${lastWinner} !`);
         }
         else {
             alert("Pas de gagnant trouvé");
