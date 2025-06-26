@@ -2,17 +2,27 @@ import { animateLinesToFinalState } from './navbar.js';
 
 let animationId: number = 0;
 
+type Match = {
+  id: number;
+  user_id: number;
+  opponent_id: number;
+  match_round: number;
+  match_index: number;
+  winner_id: number | null;
+  score: number;
+  opponent_score: number;
+  tournament_id: number;
+};
 
 async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentId: number) {
 	try {
 
-		const response = await fetch(`/api/users/history/${encodeURIComponent(userId)}`, {
+		const response = await fetch(`/api/users/history/${userId}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				user_id: userId,
 				score,
 				opponent_score: opponentScore,
 				opponent_id: opponentId
@@ -39,10 +49,12 @@ export function stopGame() {
 
 export async function renderPong() {
 	stopGame();
+	console.log("🏓 renderPong()");
 	const app = document.getElementById('app');
 	if (!app)
 		return;
 	const res = await fetch(`/dist/html/pong.html`);
+	console.log(res);
 	const html = await res.text();
 	app.innerHTML = html;
 
@@ -67,8 +79,32 @@ export async function renderPong() {
 	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	const ball = document.getElementById("ball") as HTMLDivElement;
 	const scoreDiv = document.getElementById("score") as HTMLDivElement;
-	if (!leftPaddle || !rightPaddle || !ball || !scoreDiv)
+	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
+	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
+	if (!leftPaddle) {
+		console.log("error with left paddle");
 		return;
+	}
+	if (!rightPaddle) {
+		console.log("error with right paddle");
+		return;
+	}
+	if (!ball) {
+		console.log("error with ball");
+		return;
+	}
+	if (!scoreDiv) {
+		console.log("error with scoreDiv");
+		return;
+	}
+	if (!player1Div) {
+		console.log("error with player1div");
+		return;
+	}
+	if (!player2Div) {
+		console.log("error with player2div");
+		return;
+	}
 
 	const trailBalls: HTMLDivElement[] = [];
 	for (let i = 1; i < 10; i++) {
@@ -152,7 +188,7 @@ export async function renderPong() {
 	}
 
 	function getInitialAngle(): number {
-			let angle;
+		let angle;
 		let x, y;
 		do {
 			angle = Math.random() * 2 * Math.PI;
@@ -237,11 +273,20 @@ export async function renderPong() {
 	
 	let gameStarted = false;
 
-	async function playMatch(player1: any, player2: any): Promise<{ winnerId: number, loserId: number, score: [number, number] }> {
+	async function playMatch(
+		player1: { id: number, name: string },
+		player2: { id: number, name: string }
+	):
+	Promise<{ winnerId: number, loserId: number, score: [number, number] }> {
 		player1Score = 0;
 		player2Score = 0;
 		scoreDiv.innerText = "0 - 0";
 		resetBall();
+		player1Div.innerText = player1.name;
+		player2Div.innerText = player2.name;
+		console.log(player1.name);
+		console.log(" vs ");
+		console.log(player2.name);
 
 		return new Promise(resolve => {
 			function frame() {
@@ -278,42 +323,73 @@ export async function renderPong() {
 		return;
 	}
 
-	const tournamentResponse = await fetch(`/api/tournaments/${tournamentId}`);
-	if (!tournamentResponse.ok) {
-		console.error("Failed to load tournament");
-		return;
-	}
-
-	const tournamentData = await tournamentResponse.json();
-
-	// Si tournoi, charger les matchs
+	console.log("after tournament");
 	if (tournamentId) {
-		const res = await fetch(`/api/tournaments/${tournamentId}`);
-		if (!res.ok) {
-			console.error("Erreur tournoi");
+		console.log("inside tournament");
+		const matchesRes = await fetch(`/api/tournaments/${tournamentId}`);
+		if (!matchesRes.ok) {
+			console.error("Failed to load tournament matches");
 			return;
 		}
-		const tournamentData = await res.json();
+		// const { matches }: { matches: Match[] } = await matchesRes.json();
+
+		const data = await matchesRes.json();
+		// console.log("matches json:", data);
+		const matches = Array.isArray(data) ? data : data.matches;
+		if (!Array.isArray(matches)) {
+			console.error("'matches' n'est pas un tableau.");
+			return;
+		}
 		const winners = new Map<number, boolean>();
 
-		for (const match of tournamentData.matches) {
-			const { player1, player2 } = match;
-			if (!player1 || !player2) continue;
-			if (winners.has(player1.id) === false || winners.has(player2.id) === false) continue;
+		// Trie les matchs dans l'ordre round puis index
+		matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
+		console.log(matches);
 
-			console.log(`Match entre ${player1.name} et ${player2.name}`);
-			const result = await playMatch(player1, player2);
+		for (const match of matches) {
+			const { match_round, match_index } = match;
+
+			// Récupère les deux joueurs de ce match
+			const res = await fetch(`/api/play/${tournamentId}/${match_round}/${match_index}`);
+			if (!res.ok) {
+				console.warn(`Pas de match trouvé pour round ${match_round}, index ${match_index}`);
+				continue;
+			}
+			const players = await res.json();
+			if (players.length < 2) {
+				console.warn("Pas assez de joueurs pour ce match", match);
+				continue;
+			}
+			console.log("players: ", players);
+			const [player1, player2] = players;
+
+			// Ne joue le match que si les joueurs sont encore en course (round > 1)
+			if (
+				match_round > 1 &&
+				(winners.get(player1.id) === false || winners.get(player2.id) === false)
+			) {
+				console.log(`Match ${match_round}-${match_index} ignoré car un joueur est éliminé.`);
+				continue;
+			}
+
+			console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
+			const result = await playMatch(player1, player2); // => { winnerId, loserId }
 
 			winners.set(result.winnerId, true);
 			winners.set(result.loserId, false);
 
-			await new Promise(r => setTimeout(r, 1000));
+			await new Promise((r) => setTimeout(r, 5000)); // Pause entre matchs
 		}
 
+		// Trouver le gagnant final
 		const finalWinnerId = [...winners.entries()].find(([_, win]) => win)?.[0];
-		const finalWinner = tournamentData.matches.flatMap((m: any) => [m.player1, m.player2]).find((p: any) => p.id === finalWinnerId);
-		if (finalWinner)
+		if (finalWinnerId) {
+			const allPlayers = matches.flatMap((m) => [m.user_id, m.opponent_id]);
+			const res = await fetch(`/api/users/${finalWinnerId}`);
+			const finalWinner = await res.json();
 			alert(`🏆 Le gagnant du tournoi est : ${finalWinner.name} !`);
+		} else {
+			alert("Pas de gagnant trouvé");
+		}
 	}
-
 }

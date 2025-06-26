@@ -121,25 +121,59 @@ async function routes (fastify, options) {
 
 	fastify.post('/api/users/history/:id', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { id } = request.params;
-		const { user_id, score, opponent_score, opponent_id } = request.body;
-		const insertMatch = `INSERT INTO matches (user_id, opponent_id, score, opponent_score) VALUES (?, ?, ?, ?)`;
-		const joinMatchToUser = `INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)`;
+		const { id: user_id } = request.params;
+		const { score, opponent_score, opponent_id } = request.body;
+
+		const insertMatch = `
+			INSERT INTO matches (user_id, opponent_id, score, opponent_score) VALUES (?, ?, ?, ?)
+		`;
+		const joinMatchToUser = `
+			INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)
+		`;
+
+		const isUserWinner = score > opponent_score;
+		const winnerId = isUserWinner ? user_id : opponent_id;
+		const loserId = isUserWinner ? opponent_id : user_id;
+
+		const updateStatsIfExists = `
+			UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?
+		`;
+		const updateLoserStats = `
+			UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?
+		`;
+
+		// Crée une ligne dans user_stats si elle n'existe pas
+		const insertIfMissing = `
+			INSERT INTO user_stats (user_id, total_wins, total_losses, tournaments_played, tournaments_won)
+			VALUES (?, 0, 0, 0, 0)
+		`;
+
 		try {
+			// 1. Ajout du match
 			const matchId = await new Promise((resolve, reject) => {
-				db.run(insertMatch, [user_id, opponent_id, score, opponent_score],
-				function (err) {
+				db.run(insertMatch, [user_id, opponent_id, score, opponent_score], function (err) {
 					if (err) return reject(err);
 					resolve(this.lastID);
 				});
 			});
-			await new Promise((resolve, reject) => {
-				db.run(joinMatchToUser, [user_id, matchId], function (err) {
-					if (err) return reject(err);
-					resolve(user_id, matchId);
-					});
+
+			// 2. Liaison au joueur (user_id est celui passé dans l’URL)
+			await db.run(joinMatchToUser, [user_id, matchId]);
+
+			// 3. S'assurer que les deux joueurs ont une entrée dans user_stats
+			await db.run(insertIfMissing, [winnerId]).catch(() => {});
+			await db.run(insertIfMissing, [loserId]).catch(() => {});
+
+			// 4. Mise à jour des stats
+			await db.run(updateStatsIfExists, [winnerId]);
+			await db.run(updateLoserStats, [loserId]);
+
+			reply.send({
+				message: 'Match result and stats successfully updated',
+				matchId,
+				score,
+				opponent_score
 			});
-			reply.send({message: 'Match result succesfully added', matchId, score, opponent_score});
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });

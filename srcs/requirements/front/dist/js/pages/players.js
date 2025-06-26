@@ -66,7 +66,7 @@ async function createTournamentFromPseudonyms(playerNames) {
         });
         const data = await response.json();
         if (!response.ok) {
-            return { success: false, message: (data === null || data === void 0 ? void 0 : data.error) || "Unknown error" };
+            return { success: false, message: data?.error || "Unknown error" };
         }
         return { success: true, tournamentId: data.tournamentId };
     }

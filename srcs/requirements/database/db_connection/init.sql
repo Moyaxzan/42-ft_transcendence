@@ -58,12 +58,12 @@ CREATE TABLE IF NOT EXISTS users_join_tournaments (
 CREATE TABLE IF NOT EXISTS user_stats (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  user_id INTEGER,
- total_matches INTEGER, 
+ total_matches INTEGER,  /* not used */
  total_wins INTEGER, 
  total_losses INTEGER, 
- tournaments_played INTEGER, 
- tournaments_won INTEGER, 
- win_rate INTEGER, 
+ tournaments_played INTEGER,   /* not used yet*/
+ tournaments_won INTEGER,   /* not used yet*/
+ win_rate INTEGER, /* not used */
  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

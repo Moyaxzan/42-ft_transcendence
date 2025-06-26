@@ -23,7 +23,7 @@ export async function renderLogin() {
     const html = await res.text();
     app.innerHTML = html;
     const backBtn = document.getElementById('backHomeBtn');
-    backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
+    backBtn?.addEventListener('click', () => {
         renderHome();
     });
     const loginForm = document.getElementById('loginForm');
@@ -51,11 +51,10 @@ export async function renderLogin() {
         qrCodeContainer.innerHTML = '';
     });
     loginForm.addEventListener('submit', async (e) => {
-        var _a, _b;
         e.preventDefault();
         const target = e.target;
-        const email = (_a = target.elements.namedItem('email')) === null || _a === void 0 ? void 0 : _a.value.trim();
-        const password = (_b = target.elements.namedItem('password')) === null || _b === void 0 ? void 0 : _b.value.trim();
+        const email = target.elements.namedItem('email')?.value.trim();
+        const password = target.elements.namedItem('password')?.value.trim();
         messageEl.style.color = 'red';
         messageEl.textContent = '';
         twofaSection.classList.add('hidden');
@@ -71,14 +70,14 @@ export async function renderLogin() {
             });
             const data = await res.json().catch(() => null);
             if (!res.ok) {
-                if ((data === null || data === void 0 ? void 0 : data.error) === '2FA_REQUIRED') {
+                if (data?.error === '2FA_REQUIRED') {
                     messageEl.textContent = 'Two-factor authentication required';
                     twofaSection.classList.remove('hidden');
                     pendingEmail = email;
                     pendingPassword = password;
                     return;
                 }
-                if ((data === null || data === void 0 ? void 0 : data.error) === '2FA_SETUP_REQUIRED') {
+                if (data?.error === '2FA_SETUP_REQUIRED') {
                     messageEl.textContent = 'Two-factor authentication setup required';
                     pendingEmail = email;
                     pendingPassword = password;
@@ -103,7 +102,7 @@ export async function renderLogin() {
                     }
                     return;
                 }
-                messageEl.textContent = (data === null || data === void 0 ? void 0 : data.message) || 'Authentication failed.';
+                messageEl.textContent = data?.message || 'Authentication failed.';
                 return;
             }
             messageEl.style.color = 'green';
@@ -116,7 +115,7 @@ export async function renderLogin() {
         }
     });
     submit2FABtn.addEventListener('click', async () => {
-        const code = totpInput === null || totpInput === void 0 ? void 0 : totpInput.value.trim();
+        const code = totpInput?.value.trim();
         if (!code || !pendingEmail || !pendingPassword) {
             messageEl.textContent = 'Please enter the 2FA code';
             return;
@@ -134,7 +133,7 @@ export async function renderLogin() {
             const data = await res.json().catch(() => null);
             if (!res.ok) {
                 messageEl.style.color = 'red';
-                messageEl.textContent = (data === null || data === void 0 ? void 0 : data.message) || 'Invalid 2FA code';
+                messageEl.textContent = data?.message || 'Invalid 2FA code';
                 return;
             }
             messageEl.style.color = 'green';

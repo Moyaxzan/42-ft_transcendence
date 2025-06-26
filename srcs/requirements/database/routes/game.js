@@ -7,29 +7,49 @@ import generateBracket from '../utils/bracket.js'
 
 async function gameRoutes (fastify, options) {
 	//fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
-	fastify.get('/api/play/:match_round/:match_index', async (request, reply) => {
+
+	fastify.get('/api/play/:tournament_id/:match_round/:match_index', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { match_round, match_index } = request.params;
+		const { tournament_id, match_round, match_index } = request.params;
+
 		try {
-			const rows = await new Promise((resolve, reject) => {
-			const query = `SELECT users.* FROM matches JOIN users ON users.id = matches.user_id OR users.id = matches.opponent_id WHERE matches.match_round = ? AND matches.match_index = ?`
-				db.all(query, [match_round, match_index], (err, rows) => {
-					if (err) return reject(err);
-					resolve(rows);
-				});
+			const match = await new Promise((resolve, reject) => {
+				db.get(
+					`SELECT * FROM matches
+					 WHERE tournament_id = ? AND match_round = ? AND match_index = ?`,
+					[tournament_id, match_round, match_index],
+					(err, row) => {
+						if (err) return reject(err);
+						resolve(row);
+					}
+				);
 			});
-			if (!rows) {
-				return reply.send('No match found');
+
+			if (!match) {
+				return reply.code(404).send({ error: 'Match not found' });
 			}
-			return reply.send(rows);
+
+			const players = await new Promise((resolve, reject) => {
+				db.all(
+					`SELECT * FROM users WHERE id IN (?, ?)`,
+					[match.user_id, match.opponent_id],
+					(err, rows) => {
+						if (err) return reject(err);
+						resolve(rows);
+					}
+				);
+			});
+			return reply.send(players);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({ error: 'database GET error', details: err.message });
+			return reply.status(500).send({ error: 'Database error', details: err.message });
 		}
 	});
 
+
 	fastify.get('/api/play', async (request, reply) => {
 		const db = fastify.sqlite;
+
 		try {
 			const rows = await new Promise((resolve, reject) => {
 				db.all('SELECT * FROM matches', (err, rows) => {
@@ -37,18 +57,22 @@ async function gameRoutes (fastify, options) {
 					resolve(rows);
 				});
 			});
-			if (!rows) {
-				return reply.send('No matches found');
+
+			if (!rows || rows.length === 0) {
+				return reply.code(404).send({ error: 'No matches found' });
 			}
-			reply.send(rows);
+
+			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.send(500).send({error: 'database GET error', details: err.message});
+			return reply.status(500).send({ error: 'Database GET error', details: err.message });
 		}
 	});
 
+
 	fastify.get('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
+
 		try {
 			const rows = await new Promise((resolve, reject) => {
 				db.all('SELECT * FROM tournaments', (err, rows) => {
@@ -56,15 +80,18 @@ async function gameRoutes (fastify, options) {
 					resolve(rows);
 				});
 			});
-			if (!rows) {
-				return reply.send('No tournaments found');
+
+			if (!rows || rows.length === 0) {
+				return reply.code(404).send({ error: 'No tournaments found' });
 			}
-			reply.send(rows);
+
+			return reply.send(rows);
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.status(500).send({error: 'database GET error', details: err.message});
+			return reply.status(500).send({ error: 'Database GET error', details: err.message });
 		}
 	});
+
 
 	// fastify.post('/api/tournaments', async (request, reply) => {
 	// 	const db = fastify.sqlite;
@@ -180,26 +207,32 @@ async function gameRoutes (fastify, options) {
 			const matches = generateBracket(userIds);
 
 			// 5. Insérer les matchs dans la base
-			for (const match of matches) {
-				await new Promise((resolve, reject) => {
-					db.run(
-						`INSERT INTO matches (tournament_id, user_id, opponent_id, match_round, match_index, score, opponent_score)
-						 VALUES (?, ?, ?, ?, ?, 0, 0)`,
-						[
-							tournamentId,
-							match.user_id,
-							match.opponent_id,
-							match.match_round,
-							match.match_index
-						],
-						(err) => {
-							if (err) return reject(err);
-							resolve(null);
-						}
-					);
-				});
-			}
+			await Promise.all(
+				matches.map(match =>
+					new Promise((resolve, reject) => {
+						db.run(
+							`INSERT INTO matches (tournament_id, user_id, opponent_id, match_round, match_index, score, opponent_score)
+							 VALUES (?, ?, ?, ?, ?, 0, 0)`,
+							[
+								tournamentId,
+								match.user_id,
+								match.opponent_id,
+								match.match_round,
+								match.match_index
+							],
+							(err) => {
+								if (err) return reject(err);
+								resolve(null);
+							}
+						);
+					}) 
+				)
+			);
 
+			// const insertedMatches = db.prepare("SELECT * FROM matches WHERE tournament_id = ?").all(tournamentId);
+			// fastify.log.info("Inserted matches:");
+			// fastify.log.info(insertedMatches);
+			//
 			reply.send({
 				message: 'Tournament successfully created.',
 				tournamentId,
@@ -216,24 +249,36 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
+
+
 	fastify.get('/api/tournaments/:id', async (request, reply) => {
-		const db = fastify.sqlite;
-		const id = request?.params?.id;
+		const db = fastify.sqlite; // ou ce que tu as injecté dans Fastify
+		const tournamentId = request.params.id;
 
-		const tournament = await db.get('SELECT * FROM tournaments WHERE id = ?', [id]);
+		try {
+			const matches = await new Promise((resolve, reject) => {
+				db.all(
+					'SELECT * FROM matches WHERE tournament_id = ?',
+					[tournamentId],
+					(err, rows) => {
+						if (err) return reject(err);
+						resolve(rows);
+					}
+				);
+			});
 
-		if (!tournament) {
-			return reply.code(404).send({ error: 'Tournament not found' });
+			if (matches.length === 0) {
+				return reply.code(404).send({ error: 'No matches found in this tournament' });
+			}
+
+			return reply.send({ matches });
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.code(500).send({ error: 'Database error' });
 		}
-
-		// Optionally include players or matches
-		const players = await db.all('SELECT * FROM players WHERE tournament_id = ?', [id]);
-
-		return {
-			...tournament,
-			players,
-		};
 	});
+
+
 
 /*
 	fastify.post('/api/tournaments', async (request, reply) => {

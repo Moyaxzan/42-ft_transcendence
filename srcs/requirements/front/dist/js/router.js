@@ -21,7 +21,7 @@ export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
     const render = routes[path] || renderHome;
-    if (path != "/pong") {
+    if (path != "/pong" && path != "/pong/") {
         console.log("game should stop");
         stopGame();
     }
@@ -36,9 +36,11 @@ export function enableLinkInterception() {
         if (target.matches('[data-link]')) {
             e.preventDefault();
             const href = target.getAttribute('href');
-            console.log("Intercepted navigation to:", href);
-            history.pushState(null, '', href);
-            // router();
+            if (href) {
+                console.log("Intercepted navigation to:", href);
+                history.pushState(null, '', href);
+                window.dispatchEvent(new PopStateEvent("popstate"));
+            }
         }
     });
 }
