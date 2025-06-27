@@ -2,6 +2,7 @@ import { renderHome } from './pages/home.js';
 import { renderGameMode } from './pages/gameMode.js';
 import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
+import { render404 } from './pages/error404.js';
 
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/login.js';
@@ -23,7 +24,7 @@ const routes: Record<string, () => void> = {
 export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
-	const render = routes[path] || renderHome;
+	const render = routes[path] || render404();
 	if (path != "/pong") {
 		console.log("game should stop");
 		stopGame();

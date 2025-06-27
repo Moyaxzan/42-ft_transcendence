@@ -2,6 +2,7 @@ import { renderHome } from './pages/home.js';
 import { renderGameMode } from './pages/gameMode.js';
 import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
+import { render404 } from './pages/error404.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/login.js';
 // Define a map of paths to render functions
@@ -19,7 +20,7 @@ const routes = {
 export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
-    const render = routes[path] || renderHome;
+    const render = routes[path] || render404();
     if (path != "/pong") {
         console.log("game should stop");
         stopGame();
@@ -30,17 +31,6 @@ export function router() {
 export function enableLinkInterception() {
     console.log("Setting up link interception");
     document.addEventListener('click', (e) => {
-        // 	const target = e.target as HTMLElement;
-        // 	if (target.matches('[data-link]')) {
-        // 		e.preventDefault();
-        // 		const href = target.getAttribute('href')!;
-        // 		if (!href)
-        // 			return;
-        // 		console.log("Intercepted navigation to:", href);
-        // 		history.pushState(null, '', href);
-        // 		router();
-        // 	}
-        //   });
         const link = e.target.closest('[data-link]');
         if (link) {
             e.preventDefault();

@@ -1,5 +1,4 @@
 import { animateLinesToFinalState } from './navbar.js';
-// import { renderPlayers } from './players.js';
 export async function renderGameMode() {
     const app = document.getElementById('app');
     if (!app)
@@ -33,7 +32,6 @@ function setupGameModeButtons() {
         sessionStorage.setItem('gameMode', '1vs1');
         // Utiliser système de navigation SPA
         window.history.pushState({}, '', '/players');
-        // renderPlayers();
         window.dispatchEvent(new CustomEvent('routeChanged'));
     });
     tournamentBtn.addEventListener('click', (e) => {
@@ -42,7 +40,6 @@ function setupGameModeButtons() {
         sessionStorage.setItem('gameMode', 'tournament');
         // Utiliser système de navigation SPA
         window.history.pushState({}, '', '/players');
-        // renderPlayers();
         window.dispatchEvent(new CustomEvent('routeChanged'));
     });
 }

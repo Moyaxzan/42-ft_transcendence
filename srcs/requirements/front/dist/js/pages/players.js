@@ -271,13 +271,6 @@ function initialisePlayersLogic(gameMode) {
             window.history.pushState({}, '', '/pong');
             // Déclencher le routeur pour injecter la page
             window.dispatchEvent(new CustomEvent('routeChanged'));
-            // Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
-            // sessionStorage.setItem("gamePlayers", JSON.stringify(players));
-            // Redirection vers la page de jeu
-            // history.pushState(null, "", "/pong");
-            // Appel du router pour charger la nouvelle page
-            // const	routerEvent = new CustomEvent('routeChanged');
-            // window.dispatchEvent(routerEvent);
             console.log("Lanunching the game with players:", players);
         }
     };

@@ -9,14 +9,6 @@ export async function renderGameMode() {
 	const html = await res.text();
 
 	app.innerHTML = html;
-	
-	const navbar = document.getElementById("line-top") as HTMLDivElement;
-	const footer = document.getElementById("line-bottom") as HTMLDivElement;
-
-	if (!navbar || !footer) {
-		console.log("html element not found");
-		return;
-	}
 
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },

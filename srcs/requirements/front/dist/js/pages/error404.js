@@ -1,9 +1,9 @@
 import { animateLinesToFinalState } from './navbar.js';
-export async function renderHome() {
+export async function render404() {
     const app = document.getElementById('app');
     if (!app)
         return;
-    const res = await fetch('/dist/html/home.html');
+    const res = await fetch('/dist/html/error404.html');
     const html = await res.text();
     app.innerHTML = html;
     // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
