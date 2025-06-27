@@ -1,5 +1,6 @@
 import { animateLinesToFinalState } from './navbar.js';
 
+/* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
 	type: '1vs1' | 'tournament';
 	minPlayers: number;
@@ -11,15 +12,24 @@ interface	GameMode {
 interface	Player {
 	id: number;
 	alias: string;
-	timestamp: number;
+}
+
+interface	ConnectedUser {
+	name: string;
+	ip_address: string;
+	email: string;
+	points: number;
 }
 
 // Variable globale pour stocker les joueurs
 let	players: Player[] = [];
 let	nextPlayerId = 1;
+let connectedUser: ConnectedUser | null = null;
 
 // Variable pour nettoyer les event listeners
 let	currentEventListeners: (() => void)[] = [];
+
+/* ---------------------------- FUNCTIONS ----------------------------------------------------------------------------------------------------- */
 
 export async function	renderPlayers() {
 	// NETTOYAGE : Réinitialiser complètement à chaque rendu
@@ -27,6 +37,7 @@ export async function	renderPlayers() {
 	// Réinitialiser les joueurs
 	players = [];
 	nextPlayerId = 1;
+	connectedUser = null;
 	
 	// Récupération de l'élément app principal
 	const app = document.getElementById('app');
@@ -61,15 +72,54 @@ export async function	renderPlayers() {
 	// Injection du HTML dans l'app
 	app.innerHTML = html;
 
-	setTimeout(() => {
-	animateLinesToFinalState([
-		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
-	]);
+	requestAnimationFrame(async () => { //permet l'execution de ces fonctions juste avant d'afficher le contenu de l'écran, on est sur que DOM est pret
+		animateLinesToFinalState([
+			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+			{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+		]);
 
-	// Initialisation de la logique selon le mode de jeu
-	initialisePlayersLogic(currentMode);
-	}, 10);
+		// Initialisation de la logique selon le mode de jeu
+		const	addPlayerFunction = initialisePlayersLogic(currentMode);
+
+		const	user = await getAuthUser();
+		if (user) {
+			connectedUser = user;
+			if (addPlayerFunction)
+				addPlayerFunction.addPlayer(user.name);
+			console.log("Connected player automatically added:", user.name);
+		} else {
+			console.log("No authenticated user found or auth check failed", Error);
+		}
+	});
+}
+
+function	isConnectedUser(obj: any): obj is ConnectedUser {
+	return (
+		obj &&
+		typeof obj.name === 'string' &&
+		typeof obj.ip_address === 'string' &&
+		typeof obj.email === 'string' &&
+		typeof obj.points === 'number'
+	);
+}
+
+async function getAuthUser(): Promise<ConnectedUser | null> {
+	try {
+		const	res = await fetch('/auth/me', {
+			credentials: 'include',
+		});
+		if (!res.ok)
+			return (null);
+		const	user: ConnectedUser = await res.json();
+		if (isConnectedUser(user))
+			return (console.log("Authenticated user found: ", user.name), user);
+		else
+			return (console.error("Invalid user format received from backend: ", user), null)
+	}
+	catch (error) {
+		console.error("Error fetching authenticated user:", error)
+	}
+	return (null);
 }
 
 function	cleanupEventListeners() {
@@ -102,7 +152,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			noPlayersMsg: !!noPlayersMsg,
 			beginGameBtn: !!beginGameBtn
 		});
-		return;
+		return (null);
 	}
 
 	// Définir le sous-titre du mode
@@ -161,7 +211,6 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 		const	newPlayer: Player = {
 			id: nextPlayerId++,
 			alias: trimmedAlias,
-			timestamp: Date.now()
 		};
 		// Ajout à la liste des joueurs
 		players.push(newPlayer);
@@ -202,19 +251,33 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 				const	playerElement = document.createElement("div");
 				playerElement.className = "flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200";
 
-				playerElement.innerHTML = `
-					<div class="flex items-center space-x-2">
-						<span class="text-sm font-bold text-[#218DBE]">
-							${index + 1}.
-						</span>
-						<span class="text-sm font-bold text-gray-800">
-							${player.alias}
-						</span>
-					</div>
-					<button class="w-6 h-6 flex items-center justify-center bg-red-500 text-white texte-xs rounded hover:bg-red-600 transition-colors duration-200 font-bold"
-						onclick="window.removePlayerHandler(${player.id})">
-						✕
-					</button>`;
+				if (connectedUser && player.alias === connectedUser.name) {
+					playerElement.innerHTML =	`<div class="flex items-center space-x-2">
+													<span class="text-sm font-bold text-[#218DBE]">
+														${index + 1}. </span>
+													<span class="text-sm font-bold text-gray-800">
+														${player.alias} </span>
+												</div>`
+				} else {
+					playerElement.innerHTML =	`<div class="flex items-center space-x-2">
+													<span class="text-sm font-bold text-[#218DBE]">
+														${index + 1}. </span>
+													<span class="text-sm font-bold text-gray-800">
+														${player.alias} </span>
+												</div>
+												<button class="w-6 h-6 flex items-center justify-center bg-red-500 text-white
+															   text-xs rounded hover:bg-red-600 transition-colors duration-200 font-bold
+															   remove-player-btn" data-player-id="${player.id}">
+													✕ 
+												</button>`;
+					// Ajout de l'event listener pour chaque player
+					const	removeBtn = playerElement.querySelector('.remove-player-btn') as HTMLButtonElement;
+					if (removeBtn) {
+						const	clickHandler = () => removePlayer(player.id);
+						removeBtn.addEventListener("click", clickHandler);
+						currentEventListeners.push(() => removeBtn.removeEventListener("click", clickHandler));
+					}
+				}
 				playersList.appendChild(playerElement);
 			});
 		}
@@ -261,22 +324,14 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 		if (players.length >= gameMode.minPlayers) {
 			// Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
 			sessionStorage.setItem("gamePlayers", JSON.stringify(players));
-			
-			// Redirection vers la page de jeu
-			history.pushState(null, "", "/pong");
-			
-			// Appel du router pour charger la nouvelle page
-			const	routerEvent = new CustomEvent('routeChanged');
-			window.dispatchEvent(routerEvent);
-			
+			window.history.pushState({}, '', '/pong');
+			// Déclencher le routeur pour injecter la page
+			window.dispatchEvent(new CustomEvent('routeChanged'));
 			console.log("Lanunching the game with players:", players);
 		}
 	};
 	beginGameBtn.addEventListener("click", beginGameHandler);
 	currentEventListeners.push(() => beginGameBtn.removeEventListener("click", beginGameHandler));
-
-	// Exposer la fonction de suppression au scope global pour les boutons HTML
-	(window as any).removePlayerHandler = removePlayer;
 
 	// Initialisation de l'affichage au tout début
 	updateUI();
@@ -286,4 +341,10 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	// Focus automatique sur le champ input: met automatiquement le curseur dans le champ texte
 	playerInput.focus();
 	console.log("Players logic initialized successfully");
+
+	return {addPlayer};
 }
+
+/* DOM = Document Object Model = représentation en mémoire du contenu HTML d'une page web
+objet construit à partir du fichier html ; on ne manipule jamais le html directement avec JS mais le DOM
+permet de modifier la page sans la recharger*/

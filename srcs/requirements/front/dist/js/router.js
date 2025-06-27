@@ -1,16 +1,16 @@
 import { renderHome } from './pages/home.js';
 import { renderGameMode } from './pages/gameMode.js';
 import { renderPlayers } from './pages/players.js';
-import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
+import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/login.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
     '/game-mode': renderGameMode,
     '/players': renderPlayers,
-    '/profile': renderProfile,
     '/pong': renderPong,
+    '/profile': renderProfile,
     '/login': renderLogin,
     '/users': renderUser,
     '/matches': renderMatch,
@@ -26,18 +26,40 @@ export function router() {
     }
     render();
 }
-console.log("hello");
 // Allow click links with data-link to pushState instead of full reload
 export function enableLinkInterception() {
     console.log("Setting up link interception");
     document.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target.matches('[data-link]')) {
+        // 	const target = e.target as HTMLElement;
+        // 	if (target.matches('[data-link]')) {
+        // 		e.preventDefault();
+        // 		const href = target.getAttribute('href')!;
+        // 		if (!href)
+        // 			return;
+        // 		console.log("Intercepted navigation to:", href);
+        // 		history.pushState(null, '', href);
+        // 		router();
+        // 	}
+        //   });
+        const link = e.target.closest('[data-link]');
+        if (link) {
             e.preventDefault();
-            const href = target.getAttribute('href');
+            const href = link.getAttribute('href');
+            if (!href)
+                return;
             console.log("Intercepted navigation to:", href);
             history.pushState(null, '', href);
             router();
         }
     });
 }
+/*
+Pourquoi est-ce mieux que matches() ? :
+matches('[data-link]') ne fonctionne que sur l’élément cliqué,
+donc si on clique sur une <span> à l'intérieur d’un lien,
+l’interception ne se fait pas.
+
+En utilisant closest('[data-link]'), on remonte jusqu’au lien contenant
+(si présent), même si l’élément cliqué est imbriqué dans un bouton,
+une icône, etc.
+C’est le comportement standard attendu d’un système SPA */ 

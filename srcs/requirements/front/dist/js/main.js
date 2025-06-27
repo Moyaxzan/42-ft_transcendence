@@ -1,19 +1,20 @@
 import { router, enableLinkInterception } from './router.js';
 document.addEventListener("DOMContentLoaded", () => {
     router();
-    enableLinkInterception();
+    enableLinkInterception(); // Intercepte les liens [data-link]
+    // document.addEventListener("click", (e) => {
+    // 	const link = (e.target as HTMLElement).closest("[data-link]") as HTMLAnchorElement | null;
+    // 	if (link) {
+    // 		e.preventDefault();
+    // 		const href = link.getAttribute("href");
+    // 		if (href) {
+    // 			console.log("Intercepted link:", href);
+    // 			history.pushState(null, "", href);
+    // 			router();
+    // 		}
+    // 	}
+    // });
+    window.addEventListener("popstate", router); // Gère les flèches du navigateur
+    window.addEventListener("routeChanged", router); // Gère les appels JS comme beginGame (changements de page via JS et non liens html; = évènements non interceptés par enableLinkInterception() car n'écoute que clics via <a data-link>)
     console.log("main.ts loaded");
-    document.addEventListener("click", (e) => {
-        const link = e.target.closest("[data-link]");
-        if (link) {
-            e.preventDefault();
-            const href = link.getAttribute("href");
-            if (href) {
-                console.log("Intercepted link:", href);
-                history.pushState(null, "", href);
-                router();
-            }
-        }
-    });
-    window.addEventListener("popstate", router);
 });
