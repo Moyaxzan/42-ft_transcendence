@@ -8,8 +8,11 @@
 			<h1 id="page-title" class="text-6xl font-bold text-[#FFB942] mb-4" style="font-family: 'Inter', sans-serif;">
 				Pong game
 			</h1>
-			<p class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;">
-				Ready to lose ?
+			<p lang="en" class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;">
+				Ready to lose?
+			</p>
+			<p lang="fr" class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;">
+				Pret a perdre ?
 			</p>
 		</div>
 
@@ -18,7 +21,10 @@
 
 	<!-- Contenu principal -->
 	<main class="flex flex-1 overflow-hidden">
-
+		<button id="lang-toggle"
+			class="absolute top-4 right-4 z-50 px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-700 transition">
+			Switch Language
+		</button>
 		<!-- Section gauche - Image -->
 		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
 			<img src="../../characters.png" alt="Pong characters"
