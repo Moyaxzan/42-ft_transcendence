@@ -1,5 +1,6 @@
 import { renderProfile } from './profile.js';
 import { renderHome } from './home.js';
+import { animateLinesToFinalState } from './navbar.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts) {
@@ -7,7 +8,7 @@ function loadGoogleSdk() {
             return;
         }
         const script = document.createElement('script');
-        script.src = 'https://accounts.google.com/gsi/client';
+        script.src = 'https://accounts.google.com/gsi/client?hl=en';
         script.async = true;
         script.defer = true;
         script.onload = () => resolve();
@@ -22,6 +23,12 @@ export async function renderLogin() {
     const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
+    requestAnimationFrame(() => {
+        animateLinesToFinalState([
+            { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+            { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+        ]);
+    });
     const backBtn = document.getElementById('backHomeBtn');
     backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
         renderHome();
