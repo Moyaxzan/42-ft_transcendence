@@ -10,8 +10,8 @@ const routes = {
     '/': renderHome,
     '/game-mode': renderGameMode,
     '/players': renderPlayers,
-    '/profile': renderProfile,
     '/pong': renderPong,
+    '/profile': renderProfile,
     '/pong/': renderPong,
     '/login': renderLogin,
     '/users': renderUser,
@@ -22,7 +22,7 @@ export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
     const render = routes[path] || render404();
-    if (path != "/pong" || path != "/pong/") {
+    if (path != "/pong" && path != "/pong/") {
         console.log("game should stop");
         stopGame();
     }

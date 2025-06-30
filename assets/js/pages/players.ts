@@ -400,15 +400,19 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	currentEventListeners.push(() => playerInput.removeEventListener("keypress", keyPressHandler));
 
 	// Clic sur le bouton BEGIN
-	const	beginGameHandler = (e: Event) => {
+	const	beginGameHandler = async (e: Event) => {
 		e.preventDefault();
 		if (players.length >= gameMode.minPlayers) {
 			// Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
-			sessionStorage.setItem("gamePlayers", JSON.stringify(players));
-			window.history.pushState({}, '', '/pong');
+			// await startTournament(playerNames);
+			// sessionStorage.setItem("gamePlayers", JSON.stringify(players));
+			// window.history.pushState({}, '', '/pong');
+			const playerNames = players.map(player => player.alias);
+			
+			await startTournament(playerNames);
 			// Déclencher le routeur pour injecter la page
-			window.dispatchEvent(new CustomEvent('routeChanged'));
-			console.log("Lanunching the game with players:", players);
+			// window.dispatchEvent(new CustomEvent('routeChanged'));
+			console.log("Launching the game with players:", players);
 		}
 	};
 	beginGameBtn.addEventListener("click", beginGameHandler);

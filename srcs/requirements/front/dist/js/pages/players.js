@@ -47,6 +47,9 @@ export async function renderPlayers() {
             { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
             { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
         ]);
+        // Réinitialiser les joueurs
+        players = [];
+        nextPlayerId = 1;
         // Initialisation de la logique selon le mode de jeu
         const addPlayerFunction = initialisePlayersLogic(currentMode);
         const user = await getAuthUser();
@@ -89,64 +92,6 @@ async function getAuthUser() {
 function cleanupEventListeners() {
     currentEventListeners.forEach(cleanup => cleanup());
     currentEventListeners = [];
-}
-async function createGuestUser(name) {
-    const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, is_guest: true }),
-    });
-    if (!response.ok) {
-        throw new Error(`Failed to create user "${name}"`);
-    }
-    const data = await response.json();
-    return data.userId; // attendu: { userId: 42 }
-}
-// Function to create tournament via API
-async function createTournamentFromPseudonyms(playerNames) {
-    try {
-        const response = await fetch('/api/tournaments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ players: playerNames }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            return { success: false, message: data?.error || "Unknown error" };
-        }
-        return { success: true, tournamentId: data.tournamentId };
-    }
-    catch (err) {
-        console.error("createTournamentFromPseudonyms error:", err);
-        return { success: false, message: err.message };
-    }
-}
-// Function to start tournament
-async function startTournament(playerNames) {
-    try {
-        // Show loading state
-        const beginButton = document.getElementById("begin-game-btn");
-        const originalText = beginButton.textContent;
-        beginButton.disabled = true;
-        // Create tournament via API
-        const tournamentData = await createTournamentFromPseudonyms(playerNames);
-        if (tournamentData.success && tournamentData.tournamentId) {
-            console.log("Tournoi créé avec l'ID :", tournamentData.tournamentId);
-            history.pushState(null, "", `/pong/#${tournamentData.tournamentId}`);
-            router();
-        }
-        else {
-            throw new Error(tournamentData.message || 'Failed to create tournament');
-        }
-    }
-    catch (error) {
-        console.error('Failed to create tournament:', error);
-        alert(`Failed to create tournament.`);
-        // Reset button state
-        const beginButton = document.getElementById("begin-game-btn");
-        beginButton.textContent = "BEGIN";
-        beginButton.disabled = false;
-    }
 }
 async function createGuestUser(name) {
     const response = await fetch('/api/users', {
@@ -381,15 +326,18 @@ function initialisePlayersLogic(gameMode) {
     playerInput.addEventListener("keypress", keyPressHandler);
     currentEventListeners.push(() => playerInput.removeEventListener("keypress", keyPressHandler));
     // Clic sur le bouton BEGIN
-    const beginGameHandler = (e) => {
+    const beginGameHandler = async (e) => {
         e.preventDefault();
         if (players.length >= gameMode.minPlayers) {
             // Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
-            sessionStorage.setItem("gamePlayers", JSON.stringify(players));
-            window.history.pushState({}, '', '/pong');
+            // await startTournament(playerNames);
+            // sessionStorage.setItem("gamePlayers", JSON.stringify(players));
+            // window.history.pushState({}, '', '/pong');
+            const playerNames = players.map(player => player.alias);
+            await startTournament(playerNames);
             // Déclencher le routeur pour injecter la page
-            window.dispatchEvent(new CustomEvent('routeChanged'));
-            console.log("Lanunching the game with players:", players);
+            // window.dispatchEvent(new CustomEvent('routeChanged'));
+            console.log("Launching the game with players:", players);
         }
     };
     beginGameBtn.addEventListener("click", beginGameHandler);
