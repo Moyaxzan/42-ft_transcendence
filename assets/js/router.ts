@@ -1,18 +1,22 @@
 import { renderHome } from './pages/home.js';
+import { renderGameMode } from './pages/gameMode.js';
+import { renderPlayers } from './pages/players.js';
+
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { renderLogin } from './pages/login.js';
-import { renderPlay } from './pages/play.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,
+  '/game-mode': renderGameMode,
+  '/players': renderPlayers,
   '/profile': renderProfile,
   '/pong': renderPong,
+  '/pong/': renderPong,
   '/login': renderLogin,
   '/users': renderUser,
   '/matches': renderMatch,
-  '/play': renderPlay,
 };
 
 // Run this when URL changes or app first loads
@@ -20,7 +24,7 @@ export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
 	const render = routes[path] || renderHome;
-	if (path != "/pong") {
+	if (path != "/pong" && path != "/pong/") {
 		console.log("game should stop");
 		stopGame();
 	}
@@ -35,9 +39,11 @@ export function enableLinkInterception() {
     if (target.matches('[data-link]')) {
       e.preventDefault();
       const href = target.getAttribute('href')!;
-      console.log("Intercepted navigation to:", href);
-      history.pushState(null, '', href);
-//      router();
+	  if (href) {
+		  console.log("Intercepted navigation to:", href);
+		  history.pushState(null, '', href);
+		  window.dispatchEvent(new PopStateEvent("popstate"));
+	  }
     }
   });
 }

@@ -1,0 +1,75 @@
+<!-- gameMode.html -->
+<div class="flex flex-col h-full w-full overflow-hidden relative">
+
+	<!-- Header avec Titre/navigation -->
+	<header class="relative z-50 flex justify-between items-start px-12 py-6">
+
+		<!-- Bouton back -->
+		<div class="absolute top-6 left-12 z-50">
+			<a href="/home" data-link
+				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
+				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
+				← Back
+			</a>
+		</div>
+
+		<!--Titre de la page-->
+		<div class="relative z-10 pt-10 pl-36">
+			<h1 id="page-title" class="text-6xl font-bold text-[#FFB942] mb-4" style="font-family: 'Inter', sans-serif;">
+				Game mode
+			</h1>
+		</div>
+
+		<div class="flex-1"></div>
+		
+		<!-- Bouton login -->
+		<div class="absolute top-6 right-32 z-50">
+			<a	href="/login" data-link
+				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
+				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
+				Login
+			</a>
+		</div>
+	</header>
+
+	<!-- Contenu principal -->
+	<main class="flex flex-1 overflow-hidden">
+
+		<!-- Section gauche - Image -->
+		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
+
+			<!-- Image de fond des personnages -->
+			<!-- <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80" 
+				style="background-image: url('./assets/pong-characters.png');">
+			</div> -->
+		  
+			<!-- Contenu optionnel par dessus l'image -->
+			<!-- <div class="relative z-10"> -->
+			<!-- Vous pouvez ajouter du contenu ici si nécessaire -->
+			<!-- </div> -->
+		</section>
+	
+		<!-- Section droite - Boutons de jeu -->
+		<section class="flex-[5] h-full flex flex-col justify-start items-end pt-28 pr-12">
+			<div class="w-full max-w-sm space-y-6">
+				<!-- Bouton 1 vs 1 -->
+				<a	href="/players" data-link
+					id="1vs1-button"
+					class="w-full h-14 rounded-lg bg-[#FFB942] hover:bg-[#e6a63b] transition-colors duration-200 
+					font-bold text-black text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200
+					flex items-center justify-center">
+					1 vs 1
+				</a>
+			
+				<!-- Bouton Tournament -->
+				<a	href="/players" data-link
+					id="tournament-button"
+					class="w-full h-14 rounded-lg bg-[#FFB942] hover:bg-[#e6a63b] transition-colors duration-200 
+					font-bold text-black text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200
+					flex items-center justify-center">
+					Tournament
+				</a>
+			</div>
+		</section>
+	</main>
+</div>

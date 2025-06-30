@@ -21,22 +21,23 @@
 	color: #D1FFFF;
 }
 
-.londrina-solid-regular {
-	font-family: "Londrina Solid", sans-serif;
-	font-weight: 400;
-	font-style: normal;
+.inter-regular {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
-@keyframes marquee {
-	0% {
-		transform: translateX(17%);
-	}
-	100% {
-		transform: translateX(-75%);
-	}
+.inter-bold {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 
-.animate-marquee {
-  display: inline-block;
-  animation: marquee 20s linear infinite;
+.inter-fat {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
