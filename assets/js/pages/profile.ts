@@ -1,4 +1,5 @@
 import { renderHome } from './home.js'
+import { animateLinesToFinalState } from './navbar.js'
 
 interface User {
 	id: string;
@@ -37,6 +38,13 @@ export async function renderProfile() {
 	}
 	const html = await htmlRes.text();
 	app.innerHTML = html;
+
+	requestAnimationFrame(() => {
+			animateLinesToFinalState([
+				{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+				{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+			]);
+		})
 
 	const authActionContainer = document.getElementById('authActionContainer');
 	const profileArea = document.querySelector("#profileArea");

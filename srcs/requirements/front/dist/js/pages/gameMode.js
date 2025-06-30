@@ -1,5 +1,4 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { renderPlayers } from './players.js';
 export async function renderGameMode() {
     const app = document.getElementById('app');
     if (!app)
@@ -7,12 +6,6 @@ export async function renderGameMode() {
     const res = await fetch('/dist/html/gameMode.html');
     const html = await res.text();
     app.innerHTML = html;
-    const navbar = document.getElementById("line-top");
-    const footer = document.getElementById("line-bottom");
-    if (!navbar || !footer) {
-        console.log("html element not found");
-        return;
-    }
     animateLinesToFinalState([
         { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
         { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
@@ -29,18 +22,18 @@ function setupGameModeButtons() {
     }
     oneVsOneBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        // Stocker le mode et naviguer
+        // Stocker le mode
         sessionStorage.setItem('gameMode', '1vs1');
         // Utiliser système de navigation SPA
         window.history.pushState({}, '', '/players');
-        renderPlayers();
+        window.dispatchEvent(new CustomEvent('routeChanged'));
     });
     tournamentBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        // Stocker le mode et naviguer
+        // Stocker le mode
         sessionStorage.setItem('gameMode', 'tournament');
         // Utiliser système de navigation SPA
         window.history.pushState({}, '', '/players');
-        renderPlayers();
+        window.dispatchEvent(new CustomEvent('routeChanged'));
     });
 }

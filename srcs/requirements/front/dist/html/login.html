@@ -1,94 +1,106 @@
-<!-- auth.html -->
-<!--<div id="navbar"></div>-->
+<!-- login.html -->
+<div class="flex flex-col h-full w-full overflow-hidden relative">
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
-  <link rel="stylesheet" href="/dist/css/styles.css" />
-</head>
-<body>
-  <div class="mt-4 max-w-md mx-auto p-6 bg-gray-100 rounded shadow-md">
-    <h2 class="text-2xl mb-4 text-center font-semibold">Authentication</h2>
-    <form id="loginForm" method="post" action="" class="space-y-4">
-      <div>
-        <label for="email" class="block mb-1 font-medium">Email :</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="exemple@domaine.com"
-        />
-      </div>
-      <div>
-        <label for="password" class="block mb-1 font-medium">Password :</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="********"
-        />
-      </div>
-      <button
-        type="submit"
-        class="btn-glow w-full py-3 rounded text-xl text-white relative overflow-hidden"
-      >
-        <span>Log in</span>
-      </button>
-    </form>
+	<!-- Header avec Titre/navigation -->
+	<header class="relative z-50 flex justify-between items-start px-12 py-6">
 
-    <div id="loginMessage" class="mt-4 text-center text-red-600"></div>
+		<!-- Bouton back -->
+		<div class="absolute top-6 left-12 z-50">
+			<a href="/" data-link
+				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
+				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
+				← Back
+			</a>
+		</div>
 
-    <div class="mt-4 text-center">
-      <button id="backHomeBtn" class="px-4 py-2 rounded bg-gray-300 text-black hover:bg-gray-400 transition">
-        Back to Home
-      </button>
-    </div>
+		<!--Titre de la page-->
+		<div class="relative z-10 pt-10 pl-36">
+			<h1 id="page-title" class="text-6xl font-bold text-[#FFB942] mb-4" style="font-family: 'Inter', sans-serif;">
+				Login
+			</h1>
+		</div>
 
-    <div id="twofa-section" class="hidden space-y-4">
-      <label for="totp" class="block font-medium">Code 2FA :</label>
-      <input
-        type="text"
-        id="totp"
-        name="totp"
-        maxlength="6"
-        inputmode="numeric"
-        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="123456"
-      />
-      <button
-        id="submit2FA"
-        type="button"
-        class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Verify code
-      </button>
-    </div>
-    
+		<div class="flex-1"></div>
+	</header>
 
-    <div class="mt-6 text-center">
-      <p class="mb-2">or</p>
-      <div id="googleSignInDiv"></div>
-    </div>
-  </div>
-  <div id="twofa-setup-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
-    <div class="bg-white rounded p-6 max-w-sm w-full relative">
-      <button id="close2FAModal" class="absolute top-2 right-2 text-gray-700 hover:text-black text-xl font-bold">&times;</button>
-      <h3 class="text-lg font-semibold mb-4 text-center">Configure Two-Factor Authentication</h3>
-      <p class="mb-4 text-center">Scan this QR code with your authentication app:</p>
-      <div id="qrCodeContainer" class="flex justify-center mb-4"></div>
-      <p class="text-center text-sm text-gray-600">Then enter the code below to verify.</p>
-    </div>
-  </div>
-</body>
-</html>
+	<!-- Contenu principal -->
+	<main class="flex flex-1 overflow-hidden justify-center items-start relative">
+		<div class="w-full max-w-sm mx-auto bg-gray-100 rounded-lg shadow-lg p-8">
+			<!-- Titre du formulaire-->
+			<h2 class="text-2xl mb-2 text-center font-semibold">Authentication</h2>
+			<form id="loginForm" method="post" action="" class="space-y-2">
+				<div>
+					<label for="email" class="block mb-1 font-medium text-gray-700">Email :</label>
+					<input	type="email"
+							id="email"
+							name="email"
+							required
+							class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+							placeholder="exemple@domaine.com"/>
+				</div>
+				<div>
+					<label for="password" class="block mb-1 font-medium text-gray-700">Password :</label>
+					<input	type="password"
+							id="password"
+							name="password"
+							required
+							class="w-full px-4 py-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+							placeholder="********"/>
+				</div>
+				<button	type="submit"
+						class="w-full py-3 bg-[#F27D01] text-white text-lg font-bold rounded-md hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+					<span>Log in</span>
+				</button>
+			</form>
 
+			<!-- Message d'erreur -->
+			<div id="loginMessage" class="mt-4 text-center text-red-600"></div>
 
-<!--<div id="footer"></div>-->
+			<!-- 2FA authentication -->
+			<div id="twofa-section" class="hidden space-y-4 mt-2">
+				<label for="totp" class="block font-medium text-gray-700">Code 2FA :</label>
+				<input	type="text"
+						id="totp"
+						name="totp"
+						maxlength="6"
+						inputmode="numeric"
+						class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+						placeholder="123456"/>
+				<button	id="submit2FA"
+						type="button"
+						class="w-full bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600">
+						Verify code
+				</button>
+			</div>
+
+			<!-- Google sign in -->
+			<div class="mt-4 text-center">
+				<p class="mb-4 mb-2 text-gray-700 font-medium">or</p>
+				<div id="googleSignInDiv"></div>
+			</div>
+
+			<!-- Bouton Back home -->
+			<div class="mt-6 text-center">
+				<button	id="backHomeBtn"
+						class="px-4 py-2 rounded-md bg-[#145c72] text-white font-semibold hover:bg-[#1A6F96] transition-colors  duration-200 shadow-md">
+					Back to Home
+				</button>
+			</div>
+		</div>
+
+		<!-- Modal QR 2FA -->
+		<div id="twofa-setup-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
+			<div class="bg-white rounded p-6 max-w-sm w-full relative">
+				<button	id="close2FAModal"
+						class="absolute top-2 right-2 text-gray-700 hover:text-black text-xl font-bold">
+						&times;
+				</button>
+				<h3 class="text-lg font-semibold mb-4 text-center">Configure Two-Factor Authentication</h3>
+				<p class="mb-4 text-center">Scan this QR code with your authentication app:</p>
+				<div id="qrCodeContainer" class="flex justify-center mb-4"></div>
+				<p class="text-center text-sm text-gray-600">Then enter the code below to verify.</p>
+			</div>
+		</div>
+	</main>
+</div>
 

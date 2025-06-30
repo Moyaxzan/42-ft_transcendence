@@ -6,7 +6,7 @@
 
 		<!-- Bouton back -->
 		<div class="absolute top-6 left-12 z-50">
-			<a href="/home" data-link
+			<a href="/" data-link
 				class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
 				hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
 				← Back
@@ -37,24 +37,17 @@
 
 		<!-- Section gauche - Image -->
 		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
-
-			<!-- Image de fond des personnages -->
-			<!-- <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80" 
-				style="background-image: url('./assets/pong-characters.png');">
-			</div> -->
-		  
-			<!-- Contenu optionnel par dessus l'image -->
-			<!-- <div class="relative z-10"> -->
-			<!-- Vous pouvez ajouter du contenu ici si nécessaire -->
-			<!-- </div> -->
+			<img src="../../characters.png" alt="Pong characters"
+				 class="absolute bottom-0 left-0 w-[90%] h-auto object-contain pointer-events-none z-0">
 		</section>
 	
 		<!-- Section droite - Boutons de jeu -->
-		<section class="flex-[5] h-full flex flex-col justify-start items-end pt-28 pr-12">
+		<section class="flex-[5] h-full flex flex-col justify-start items-start pt-28">
 			<div class="w-full max-w-sm space-y-6">
 				<!-- Bouton 1 vs 1 -->
-				<a	href="/players" data-link
+				<a	href="/players"
 					id="1vs1-button"
+					role="button"
 					class="w-full h-14 rounded-lg bg-[#FFB942] hover:bg-[#e6a63b] transition-colors duration-200 
 					font-bold text-black text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200
 					flex items-center justify-center">
@@ -62,8 +55,9 @@
 				</a>
 			
 				<!-- Bouton Tournament -->
-				<a	href="/players" data-link
+				<a	href="/players"
 					id="tournament-button"
+					role="button"
 					class="w-full h-14 rounded-lg bg-[#FFB942] hover:bg-[#e6a63b] transition-colors duration-200 
 					font-bold text-black text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200
 					flex items-center justify-center">

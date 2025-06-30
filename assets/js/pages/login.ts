@@ -1,5 +1,6 @@
 import { renderProfile } from './profile.js'
 import { renderHome } from './home.js'
+import { animateLinesToFinalState } from './navbar.js'
 
 declare global {
 	interface Window {
@@ -16,7 +17,7 @@ function loadGoogleSdk(): Promise<void> {
 		}
 
 		const script = document.createElement('script');
-		script.src = 'https://accounts.google.com/gsi/client';
+		script.src = 'https://accounts.google.com/gsi/client?hl=en';
 		script.async = true;
 		script.defer = true;
 		script.onload = () => resolve();
@@ -33,6 +34,14 @@ export async function renderLogin(): Promise<void> {
 	const res = await fetch('/dist/html/login.html');
 	const html = await res.text();
 	app.innerHTML = html;
+
+	requestAnimationFrame(() => {
+		animateLinesToFinalState([
+			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+			{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+		]);
+	})
+	
 
 	const backBtn = document.getElementById('backHomeBtn');
 	backBtn?.addEventListener('click', () => {
