@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js'
-import { setLanguage, toggleLanguage } from '../lang.js'
+import { setLanguage } from '../lang.js'
 
 export async function renderHome() {
 	console.log("renderHome called");
@@ -14,18 +14,16 @@ export async function renderHome() {
 
 	setLanguage(document.documentElement.lang as 'en' | 'fr');
 
-	setTimeout(() => {
-		const toggleButton = document.getElementById('lang-toggle');
-		if (toggleButton) {
-			console.log("Button found in timeout");
-			toggleButton.addEventListener('click', () => {
-				console.log("Lang button clicked");
-				toggleLanguage();
-			});
-		} else {
-			console.warn("Button NOT found in timeout");
-		}
-	}, 100);
+
+	// const toggleButton = document.getElementById('lang-toggle');
+	// if (toggleButton) {
+	// 	console.log("Button found in timeout");
+	// 	toggleButton.addEventListener('click', () => {
+	// 		console.log("Lang button clicked");
+	// 		toggleLanguage();
+	// 	});
+	// } 
+
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },

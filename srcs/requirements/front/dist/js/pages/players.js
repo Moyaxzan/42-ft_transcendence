@@ -1,4 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage } from '../lang.js';
 // Variable globale pour stocker les joueurs
 let players = [];
 let nextPlayerId = 1;
@@ -40,6 +41,7 @@ export async function renderPlayers() {
     const html = await res.text();
     // Injection du HTML dans l'app
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     requestAnimationFrame(async () => {
         animateLinesToFinalState([
             { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },

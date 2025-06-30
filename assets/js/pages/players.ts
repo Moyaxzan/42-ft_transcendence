@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-
+import { setLanguage } from '../lang.js';
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
 	type: '1vs1' | 'tournament';
@@ -72,6 +72,8 @@ export async function	renderPlayers() {
 	// Injection du HTML dans l'app
 	app.innerHTML = html;
 
+	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	
 	requestAnimationFrame(async () => { //permet l'execution de ces fonctions juste avant d'afficher le contenu de l'écran, on est sur que DOM est pret
 		animateLinesToFinalState([
 			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
