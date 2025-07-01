@@ -23,9 +23,10 @@ export async function renderLogin() {
     const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
-    requestAnimationFrame(() => {
-        setLanguage(document.documentElement.lang);
-    });
+    setLanguage(document.documentElement.lang);
+    // requestAnimationFrame(() => {
+    // 	console.log('Langue actuelle :', document.documentElement.lang);
+    // });
     const backBtn = document.getElementById('backHomeBtn');
     backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
         renderHome();

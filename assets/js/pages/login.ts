@@ -36,9 +36,11 @@ export async function renderLogin(): Promise<void> {
 	app.innerHTML = html;
 
 
-	requestAnimationFrame(() => {
-		setLanguage(document.documentElement.lang as 'en' | 'fr');
-	});
+	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	// requestAnimationFrame(() => {
+	// 	console.log('Langue actuelle :', document.documentElement.lang);
+		
+	// });
 
 	const backBtn = document.getElementById('backHomeBtn');
 	backBtn?.addEventListener('click', () => {
