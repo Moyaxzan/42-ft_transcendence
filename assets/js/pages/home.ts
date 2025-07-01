@@ -13,17 +13,7 @@ export async function renderHome() {
 	app.innerHTML = html;
 
 	setLanguage(document.documentElement.lang as 'en' | 'fr');
-
-
-	// const toggleButton = document.getElementById('lang-toggle');
-	// if (toggleButton) {
-	// 	console.log("Button found in timeout");
-	// 	toggleButton.addEventListener('click', () => {
-	// 		console.log("Lang button clicked");
-	// 		toggleLanguage();
-	// 	});
-	// } 
-
+	
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },

@@ -1,5 +1,6 @@
 import { renderProfile } from './profile.js';
 import { renderHome } from './home.js';
+import { setLanguage } from '../lang.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts) {
@@ -22,6 +23,9 @@ export async function renderLogin() {
     const res = await fetch('/dist/html/login.html');
     const html = await res.text();
     app.innerHTML = html;
+    requestAnimationFrame(() => {
+        setLanguage(document.documentElement.lang);
+    });
     const backBtn = document.getElementById('backHomeBtn');
     backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
         renderHome();

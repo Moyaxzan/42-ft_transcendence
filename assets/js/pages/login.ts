@@ -1,5 +1,6 @@
 import { renderProfile } from './profile.js'
 import { renderHome } from './home.js'
+import { setLanguage } from '../lang.js';
 
 declare global {
 	interface Window {
@@ -33,6 +34,11 @@ export async function renderLogin(): Promise<void> {
 	const res = await fetch('/dist/html/login.html');
 	const html = await res.text();
 	app.innerHTML = html;
+
+
+	requestAnimationFrame(() => {
+		setLanguage(document.documentElement.lang as 'en' | 'fr');
+	});
 
 	const backBtn = document.getElementById('backHomeBtn');
 	backBtn?.addEventListener('click', () => {

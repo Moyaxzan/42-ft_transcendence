@@ -3,19 +3,11 @@ import { setLanguage } from './lang.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 	router();
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	// setLanguage(document.documentElement.lang as 'en' | 'fr');
+	const lang = (localStorage.getItem("lang") as 'en' | 'fr') || 'en';
+	setLanguage(lang);
 
 	enableLinkInterception(); // Intercepte les liens [data-link]
-
-
-	// const toggleButton = document.getElementById('lang-toggle');
-	// if (toggleButton) {
-	// 	console.log("Button found in timeout");
-	// 	toggleButton.addEventListener('click', () => {
-	// 		console.log("Lang button clicked");
-	// 		toggleLanguage();
-	// 	});
-	// } 
 
 	const langButtons = document.querySelectorAll(".lang-option");
 	langButtons.forEach(button =>  {

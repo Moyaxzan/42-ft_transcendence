@@ -121,20 +121,41 @@ function initialisePlayersLogic(gameMode) {
     console.log("Mode indicator set to:", gameMode.subtitle);
     function updateUI() {
         // Mettre à jour les textes informatifs
-        playerLimits.textContent = gameMode.type === '1vs1' ? 'Exactly 2 players required'
-            : `${gameMode.minPlayers} to ${gameMode.maxPlayers} players required`;
-        // Mettre à jour le compteur
-        playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
+        // playerLimits.textContent = gameMode.type === '1vs1' ? 'Exactly 2 players required' 
+        // 	: `${gameMode.minPlayers} to ${gameMode.maxPlayers} players required`;
+        // // Mettre à jour le compteur
+        // playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
+        // // État des boutons
+        // const	atMaxCapacity = players.length >= gameMode.maxPlayers; // variable booléenne
+        // playerInput.disabled = atMaxCapacity;
+        // addPlayerBtn.disabled = atMaxCapacity;
+        // if (atMaxCapacity) {
+        // 	addPlayerBtn.textContent = gameMode.type === '1vs1' ? 'Players Complete' : 'Tournament Full';
+        // } else {
+        // 	addPlayerBtn.textContent = 'Add player';
+        // }
+        // Mettre à jour les textes informatifs
+        playerLimits.innerHTML = gameMode.type === '1vs1'
+            ? `
+			<span lang="en">Exactly 2 players required</span>
+			<span lang="fr">Exactement 2 joueurs requis</span>
+			`
+            : `
+			<span lang="en">${gameMode.minPlayers} to ${gameMode.maxPlayers} players required</span>
+			<span lang="fr">${gameMode.minPlayers} à ${gameMode.maxPlayers} joueurs requis</span>
+			`;
         // État des boutons
-        const atMaxCapacity = players.length >= gameMode.maxPlayers; // variable booléenne
+        const atMaxCapacity = players.length >= gameMode.maxPlayers;
+        // // Mettre à jour le compteur
+        playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
         playerInput.disabled = atMaxCapacity;
         addPlayerBtn.disabled = atMaxCapacity;
-        if (atMaxCapacity) {
-            addPlayerBtn.textContent = gameMode.type === '1vs1' ? 'Players Complete' : 'Tournament Full';
-        }
-        else {
-            addPlayerBtn.textContent = 'Add player';
-        }
+        addPlayerBtn.innerHTML = atMaxCapacity
+            ? (gameMode.type === '1vs1'
+                ? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span>`
+                : `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span>`)
+            : `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span>`;
+        setLanguage(document.documentElement.lang);
     }
     // Fonction pour valider un alias
     function isValidAlias(alias) {
