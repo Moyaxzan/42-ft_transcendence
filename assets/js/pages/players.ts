@@ -1,5 +1,8 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage } from '../lang.js';
+import '../tournament.js'
+import { router } from '../router.js'
+
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
 	type: '1vs1' | 'tournament';
@@ -19,6 +22,14 @@ interface	ConnectedUser {
 	ip_address: string;
 	email: string;
 	points: number;
+}
+
+// Interface for tournament creation response
+interface TournamentResponse {
+	success: boolean;
+	message: string;
+	tournamentId: number;
+	players: string[];
 }
 
 // Variable globale pour stocker les joueurs
@@ -72,13 +83,17 @@ export async function	renderPlayers() {
 	// Injection du HTML dans l'app
 	app.innerHTML = html;
 
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 	
 	requestAnimationFrame(async () => { //permet l'execution de ces fonctions juste avant d'afficher le contenu de l'écran, on est sur que DOM est pret
 		animateLinesToFinalState([
 			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 			{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
 		]);
+
+	// Réinitialiser les joueurs
+	players = [];
+	nextPlayerId = 1;
 
 		// Initialisation de la logique selon le mode de jeu
 		const	addPlayerFunction = initialisePlayersLogic(currentMode);
@@ -127,6 +142,73 @@ async function getAuthUser(): Promise<ConnectedUser | null> {
 function	cleanupEventListeners() {
 	currentEventListeners.forEach(cleanup => cleanup());
 	currentEventListeners = [];
+}
+
+async function createGuestUser(name: string): Promise<number> {
+	const response = await fetch('/api/users', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ name, is_guest: true }),
+	});
+	if (!response.ok) {
+		throw new Error(`Failed to create user "${name}"`);
+	}
+	const data = await response.json();
+	return data.userId; // attendu: { userId: 42 }
+}
+
+// Function to create tournament via API
+
+
+async function createTournamentFromPseudonyms(playerNames: string[]): Promise<{ success: boolean, tournamentId?: number, message?: string }> {
+	try {
+		const response = await fetch('/api/tournaments', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ players: playerNames }),
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { success: false, message: data?.error || "Unknown error" };
+		}
+
+		return { success: true, tournamentId: data.tournamentId };
+	} catch (err) {
+		console.error("createTournamentFromPseudonyms error:", err);
+		return { success: false, message: (err as Error).message };
+	}
+}
+
+// Function to start tournament
+async function startTournament(playerNames: string[]) {
+	try {
+		// Show loading state
+		const beginButton = document.getElementById("begin-game-btn") as HTMLButtonElement;
+		const originalText = beginButton.textContent;
+		beginButton.disabled = true;
+
+		// Create tournament via API
+		const tournamentData = await createTournamentFromPseudonyms(playerNames);
+
+		if (tournamentData.success && tournamentData.tournamentId) {
+			console.log("Tournoi créé avec l'ID :", tournamentData.tournamentId);
+			history.pushState(null, "", `/pong/#${tournamentData.tournamentId}`);
+			router();
+		} else {
+			throw new Error(tournamentData.message || 'Failed to create tournament');
+		}
+
+	} catch (error) {
+		console.error('Failed to create tournament:', error);
+		alert(`Failed to create tournament.`);
+		
+		// Reset button state
+		const beginButton = document.getElementById("begin-game-btn") as HTMLButtonElement;
+		beginButton.textContent = "BEGIN";
+		beginButton.disabled = false;
+	}
 }
 
 function	initialisePlayersLogic(gameMode: GameMode) {	
@@ -345,15 +427,19 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	currentEventListeners.push(() => playerInput.removeEventListener("keypress", keyPressHandler));
 
 	// Clic sur le bouton BEGIN
-	const	beginGameHandler = (e: Event) => {
+	const	beginGameHandler = async (e: Event) => {
 		e.preventDefault();
 		if (players.length >= gameMode.minPlayers) {
 			// Stocker les joueurs dans le sessionStorage pour les récupérer dans le jeu
-			sessionStorage.setItem("gamePlayers", JSON.stringify(players));
-			window.history.pushState({}, '', '/pong');
+			// await startTournament(playerNames);
+			// sessionStorage.setItem("gamePlayers", JSON.stringify(players));
+			// window.history.pushState({}, '', '/pong');
+			const playerNames = players.map(player => player.alias);
+			
+			await startTournament(playerNames);
 			// Déclencher le routeur pour injecter la page
-			window.dispatchEvent(new CustomEvent('routeChanged'));
-			console.log("Lanunching the game with players:", players);
+			// window.dispatchEvent(new CustomEvent('routeChanged'));
+			console.log("Launching the game with players:", players);
 		}
 	};
 	beginGameBtn.addEventListener("click", beginGameHandler);

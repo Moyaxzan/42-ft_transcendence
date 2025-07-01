@@ -12,7 +12,7 @@ export async function renderHome() {
 
 	app.innerHTML = html;
 
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 	
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },

@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS matches (
  status NUMERIC DEFAULT 0,
  user_id INTEGER,
  tournament_id INTEGER,
- winner_id INTEGER,
+ winner_id INTEGER, /* not used for now */
  score INTEGER NOT NULL,
  opponent_score INTEGER NOT NULL,
  opponent_id INTEGER NOT NULL,
@@ -58,12 +58,12 @@ CREATE TABLE IF NOT EXISTS users_join_tournaments (
 CREATE TABLE IF NOT EXISTS user_stats (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  user_id INTEGER,
- total_matches INTEGER, 
+ total_matches INTEGER,  /* not used */
  total_wins INTEGER, 
  total_losses INTEGER, 
- tournaments_played INTEGER, 
- tournaments_won INTEGER, 
- win_rate INTEGER, 
+ tournaments_played INTEGER,   /* not used yet*/
+ tournaments_won INTEGER,   /* not used yet*/
+ win_rate INTEGER, /* not used */
  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

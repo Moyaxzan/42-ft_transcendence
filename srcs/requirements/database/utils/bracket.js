@@ -58,7 +58,7 @@ function generateBracket(userIds) {
 		previousRound = nextRound;
 		roundNumber++;
 	}
-
+	console.log(rounds.flat());
 	return rounds.flat();
 }
 
