@@ -1,4 +1,8 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { showWinnerModal, hideWinnerModal } from './winner.js';
+import { sendMatchResult, advanceWinner } from '../tournament.js';
+
+declare const confetti: any; 
 
 let animationId: number = 0;
 
@@ -14,77 +18,13 @@ type Match = {
   tournament_id: number;
 };
 
-async function sendMatchResult(
-	userId: number,
-	score: number,
-	opponentScore: number,
-	opponentId: number,
-	tournamentId: number,
-	matchRound: number,
-	matchIndex: number
-) {
-	// // 1. store result inside user stats
-	// try {
-	// 	const response = await fetch(`/api/users/history/${userId}`, {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 		body: JSON.stringify({
-	// 			score,
-	// 			opponent_score: opponentScore,
-	// 			opponent_id: opponentId
-	// 		})
-	// 	});
-	// 	if (!response.ok) {
-	// 		const errorText = await response.text();
-	// 		console.error('Erreur lors de l’envoi du score :', errorText);
-	// 		return;
-	// 	}
-	// 	const result = await response.json();
-	// 	console.log('Score enregistré avec succès :', result);
-	// } catch (err) {
-	// 	console.error('Erreur réseau ou serveur :', err);
-	// }
 
-	//2. get winner_id
-	let winnerId = -1;
-	if (score > opponentScore) {
-		winnerId = userId;
-	} else {
-		winnerId = opponentId;
-	}
-
-	//3. advance winner inside bracket
-	try {
-		const response = await fetch(`/api/play/resolve`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				tournament_id: tournamentId,
-				match_round: matchRound,
-				match_index: matchIndex,
-				winner_id: winnerId
-			})
-		});
-
-		// if (!response.ok) {
-		// 	const errorText = await response.text();
-		// 	console.error('Erreur lors de l’avancement du winner :', errorText);
-		// 	return;
-		// }
-		// const result = await response.json();
-		// console.log('Score enregistré avec succès :', result);
-	} catch (err) {
-		console.error('Erreur réseau ou serveur :', err);
-	}
-}
+let gameStopped = false;
 
 export function stopGame() {
 	cancelAnimationFrame(animationId);
 	animationId = 0;
+	gameStopped = true;
 }
 
 function delay(ms: number) {
@@ -122,9 +62,11 @@ export async function renderPong() {
 	const leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	const ball = document.getElementById("ball") as HTMLDivElement;
-	const scoreDiv = document.getElementById("score") as HTMLDivElement;
+	const scorePlayer1Div = document.getElementById("score-player1") as HTMLDivElement;
+	const scorePlayer2Div = document.getElementById("score-player2") as HTMLDivElement;
 	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
 	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
+	const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
 	if (!leftPaddle) {
 		console.log("error with left paddle");
 		return;
@@ -137,8 +79,12 @@ export async function renderPong() {
 		console.log("error with ball");
 		return;
 	}
-	if (!scoreDiv) {
-		console.log("error with scoreDiv");
+	if (!scorePlayer1Div) {
+		console.log("error with scoreDiv1");
+		return;
+	}
+	if (!scorePlayer2Div) {
+		console.log("error with scoreDiv2");
 		return;
 	}
 	if (!player1Div) {
@@ -150,6 +96,10 @@ export async function renderPong() {
 		return;
 	}
 
+	if (!countdownDiv) {
+		console.log("error with countdown div");
+		return;
+	}
 	const trailBalls: HTMLDivElement[] = [];
 	for (let i = 1; i < 10; i++) {
 		let trail = document.getElementById(`trail${i}`) as HTMLDivElement | null;
@@ -197,7 +147,8 @@ export async function renderPong() {
 	let startRound = Date.now();
 	let player1Score = 0;
 	let player2Score = 0;
-	scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+	scorePlayer1Div.innerText = `${player1Score}`;
+	scorePlayer2Div.innerText = `${player2Score}`;
 
 	//initializations
 	let leftPaddlePos = 41;   // as %
@@ -318,13 +269,6 @@ export async function renderPong() {
 	
 	let gameStarted = false;
 
-	//GAME COUNTDOWN
-	const countdownDiv = document.createElement('div');
-	countdownDiv.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#FFB942] text-6xl font-bold z-50';
-	countdownDiv.setAttribute("style", "font-family: 'Inter', sans-serif;");
-	document.body.appendChild(countdownDiv);
-	countdownDiv.style.display = 'none';
-
 	function startCountdown(afterCountdown?: () => void, duration = 3): Promise<void> {
 		return new Promise(resolve => {
 			countdownDiv.style.display = 'block';
@@ -378,9 +322,13 @@ export async function renderPong() {
 		matchIndex: number
 	):
 	Promise<{ winnerId: number, winnerName: string }> {
+		let path = window.location.pathname;
+		if (path == "/pong/" || path == "/pong")
+			gameStopped = false;
 		player1Score = 0;
 		player2Score = 0;
-		scoreDiv.innerText = "0 - 0";
+		scorePlayer1Div.innerText = "0";
+		scorePlayer2Div.innerText = "0";
 		resetBall();
 		resetPaddles();
 		player1Div.innerText = player1.name;
@@ -396,13 +344,15 @@ export async function renderPong() {
 			ball.style.top = `50%`;
 			ball.style.left = `50%`;
 			await waitForSpacePress();
-			await startCountdown(() => requestAnimationFrame(frame), 3)
+			await startCountdown(() => requestAnimationFrame(frame), 3);
 			function frame() {
+				if (gameStopped)
+					return;
 				movePaddles();
 				if (ballPosx[0] > 130) {
 					player1Score++;
 					resetBall();
-					scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+					scorePlayer1Div.innerText = `${player1Score}`;
 					resetPaddles();
 					if (player1Score != 3) {
 			 			startCountdown(() => requestAnimationFrame(frame), 3);
@@ -411,7 +361,7 @@ export async function renderPong() {
 				} else if (ballPosx[0] < -30) {
 					player2Score++;
 					resetBall();
-					scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+					scorePlayer2Div.innerText = `${player2Score}`;
 					resetPaddles();
 					if (player2Score != 3) {
 						startCountdown(() => requestAnimationFrame(frame), 3);
@@ -419,9 +369,9 @@ export async function renderPong() {
 					}
 				}
 				if (player1Score === 3 || player2Score === 3) {
-					stopGame();
 					launchRound = false;
 					sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
+					stopGame();
 					let winnerId: number;
 					let winnerName: string;
 					if (player2Score < player1Score) {
@@ -443,7 +393,6 @@ export async function renderPong() {
 	}
 
 
-
 	const tournamentId = window.location.hash.slice(1);
 	if (!tournamentId) {
 		console.error("No tournament ID provided in URL");
@@ -456,10 +405,8 @@ export async function renderPong() {
 			console.error("Failed to load tournament matches");
 			return;
 		}
-		// const { matches }: { matches: Match[] } = await matchesRes.json();
 
 		const data = await matchesRes.json();
-		// console.log("matches json:", data);
 		const matches = Array.isArray(data) ? data : data.matches;
 		if (!Array.isArray(matches)) {
 			console.error("'matches' n'est pas un tableau.");
@@ -469,9 +416,18 @@ export async function renderPong() {
 
 		// trie les matchs dans l'ordre round puis index
 		matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
-		console.log(matches);
+		// console.log(matches);
 
 		for (const match of matches) {
+
+			//DEBUG
+			const result = await fetch(`/api/tournaments/${tournamentId}/matches`);
+			const { matches } = await result.json();
+			console.table(matches);
+
+			if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+				return;
+			gameStopped = false;
 			resetPaddles();
 			const { match_round, match_index } = match;
 
@@ -482,26 +438,89 @@ export async function renderPong() {
 				continue;
 			}
 			const players = await res.json();
-			if (players.length < 2) {
+			if (players.length < 1) {
 				console.warn("Pas assez de joueurs pour ce match", match);
 				continue;
 			}
 			const [player1, player2] = players;
+			if (!player1) {
+				await advanceWinner(Number(tournamentId), match_round, match_index, player2.id)
+			} else if (!player2) {
+				await advanceWinner(Number(tournamentId), match_round, match_index, player1.id)
+			} else {
+				console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
+				const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
+				lastWinner = matchRes.winnerName;
+			}
+			await new Promise(resolve => setTimeout(resolve, 1000));
 
-			console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
-			const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
-
-			lastWinner = matchRes.winnerName;
-
-			// change this
-			await new Promise((r) => setTimeout(r, 5000)); // Pause entre matchs
 		}
 
-		// not working as i would like
+		if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+			return;
 		if (lastWinner != "None") {
-			alert(`🏆 Le gagnant du tournoi est : ${lastWinner} !`);
+			//winner pop up
+			showWinnerModal(lastWinner);
+			//confettis
+			FireCannon();
+
+			// Closes modal when clicking outside the content
+			document.getElementById('winnerModal')!.addEventListener('click', (e) => {
+				const content = document.getElementById('modalContent')!;
+				if (!content.contains(e.target as Node)) {
+					hideWinnerModal();
+					//redirects to /gameMode
+					window.location.href = "/game-mode";
+				}
+			});
 		} else {
 			alert("Pas de gagnant trouvé");
 		}
 	}
 }
+
+const count = 200;
+const defaults: confetti.Options = {
+  origin: { y: 0.7 }
+};
+
+function Fire(particleRatio: number, opts: confetti.Options) {
+  confetti(Object.assign({}, defaults, opts, {
+    particleCount: Math.floor(count * particleRatio)
+  }));
+}
+
+export function FireCannon() {
+  Fire(0.25, {
+    spread: 26,
+    startVelocity: 55,
+  });
+
+  Fire(0.2, {
+    spread: 60,
+  });
+
+  Fire(0.35, {
+    spread: 100,
+    decay: 0.91,
+    scalar: 0.4,
+  });
+
+  Fire(0.1, {
+    spread: 120,
+    startVelocity: 25,
+    decay: 0.92,
+    scalar: 1.2,
+  });
+
+  Fire(0.1, {
+    spread: 120,
+    startVelocity: 45,
+  });
+
+  Fire(0.3, {
+    spread: 200,
+    startVelocity: 40,
+  });
+}
+

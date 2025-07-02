@@ -16,12 +16,6 @@ async function routes (fastify, options) {
 	});
 */
 
-	fastify.log.info("☺️ ☺️ ☺️");
-	const userIds = [145, 12, 33, 78798789798, 55, 56];
-	fastify.log.info(generateBracket(userIds));
-	fastify.log.info("☺️ ☺️ ☺️");
-
-
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
@@ -81,22 +75,11 @@ async function routes (fastify, options) {
   		}
 	});
 
-	// fastify.get('/users/history/:id', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { id } = request.params;
-	// 	try {
-	// 		const user = await new Promise((resolve, reject) => {
-	// 		db.get('SELECT * FROM matches WHERE user_id = ?', [id], (err, row) => {
-	// 			if (err) return reject(err);
-	// 			resolve(row);
-	// 			});
-	// 		});
-	// 		return reply.send(user);
-	// 	} catch (err) {
-	// 		fastigy.log.error(err);
-	// 		return reply.status(500).send({ error: 'database GET error', details: err.message });
-	// 	}
-	// })
+	fastify.get('/users/history/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+
+	})
 
 	fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
@@ -122,61 +105,40 @@ async function routes (fastify, options) {
 	fastify.post('/api/users/history/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id: user_id } = request.params;
-		const { score, opponent_score, opponent_id } = request.body;
-
-		const insertMatch = `
-			INSERT INTO matches (user_id, opponent_id, score, opponent_score) VALUES (?, ?, ?, ?)
-		`;
-		const joinMatchToUser = `
-			INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)
-		`;
-
-		const isUserWinner = score > opponent_score;
-		const winnerId = isUserWinner ? user_id : opponent_id;
-		const loserId = isUserWinner ? opponent_id : user_id;
-
-		const updateStatsIfExists = `
-			UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?
-		`;
-		const updateLoserStats = `
-			UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?
-		`;
-
-		// Crée une ligne dans user_stats si elle n'existe pas
-		const insertIfMissing = `
-			INSERT INTO user_stats (user_id, total_wins, total_losses, tournaments_played, tournaments_won)
-			VALUES (?, 0, 0, 0, 0)
-		`;
+		const { isWinner } = request.body;
 
 		try {
-			// 1. Ajout du match
-			const matchId = await new Promise((resolve, reject) => {
-				db.run(insertMatch, [user_id, opponent_id, score, opponent_score], function (err) {
-					if (err) return reject(err);
-					resolve(this.lastID);
-				});
-			});
+			// vérifie si une entrée existe déjà pour cet utilisateur
+			const row = await db.get(
+				'SELECT * FROM user_stats WHERE user_id = ?',
+				[user_id]
+			);
 
-			// 2. Liaison au joueur (user_id est celui passé dans l’URL)
-			await db.run(joinMatchToUser, [user_id, matchId]);
+			if (row) {
+				// mise à jour des stats existantes
+				if (isWinner) {
+					await db.run(
+						'UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?',
+						[user_id]
+					);
+				} else {
+					await db.run(
+						'UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?',
+						[user_id]
+					);
+				}
+			} else {
+				//creation de la ligne si elle n'existe pas
+				await db.run(
+					'INSERT INTO user_stats (user_id, total_wins, total_losses) VALUES (?, ?, ?)',
+					[user_id, isWinner ? 1 : 0, isWinner ? 0 : 1]
+				);
+			}
 
-			// 3. S'assurer que les deux joueurs ont une entrée dans user_stats
-			await db.run(insertIfMissing, [winnerId]).catch(() => {});
-			await db.run(insertIfMissing, [loserId]).catch(() => {});
-
-			// 4. Mise à jour des stats
-			await db.run(updateStatsIfExists, [winnerId]);
-			await db.run(updateLoserStats, [loserId]);
-
-			reply.send({
-				message: 'Match result and stats successfully updated',
-				matchId,
-				score,
-				opponent_score
-			});
+			reply.send({ success: true });
 		} catch (err) {
-			fastify.log.error(err);
-			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+			console.error('Erreur lors de la mise à jour des stats :', err);
+			reply.status(500).send({ error: 'Erreur serveur' });
 		}
 	});
 

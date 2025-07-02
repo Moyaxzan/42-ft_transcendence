@@ -21,10 +21,14 @@
   "homepage": "https://github.com/Moyaxzan/42-ft_transcendence#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "canvas-confetti": "^1.9.3",
     "fastify": "^5.3.3",
     "node": "^22.16.0",
     "sqlite3": "^5.1.7",
     "tsc": "^2.0.4",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0"
   }
 }
