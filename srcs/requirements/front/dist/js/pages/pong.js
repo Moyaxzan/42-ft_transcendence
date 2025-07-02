@@ -94,6 +94,7 @@ export async function renderPong() {
     const scoreDiv = document.getElementById("score");
     const player1Div = document.getElementById("player1-name");
     const player2Div = document.getElementById("player2-name");
+    const countdownDiv = document.getElementById("countdown");
     if (!leftPaddle) {
         console.log("error with left paddle");
         return;
@@ -116,6 +117,10 @@ export async function renderPong() {
     }
     if (!player2Div) {
         console.log("error with player2div");
+        return;
+    }
+    if (!countdownDiv) {
+        console.log("error with countdown div");
         return;
     }
     const trailBalls = [];
@@ -265,12 +270,6 @@ export async function renderPong() {
         rightPaddle.style.top = `${rightPaddlePos}%`;
     }
     let gameStarted = false;
-    //GAME COUNTDOWN
-    const countdownDiv = document.createElement('div');
-    countdownDiv.className = 'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#FFB942] text-6xl font-bold z-50';
-    countdownDiv.setAttribute("style", "font-family: 'Inter', sans-serif;");
-    document.body.appendChild(countdownDiv);
-    countdownDiv.style.display = 'none';
     function startCountdown(afterCountdown, duration = 3) {
         return new Promise(resolve => {
             countdownDiv.style.display = 'block';
@@ -331,6 +330,7 @@ export async function renderPong() {
             ball.style.left = `50%`;
             await waitForSpacePress();
             await startCountdown(() => requestAnimationFrame(frame), 3);
+            console.log("start countdown function called");
             function frame() {
                 movePaddles();
                 if (ballPosx[0] > 130) {

@@ -29,6 +29,10 @@ export function router() {
 	if (path != "/pong" && path != "/pong/") {
 		console.log("game should stop");
 		stopGame();
+		const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
+		if (countdownDiv) {
+			countdownDiv.style.display = "none";
+		}
 	}
 	render();
 }

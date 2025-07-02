@@ -25,6 +25,10 @@ export function router() {
     if (path != "/pong" && path != "/pong/") {
         console.log("game should stop");
         stopGame();
+        const countdownDiv = document.getElementById("countdown");
+        if (countdownDiv) {
+            countdownDiv.style.display = "none";
+        }
     }
     render();
 }
@@ -53,4 +57,4 @@ l’interception ne se fait pas.
 En utilisant closest('[data-link]'), on remonte jusqu’au lien contenant
 (si présent), même si l’élément cliqué est imbriqué dans un bouton,
 une icône, etc.
-C’est le comportement standard attendu d’un système SPA */ 
+C’est le comportement standard attendu d’un système SPA */
