@@ -125,7 +125,8 @@ export async function renderPong() {
 	const leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	const ball = document.getElementById("ball") as HTMLDivElement;
-	const scoreDiv = document.getElementById("score") as HTMLDivElement;
+	const scorePlayer1Div = document.getElementById("score-player1") as HTMLDivElement;
+	const scorePlayer2Div = document.getElementById("score-player2") as HTMLDivElement;
 	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
 	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
 	const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
@@ -141,8 +142,12 @@ export async function renderPong() {
 		console.log("error with ball");
 		return;
 	}
-	if (!scoreDiv) {
-		console.log("error with scoreDiv");
+	if (!scorePlayer1Div) {
+		console.log("error with scoreDiv1");
+		return;
+	}
+	if (!scorePlayer2Div) {
+		console.log("error with scoreDiv2");
 		return;
 	}
 	if (!player1Div) {
@@ -205,7 +210,8 @@ export async function renderPong() {
 	let startRound = Date.now();
 	let player1Score = 0;
 	let player2Score = 0;
-	scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+	scorePlayer1Div.innerText = `${player1Score}`;
+	scorePlayer2Div.innerText = `${player2Score}`;
 
 	//initializations
 	let leftPaddlePos = 41;   // as %
@@ -387,7 +393,8 @@ export async function renderPong() {
 			gameStopped = false;
 		player1Score = 0;
 		player2Score = 0;
-		scoreDiv.innerText = "0 - 0";
+		scorePlayer1Div.innerText = "0";
+		scorePlayer2Div.innerText = "0";
 		resetBall();
 		resetPaddles();
 		player1Div.innerText = player1.name;
@@ -412,7 +419,7 @@ export async function renderPong() {
 				if (ballPosx[0] > 130) {
 					player1Score++;
 					resetBall();
-					scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+					scorePlayer1Div.innerText = `${player1Score}`;
 					resetPaddles();
 					if (player1Score != 3) {
 			 			startCountdown(() => requestAnimationFrame(frame), 3);
@@ -421,7 +428,7 @@ export async function renderPong() {
 				} else if (ballPosx[0] < -30) {
 					player2Score++;
 					resetBall();
-					scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+					scorePlayer2Div.innerText = `${player2Score}`;
 					resetPaddles();
 					if (player2Score != 3) {
 						startCountdown(() => requestAnimationFrame(frame), 3);
