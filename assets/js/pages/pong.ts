@@ -353,18 +353,23 @@ export async function renderPong() {
 		});
 	}
 
-	function waitForSpacePress(): Promise<void> {
+	function waitForSpacePress(signal: AbortSignal): Promise<void> {
 		return new Promise(resolve => {
-			function onKeyDown(e: KeyboardEvent) {
-				if (e.code === "Space") {
-					document.removeEventListener("keydown", onKeyDown);
-					countdownDiv.innerText = "";
+			function handler(e: KeyboardEvent) {
+				if (e.code === 'Space') {
+					cleanup();
 					resolve();
 				}
 			}
-			countdownDiv.innerText = "Press space to start!";
-			countdownDiv.style.display = 'block';
-			document.addEventListener("keydown", onKeyDown);
+			function cleanup() {
+				window.removeEventListener('keydown', handler);
+				signal.removeEventListener('abort', cleanup);
+			}
+			signal.addEventListener('abort', () => {
+				cleanup();
+				resolve();
+			});
+			window.addEventListener('keydown', handler);
 		});
 	}
 
