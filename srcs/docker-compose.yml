@@ -58,8 +58,7 @@ services:
     networks:
       - transcendence
     restart: unless-stopped
-    
-    
+
 volumes:
   nginx:
     driver: local

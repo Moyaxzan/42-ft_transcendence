@@ -1,8 +1,8 @@
 const userBodyJsonSchema = {
         type: 'object',
-        required: ['name', 'ip_address'],
+        required: ['name'],
 	properties: {
-                is_ia: { type: 'integer' },
+                is_guest: { type: 'integer' },
                 name: { type: 'string' },
                 email: { type: 'string', format: 'email' },
                 id_token: { type: 'string' },
@@ -17,6 +17,8 @@ const userBodyJsonSchema = {
 		},
                 is_log: { type: 'integer' },
                 points: { type: 'integer' },
+                wins: { type: 'integer' },
+                losses: { type: 'integer' },
         },
         additionalProperties: false,
 };

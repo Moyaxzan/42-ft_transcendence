@@ -14,7 +14,13 @@ server {
 		proxy_set_header Host \$host;
 		proxy_set_header X-Real-IP \$remote_addr;
 	}
-	location /api/matches {
+	location /api/play {
+		proxy_pass http://database:3000;
+		proxy_http_version 1.1;
+		proxy_set_header Host \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
+	location /api/tournaments {
 		proxy_pass http://database:3000;
 		proxy_http_version 1.1;
 		proxy_set_header Host \$host;
@@ -34,6 +40,12 @@ server {
 	}
 	location /kibana {
 		proxy_pass http://kibana:5601;
+		proxy_http_version 1.1;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+	}
+	location /hashicorp-vault/ {
+		proxy_pass http://hashicorp-vault:8200;
 		proxy_http_version 1.1;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
