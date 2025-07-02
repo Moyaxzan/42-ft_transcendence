@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
  twofa_secret TEXT DEFAULT NULL,
  ip_address TEXT DEFAULT NULL,
  is_log NUMERIC DEFAULT 0,
- points INTEGER DEFAULT 0
+ points INTEGER DEFAULT 0,
+ language TEXT DEFAULT en
 );
 
 CREATE TABLE IF NOT EXISTS matches (
