@@ -1,4 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { showWinnerModal, hideWinnerModal } from './winner.js';
 
 let animationId: number = 0;
 
@@ -518,7 +519,16 @@ export async function renderPong() {
 			return;
 		// not working as i would like
 		if (lastWinner != "None") {
-			alert(`🏆 Le gagnant du tournoi est : ${lastWinner} !`);
+			showWinnerModal(lastWinner);
+			// Close modal when clicking outside the content
+			document.getElementById('winnerModal')!.addEventListener('click', (e) => {
+				const content = document.getElementById('modalContent')!;
+				if (!content.contains(e.target as Node)) {
+					hideWinnerModal();
+					//redirects to /gameMode
+					window.location.href = "/game-mode";
+				}
+			});
 		} else {
 			alert("Pas de gagnant trouvé");
 		}
