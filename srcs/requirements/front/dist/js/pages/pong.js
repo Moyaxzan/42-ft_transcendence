@@ -1,57 +1,7 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { showWinnerModal, hideWinnerModal } from './winner.js';
+import { sendMatchResult, advanceWinner } from '../tournament.js';
 let animationId = 0;
-async function sendMatchResult(userId, score, opponentScore, opponentId, tournamentId, matchRound, matchIndex) {
-    // // 1. store result inside user stats
-    // try {
-    // 	const response = await fetch(`/api/users/history/${userId}`, {
-    // 		method: 'POST',
-    // 		headers: {
-    // 			'Content-Type': 'application/json',
-    // 		},
-    // 		body: JSON.stringify({
-    // 			score,
-    // 			opponent_score: opponentScore,
-    // 			opponent_id: opponentId
-    // 		})
-    // 	});
-    // 	if (!response.ok) {
-    // 		const errorText = await response.text();
-    // 		console.error('Erreur lors de l’envoi du score :', errorText);
-    // 		return;
-    // 	}
-    // 	const result = await response.json();
-    // 	console.log('Score enregistré avec succès :', result);
-    // } catch (err) {
-    // 	console.error('Erreur réseau ou serveur :', err);
-    // }
-    //2. get winner_id
-    let winnerId = -1;
-    if (score > opponentScore) {
-        winnerId = userId;
-    }
-    else {
-        winnerId = opponentId;
-    }
-    //3. advance winner inside bracket
-    try {
-        const response = await fetch(`/api/play/resolve`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tournament_id: tournamentId,
-                match_round: matchRound,
-                match_index: matchIndex,
-                winner_id: winnerId
-            })
-        });
-    }
-    catch (err) {
-        console.error('Erreur réseau ou serveur :', err);
-    }
-}
 let gameStopped = false;
 export function stopGame() {
     cancelAnimationFrame(animationId);
@@ -361,9 +311,9 @@ export async function renderPong() {
                     }
                 }
                 if (player1Score === 3 || player2Score === 3) {
-                    stopGame();
                     launchRound = false;
                     sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
+                    stopGame();
                     let winnerId;
                     let winnerName;
                     if (player2Score < player1Score) {
@@ -405,8 +355,12 @@ export async function renderPong() {
         let lastWinner = "None";
         // trie les matchs dans l'ordre round puis index
         matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
-        console.log(matches);
+        // console.log(matches);
         for (const match of matches) {
+            //DEBUG
+            const result = await fetch(`/api/tournaments/${tournamentId}/matches`);
+            const { matches } = await result.json();
+            console.table(matches);
             if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
                 return;
             gameStopped = false;
@@ -419,14 +373,23 @@ export async function renderPong() {
                 continue;
             }
             const players = await res.json();
-            if (players.length < 2) {
+            if (players.length < 1) {
                 console.warn("Pas assez de joueurs pour ce match", match);
                 continue;
             }
             const [player1, player2] = players;
-            console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
-            const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
-            lastWinner = matchRes.winnerName;
+            if (!player1) {
+                await advanceWinner(Number(tournamentId), match_round, match_index, player2.id);
+            }
+            else if (!player2) {
+                await advanceWinner(Number(tournamentId), match_round, match_index, player1.id);
+            }
+            else {
+                console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
+                const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
+                lastWinner = matchRes.winnerName;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
         if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
             return;

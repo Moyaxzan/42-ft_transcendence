@@ -215,6 +215,48 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
+
+
+	fastify.get('/api/tournaments/:tournament_id/matches', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { tournament_id } = request.params;
+
+		try {
+			const matches = await new Promise((resolve, reject) => {
+				db.all(
+					`SELECT 
+						match_round, match_index,
+						user_id, opponent_id
+					 FROM matches
+					 WHERE tournament_id = ?
+					 ORDER BY match_round ASC, match_index ASC`,
+					[tournament_id],
+					(err, rows) => {
+						if (err) return reject(err);
+						resolve(rows);
+					}
+				);
+			});
+
+			// Formatage console pour debug lisible
+			console.log(`\n=== 🏆 Bracket du tournoi ${tournament_id} ===`);
+			let currentRound = -1;
+			for (const match of matches) {
+				if (match.match_round !== currentRound) {
+					currentRound = match.match_round;
+					console.log(`\n-- 🥊 Round ${currentRound} --`);
+				}
+				console.log(`Match ${match.match_index} : ${match.user_id ?? 'VIDE'} vs ${match.opponent_id ?? 'VIDE'}`);
+			}
+			console.log(`===============================\n`);
+
+			reply.send({ matches });
+		} catch (err) {
+			fastify.log.error(err);
+			reply.code(500).send({ error: 'Erreur récupération des matchs' });
+		}
+	});
+
 	//advance winner inside bracket
 	fastify.post('/api/play/resolve', async (request, reply) => {
 		const db = fastify.sqlite;
@@ -252,7 +294,7 @@ async function gameRoutes (fastify, options) {
 			} else {
 				await db.run(updateNewUser,		[winner_id, tournament_id, match_round + 1, Math.floor(match_index / 2)]);
 			}
-			fastify.log.info("Winner successfully advanced to next round !");
+			fastify.log.info(`Winner ${winner_id} successfully advanced to next round ${match_round + 1}-${Math.floor(match_index / 2)}!`);
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.code(500).send({ error: 'Database error' });
