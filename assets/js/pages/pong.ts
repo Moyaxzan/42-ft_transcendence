@@ -82,9 +82,12 @@ async function sendMatchResult(
 	}
 }
 
+let gameStopped = false;
+
 export function stopGame() {
 	cancelAnimationFrame(animationId);
 	animationId = 0;
+	gameStopped = true;
 }
 
 function delay(ms: number) {
@@ -353,23 +356,18 @@ export async function renderPong() {
 		});
 	}
 
-	function waitForSpacePress(signal: AbortSignal): Promise<void> {
+	function waitForSpacePress(): Promise<void> {
 		return new Promise(resolve => {
-			function handler(e: KeyboardEvent) {
-				if (e.code === 'Space') {
-					cleanup();
+			function onKeyDown(e: KeyboardEvent) {
+				if (e.code === "Space") {
+					document.removeEventListener("keydown", onKeyDown);
+					countdownDiv.innerText = "";
 					resolve();
 				}
 			}
-			function cleanup() {
-				window.removeEventListener('keydown', handler);
-				signal.removeEventListener('abort', cleanup);
-			}
-			signal.addEventListener('abort', () => {
-				cleanup();
-				resolve();
-			});
-			window.addEventListener('keydown', handler);
+			countdownDiv.innerText = "Press space to start!";
+			countdownDiv.style.display = 'block';
+			document.addEventListener("keydown", onKeyDown);
 		});
 	}
 
@@ -381,6 +379,12 @@ export async function renderPong() {
 		matchIndex: number
 	):
 	Promise<{ winnerId: number, winnerName: string }> {
+		// if (gameStopped)
+		// 	return ({ -1, "null" });
+		console.log("----------------------Play Match-----------------------");
+		let path = window.location.pathname;
+		if (path == "/pong/" || path == "/pong")
+			gameStopped = false;
 		player1Score = 0;
 		player2Score = 0;
 		scoreDiv.innerText = "0 - 0";
@@ -402,7 +406,8 @@ export async function renderPong() {
 			await startCountdown(() => requestAnimationFrame(frame), 3);
 			console.log("start countdown function called");
 			function frame() {
-				
+				if (gameStopped)
+					return;
 				movePaddles();
 				if (ballPosx[0] > 130) {
 					player1Score++;
@@ -448,7 +453,6 @@ export async function renderPong() {
 	}
 
 
-
 	const tournamentId = window.location.hash.slice(1);
 	if (!tournamentId) {
 		console.error("No tournament ID provided in URL");
@@ -477,6 +481,10 @@ export async function renderPong() {
 		console.log(matches);
 
 		for (const match of matches) {
+			if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+				return;
+			console.log("----------------------TOURNAMENT LOOP-----------------------");
+			gameStopped = false;
 			resetPaddles();
 			const { match_round, match_index } = match;
 
@@ -497,11 +505,10 @@ export async function renderPong() {
 			const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
 
 			lastWinner = matchRes.winnerName;
-
-			// change this
-			await new Promise((r) => setTimeout(r, 5000)); // Pause entre matchs
 		}
 
+		if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+			return;
 		// not working as i would like
 		if (lastWinner != "None") {
 			alert(`🏆 Le gagnant du tournoi est : ${lastWinner} !`);

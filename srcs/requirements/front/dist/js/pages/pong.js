@@ -58,9 +58,11 @@ async function sendMatchResult(userId, score, opponentScore, opponentId, tournam
         console.error('Erreur réseau ou serveur :', err);
     }
 }
+let gameStopped = false;
 export function stopGame() {
     cancelAnimationFrame(animationId);
     animationId = 0;
+    gameStopped = true;
 }
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -313,6 +315,12 @@ export async function renderPong() {
         });
     }
     async function playMatch(player1, player2, tournamentId, matchRound, matchIndex) {
+        // if (gameStopped)
+        // 	return ({ -1, "null" });
+        console.log("----------------------Play Match-----------------------");
+        let path = window.location.pathname;
+        if (path == "/pong/" || path == "/pong")
+            gameStopped = false;
         player1Score = 0;
         player2Score = 0;
         scoreDiv.innerText = "0 - 0";
@@ -332,6 +340,8 @@ export async function renderPong() {
             await startCountdown(() => requestAnimationFrame(frame), 3);
             console.log("start countdown function called");
             function frame() {
+                if (gameStopped)
+                    return;
                 movePaddles();
                 if (ballPosx[0] > 130) {
                     player1Score++;
@@ -402,6 +412,10 @@ export async function renderPong() {
         matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
         console.log(matches);
         for (const match of matches) {
+            if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+                return;
+            console.log("----------------------TOURNAMENT LOOP-----------------------");
+            gameStopped = false;
             resetPaddles();
             const { match_round, match_index } = match;
             // Récupère les deux joueurs de ce match
@@ -419,9 +433,9 @@ export async function renderPong() {
             console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
             const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
             lastWinner = matchRes.winnerName;
-            // change this
-            await new Promise((r) => setTimeout(r, 5000)); // Pause entre matchs
         }
+        if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+            return;
         // not working as i would like
         if (lastWinner != "None") {
             alert(`🏆 Le gagnant du tournoi est : ${lastWinner} !`);
