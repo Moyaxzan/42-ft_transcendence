@@ -447,6 +447,7 @@ export async function renderPong() {
         // not working as i would like
         if (lastWinner != "None") {
             showWinnerModal(lastWinner);
+            FireCannon();
             // Close modal when clicking outside the content
             document.getElementById('winnerModal').addEventListener('click', (e) => {
                 const content = document.getElementById('modalContent');
@@ -461,4 +462,41 @@ export async function renderPong() {
             alert("Pas de gagnant trouvé");
         }
     }
+}
+const count = 200;
+const defaults = {
+    origin: { y: 0.7 }
+};
+function Fire(particleRatio, opts) {
+    confetti(Object.assign({}, defaults, opts, {
+        particleCount: Math.floor(count * particleRatio)
+    }));
+}
+export function FireCannon() {
+    Fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+    });
+    Fire(0.2, {
+        spread: 60,
+    });
+    Fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.4,
+    });
+    Fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2,
+    });
+    Fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+    });
+    Fire(0.3, {
+        spread: 200,
+        startVelocity: 40,
+    });
 }
