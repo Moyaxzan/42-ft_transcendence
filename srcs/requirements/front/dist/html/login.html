@@ -5,13 +5,13 @@
       <a href="/" data-link
         class="px-4 py-2 rounded-md bg-[#145c72] text-white text-sm
           hover:bg-[#1A6F96] transition-colors duration-200 shadow-md">
-        ← <span lang="en">Back</span><span lang="fr">Retour</span>
+        ← <span lang="en">Back</span><span lang="fr">Retour</span><span lang="jp">戻る</span>
       </a>
     </div>
 
     <div class="relative z-10 pt-10 pl-36">
       <h1 id="page-title" class="text-6xl font-bold text-[#FFB942] mb-4" style="font-family: 'Inter', sans-serif;">
-        <span lang="en">Login</span><span lang="fr">Connexion</span>
+        <span lang="en">Log in</span><span lang="fr">Connexion</span><span lang="jp">ログイン</span>
       </h1>
     </div>
 
@@ -21,12 +21,12 @@
   <main class="flex flex-1 overflow-hidden justify-center items-start relative">
     <div class="w-full max-w-sm mx-auto bg-gray-100 rounded-lg shadow-lg p-8">
       <h2 class="text-2xl mb-2 text-center font-semibold">
-        <span lang="en">Authentication</span><span lang="fr">Authentification</span>
+        <span lang="en">Authentication</span><span lang="fr">Authentification</span><span lang="jp">認証</span>
       </h2>
       <form id="loginForm" method="post" action="" class="space-y-2">
         <div>
           <label for="email" class="block mb-1 font-medium text-gray-700">
-            <span lang="en">Email :</span><span lang="fr">Email :</span>
+            <span lang="en">Email :</span><span lang="fr">Email :</span><span lang="jp">メールアドレス</span>
           </label>
           <input
             type="email"
@@ -39,7 +39,7 @@
         </div>
         <div>
           <label for="password" class="block mb-1 font-medium text-gray-700">
-            <span lang="en">Password :</span><span lang="fr">Mot de passe :</span>
+            <span lang="en">Password :</span><span lang="fr">Mot de passe :</span><span lang="jp">パスワード</span>
           </label>
           <input
             type="password"
@@ -54,7 +54,7 @@
           type="submit"
           class="w-full py-3 bg-[#F27D01] text-white text-lg font-bold rounded-md hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span lang="en">Log in</span><span lang="fr">Connexion</span>
+          <span lang="en">Log in</span><span lang="fr">Connexion</span><span lang="jp">ログイン</span>
         </button>
       </form>
 
@@ -62,7 +62,7 @@
 
       <div id="twofa-section" class="hidden space-y-4 mt-2">
         <label for="totp" class="block font-medium text-gray-700">
-          <span lang="en">2FA Code:</span><span lang="fr">Code 2FA :</span>
+          <span lang="en">2FA Code:</span><span lang="fr">Code 2FA :</span><span lang="jp">2要素認証コード</span>
         </label>
         <input
           type="text"
@@ -78,12 +78,12 @@
           type="button"
           class="w-full bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600"
         >
-          <span lang="en">Verify code</span><span lang="fr">Vérification du code</span>
+          <span lang="en">Verify code</span><span lang="fr">Vérification du code</span><span lang="jp">コードを確認</span>
         </button>
       </div>
 
       <div class="mt-4 text-center">
-        <p class="mb-4 mb-2 text-gray-700 font-medium"><span lang="en">or</span><span lang="fr">ou</span></p>
+        <p class="mb-4 mb-2 text-gray-700 font-medium"><span lang="en">or</span><span lang="fr">ou</span></p><span lang="jp">または</span>
         <div id="googleSignInDiv"></div>
       </div>
 
@@ -92,7 +92,7 @@
           id="backHomeBtn"
           class="px-4 py-2 rounded-md bg-[#145c72] text-white font-semibold hover:bg-[#1A6F96] transition-colors duration-200 shadow-md"
         >
-          <span lang="en">Back to Home</span><span lang="fr">Retour à l'accueil</span>
+          <span lang="en">Back to Home</span><span lang="fr">Retour à l'accueil</span><span lang="jp">ホームに戻る</span>
         </button>
       </div>
     </div>
@@ -106,16 +106,18 @@
           &times;
         </button>
         <h3 class="text-lg font-semibold mb-4 text-center">
-          <span lang="en">Configure Two-Factor Authentication</span><span lang="fr">Configurer la double authentification</span>
+          <span lang="en">Configure Two-Factor Authentication</span><span lang="fr">Configurer la double authentification</span><span lang="fr">2要素認証を設定</span>
         </h3>
         <p class="mb-4 text-center">
           <span lang="en">Scan this QR code with your authentication app:</span>
           <span lang="fr">Scannez ce QR code avec votre application :</span>
+          <span lang="jp">認証アプリでこのQRコードをスキャンしてください</span>
         </p>
         <div id="qrCodeContainer" class="flex justify-center mb-4"></div>
         <p class="text-center text-sm text-gray-600">
           <span lang="en">Then enter the code below to verify.</span>
           <span lang="fr">Puis tapez le code ci-dessous.</span>
+          <span lang="jp">以下のコードを入力して確認してください</span>
         </p>
       </div>
     </div>

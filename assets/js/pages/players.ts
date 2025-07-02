@@ -266,10 +266,12 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			? `
 			<span lang="en">Exactly 2 players required</span>
 			<span lang="fr">Exactement 2 joueurs requis</span>
+			<span lang="jp">ちょうど2人のプレイヤーが必要です</span>
 			`
 			: `
 			<span lang="en">${gameMode.minPlayers} to ${gameMode.maxPlayers} players required</span>
 			<span lang="fr">${gameMode.minPlayers} à ${gameMode.maxPlayers} joueurs requis</span>
+			<span lang="jp">${gameMode.minPlayers} à ${gameMode.maxPlayers} プレイヤーが必要です</span>
 			`;
 		// État des boutons
 		const atMaxCapacity = players.length >= gameMode.maxPlayers;
@@ -280,9 +282,9 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 
 		addPlayerBtn.innerHTML = atMaxCapacity
 			? (gameMode.type === '1vs1'
-				? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span>`
-				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span>`)
-			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span>`;
+				? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span>span lang="jp">プレイヤーが揃いました</span>`
+				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
+			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
 
 		setLanguage(document.documentElement.lang as 'en' | 'fr');
 	}
