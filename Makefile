@@ -58,7 +58,6 @@ clean:
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@echo "Containers removed $(GREEN)successfully$(RESET)"
-	@rm -rf $(VAULT_CERT_DIR)/vault.crt $(VAULT_CERT_DIR)/vault.key
 
 down:
 	@docker $(COMPOSE) stop
