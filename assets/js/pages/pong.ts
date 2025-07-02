@@ -1,7 +1,9 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { showWinnerModal, hideWinnerModal } from './winner.js';
-// import * as confetti from 'canvas-confetti';
+import { sendMatchResult } from '../tournament.js';
+
 declare const confetti: any; 
+
 let animationId: number = 0;
 
 type Match = {
@@ -16,73 +18,6 @@ type Match = {
   tournament_id: number;
 };
 
-async function sendMatchResult(
-	userId: number,
-	score: number,
-	opponentScore: number,
-	opponentId: number,
-	tournamentId: number,
-	matchRound: number,
-	matchIndex: number
-) {
-	// // 1. store result inside user stats
-	// try {
-	// 	const response = await fetch(`/api/users/history/${userId}`, {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 		body: JSON.stringify({
-	// 			score,
-	// 			opponent_score: opponentScore,
-	// 			opponent_id: opponentId
-	// 		})
-	// 	});
-	// 	if (!response.ok) {
-	// 		const errorText = await response.text();
-	// 		console.error('Erreur lors de l’envoi du score :', errorText);
-	// 		return;
-	// 	}
-	// 	const result = await response.json();
-	// 	console.log('Score enregistré avec succès :', result);
-	// } catch (err) {
-	// 	console.error('Erreur réseau ou serveur :', err);
-	// }
-
-	//2. get winner_id
-	let winnerId = -1;
-	if (score > opponentScore) {
-		winnerId = userId;
-	} else {
-		winnerId = opponentId;
-	}
-
-	//3. advance winner inside bracket
-	try {
-		const response = await fetch(`/api/play/resolve`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				tournament_id: tournamentId,
-				match_round: matchRound,
-				match_index: matchIndex,
-				winner_id: winnerId
-			})
-		});
-
-		// if (!response.ok) {
-		// 	const errorText = await response.text();
-		// 	console.error('Erreur lors de l’avancement du winner :', errorText);
-		// 	return;
-		// }
-		// const result = await response.json();
-		// console.log('Score enregistré avec succès :', result);
-	} catch (err) {
-		console.error('Erreur réseau ou serveur :', err);
-	}
-}
 
 let gameStopped = false;
 
@@ -387,9 +322,6 @@ export async function renderPong() {
 		matchIndex: number
 	):
 	Promise<{ winnerId: number, winnerName: string }> {
-		// if (gameStopped)
-		// 	return ({ -1, "null" });
-		console.log("----------------------Play Match-----------------------");
 		let path = window.location.pathname;
 		if (path == "/pong/" || path == "/pong")
 			gameStopped = false;
@@ -413,7 +345,6 @@ export async function renderPong() {
 			ball.style.left = `50%`;
 			await waitForSpacePress();
 			await startCountdown(() => requestAnimationFrame(frame), 3);
-			console.log("start countdown function called");
 			function frame() {
 				if (gameStopped)
 					return;
@@ -474,10 +405,8 @@ export async function renderPong() {
 			console.error("Failed to load tournament matches");
 			return;
 		}
-		// const { matches }: { matches: Match[] } = await matchesRes.json();
 
 		const data = await matchesRes.json();
-		// console.log("matches json:", data);
 		const matches = Array.isArray(data) ? data : data.matches;
 		if (!Array.isArray(matches)) {
 			console.error("'matches' n'est pas un tableau.");
@@ -492,7 +421,6 @@ export async function renderPong() {
 		for (const match of matches) {
 			if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
 				return;
-			console.log("----------------------TOURNAMENT LOOP-----------------------");
 			gameStopped = false;
 			resetPaddles();
 			const { match_round, match_index } = match;
@@ -512,17 +440,18 @@ export async function renderPong() {
 
 			console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
 			const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
-
 			lastWinner = matchRes.winnerName;
 		}
 
 		if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
 			return;
-		// not working as i would like
 		if (lastWinner != "None") {
+			//winner pop up
 			showWinnerModal(lastWinner);
+			//confettis
 			FireCannon();
-			// Close modal when clicking outside the content
+
+			// Closes modal when clicking outside the content
 			document.getElementById('winnerModal')!.addEventListener('click', (e) => {
 				const content = document.getElementById('modalContent')!;
 				if (!content.contains(e.target as Node)) {

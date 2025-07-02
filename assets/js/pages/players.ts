@@ -1,5 +1,4 @@
 import { animateLinesToFinalState } from './navbar.js';
-import '../tournament.js'
 import { router } from '../router.js'
 
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */

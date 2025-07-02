@@ -16,12 +16,6 @@ async function routes (fastify, options) {
 	});
 */
 
-	fastify.log.info("☺️ ☺️ ☺️");
-	const userIds = [145, 12, 33, 78798789798, 55, 56];
-	fastify.log.info(generateBracket(userIds));
-	fastify.log.info("☺️ ☺️ ☺️");
-
-
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {

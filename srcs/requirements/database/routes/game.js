@@ -6,8 +6,6 @@ import updateNameSchema from '../schemas/updateNameSchema.js'
 import generateBracket from '../utils/bracket.js'
 
 async function gameRoutes (fastify, options) {
-	//fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
-
 	fastify.get('/api/play/:tournament_id/:match_round/:match_index', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { tournament_id, match_round, match_index } = request.params;
@@ -92,60 +90,6 @@ async function gameRoutes (fastify, options) {
 		}
 	});
 
-
-	// fastify.post('/api/tournaments', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { players, tournamentId } = request.body;
-	// 	console.log("📦 Contenu complet du body :", request.body);
-	// 	if (!Array.isArray(players) || players.length < 2) {
-	// 		return reply.status(400).send({ error: "COUCOU" });
-	// 	}
-	//
-	// 	try {
-	// 		const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
-	// 		const getUserId = `SELECT id FROM users WHERE name = ?`;
-	// 		const insertTourn = `INSERT INTO tournaments (user_id, match_id) VALUES (?, ?)`;
-	// 		const joinTourntoUser = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`; 
-	// 		const is_guest = true;
-	// 		const userIds = [];
-	//
-	// 		for (const name of players) {
-	// 			 await new Promise ((resolve, reject) => {
-	// 				db.run(insertGuest, [name, is_guest], function (err) {
-	// 					if (err) return reject(err);
-	// 					resolve({name, is_guest});
-	// 				});
-	// 			})
-	// 			const 	userId = await new Promise((resolve, reject) => {
-	// 				db.get(getUserId, [name], (err, row) => {
-	// 					if (err) return reject(err);
-	// 					resolve(row.id);
-	// 				});
-	// 			});
-	// 			userIds.push(userId);
-	// 		}
-	// 		const ownerId = userIds[0];
-	// 		const tournamentId = await new Promise ((resolve, reject) => {
-	// 			db.run(insertTourn, [ownerId, null], function (err) {
-	// 				if (err) return reject(err);
-	// 				resolve(this.lastID);
-	// 			});
-	// 		});
-	// 		for (const uid of userIds) {
-	// 			await new Promise ((resolve, reject) => {
-	// 				db.run(joinTourntoUser, [uid, tournamentId], function (err) {
-	// 					if (err) return reject(err);
-	// 					resolve();
-	// 				});
-	// 			});
-	// 		}
-	// 		reply.send({message: 'Guests successfully added', players, tournamentId});
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		return reply.status(500).send({error: 'database POST error', details: err.message});
-	// 	}
-	// });
-
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { players } = request.body;
@@ -165,7 +109,7 @@ async function gameRoutes (fastify, options) {
 			const is_guest = true;
 			const userIds = [];
 
-			// 1. Créer les utilisateurs invités et récupérer leurs IDs
+			// Créé les utilisateurs invités et récupérer leurs IDs
 			for (const name of players) {
 				await new Promise((resolve, reject) => {
 					db.run(insertGuest, [name, is_guest], function (err) {
@@ -183,7 +127,7 @@ async function gameRoutes (fastify, options) {
 				userIds.push(userId);
 			}
 
-			// 2. Créer le tournoi avec le premier joueur comme owner
+			// Créé le tournoi avec le premier joueur comme owner
 			const ownerId = userIds[0];
 			const tournamentId = await new Promise((resolve, reject) => {
 				db.run(insertTournament, [ownerId], function (err) {
@@ -192,7 +136,7 @@ async function gameRoutes (fastify, options) {
 				});
 			});
 
-			// 3. Lier chaque utilisateur au tournoi
+			// Lie chaque utilisateur au tournoi
 			for (const uid of userIds) {
 				await new Promise((resolve, reject) => {
 					db.run(linkUserToTournament, [uid, tournamentId], function (err) {
@@ -202,11 +146,11 @@ async function gameRoutes (fastify, options) {
 				});
 			}
 
-			// 4. Générer les matchs (bracket)
+			// Génére les matchs (bracket)
 			console.log("generating bracket");
 			const matches = generateBracket(userIds);
 
-			// 5. Insérer les matchs dans la base
+			// Insére les matchs dans la base
 			await Promise.all(
 				matches.map(match =>
 					new Promise((resolve, reject) => {
@@ -228,11 +172,6 @@ async function gameRoutes (fastify, options) {
 					}) 
 				)
 			);
-
-			// const insertedMatches = db.prepare("SELECT * FROM matches WHERE tournament_id = ?").all(tournamentId);
-			// fastify.log.info("Inserted matches:");
-			// fastify.log.info(insertedMatches);
-			//
 			reply.send({
 				message: 'Tournament successfully created.',
 				tournamentId,
