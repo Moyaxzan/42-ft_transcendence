@@ -67,6 +67,8 @@ export async function renderPong() {
 	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
 	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
 	const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
+	const helpModal = document.getElementById("help-modal") as HTMLDivElement;
+
 	if (!leftPaddle) {
 		console.log("error with left paddle");
 		return;
@@ -98,6 +100,10 @@ export async function renderPong() {
 
 	if (!countdownDiv) {
 		console.log("error with countdown div");
+		return;
+	}
+	if (!helpModal) {
+		console.log("error with help modal");
 		return;
 	}
 	const trailBalls: HTMLDivElement[] = [];
@@ -346,9 +352,12 @@ export async function renderPong() {
 			ball.style.left = `50%`;
 			await waitForSpacePress();
 			await startCountdown(() => requestAnimationFrame(frame), 3);
-			function frame() {
+			async function frame() {
 				if (gameStopped)
 					return;
+				while (!helpModal.classList.contains("hidden")) {
+					await delay(500);
+				}
 				movePaddles();
 				if (ballPosx[0] > 130) {
 					player1Score++;
