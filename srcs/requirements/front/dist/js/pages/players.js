@@ -184,20 +184,6 @@ function initialisePlayersLogic(gameMode) {
     console.log("Mode indicator set to:", gameMode.subtitle);
     function updateUI() {
         // Mettre à jour les textes informatifs
-        // playerLimits.textContent = gameMode.type === '1vs1' ? 'Exactly 2 players required' 
-        // 	: `${gameMode.minPlayers} to ${gameMode.maxPlayers} players required`;
-        // // Mettre à jour le compteur
-        // playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
-        // // État des boutons
-        // const	atMaxCapacity = players.length >= gameMode.maxPlayers; // variable booléenne
-        // playerInput.disabled = atMaxCapacity;
-        // addPlayerBtn.disabled = atMaxCapacity;
-        // if (atMaxCapacity) {
-        // 	addPlayerBtn.textContent = gameMode.type === '1vs1' ? 'Players Complete' : 'Tournament Full';
-        // } else {
-        // 	addPlayerBtn.textContent = 'Add player';
-        // }
-        // Mettre à jour les textes informatifs
         playerLimits.innerHTML = gameMode.type === '1vs1'
             ? `
 			<span lang="en">Exactly 2 players required</span>
