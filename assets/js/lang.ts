@@ -13,3 +13,6 @@ export function setLanguage(lang: 'en' | 'fr' | 'jp') {
 	});
 }
 
+export function getCurrentLang(): string {
+	return document.documentElement.lang || 'en';
+}

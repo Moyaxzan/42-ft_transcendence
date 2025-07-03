@@ -10,3 +10,6 @@ export function setLanguage(lang) {
         el.style.display = elLang === lang ? '' : 'none';
     });
 }
+export function getCurrentLang() {
+    return document.documentElement.lang || 'en';
+}

@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { setLanguage } from '../lang.js';
+import { setLanguage, getCurrentLang } from '../lang.js';
 import '../tournament.js';
 import { router } from '../router.js';
 // Variable globale pour stocker les joueurs
@@ -203,7 +203,7 @@ function initialisePlayersLogic(gameMode) {
         addPlayerBtn.disabled = atMaxCapacity;
         addPlayerBtn.innerHTML = atMaxCapacity
             ? (gameMode.type === '1vs1'
-                ? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span>span lang="jp">プレイヤーが揃いました</span>`
+                ? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span><span lang="jp">プレイヤーが揃いました</span>`
                 : `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
             : `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
         setLanguage(document.documentElement.lang);
@@ -222,16 +222,28 @@ function initialisePlayersLogic(gameMode) {
     }
     // Fonction pour ajouter un joueur
     function addPlayer(alias) {
+        const lang = getCurrentLang();
+        console.log("langue: ", lang);
         // Trim pour enlever les espaces au début et à la fin
         const trimmedAlias = alias.trim();
         // Affichage d'une alerte en cas d'alias invalide
         if (!isValidAlias(trimmedAlias)) {
-            alert("Alias invalid or already used !");
+            if (lang == "en")
+                alert("Alias invalid or already used!");
+            else if (lang == "fr")
+                alert("Pseudo invalide ou deja utilise !");
+            else if (lang == "jp")
+                alert("無効なエイリアス、または既に使用されています");
             return;
         }
         // Affichage d'une alerte en cas de joueurs max atteint
         if (players.length >= gameMode.maxPlayers) {
-            alert(`Maximum ${gameMode.maxPlayers} players allowed for ${gameMode.type}`);
+            if (lang == "en")
+                alert(`Maximum ${gameMode.maxPlayers} players allowed for ${gameMode.type}`);
+            else if (lang == "fr")
+                alert(`Un maximum de ${gameMode.maxPlayers} joueurs sont autorises pour un ${gameMode.type}`);
+            else if (lang == "jp")
+                alert(`${gameMode.maxPlayers} には最大X人のプレイヤーが参加できます ${gameMode.type}`);
             return;
         }
         // Création du nouveau joueur
