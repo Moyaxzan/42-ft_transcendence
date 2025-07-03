@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { showWinnerModal, hideWinnerModal } from './modals.js';
+import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 let animationId = 0;
 let gameStopped = false;
@@ -42,6 +42,7 @@ export async function renderPong() {
     const player1Div = document.getElementById("player1-name");
     const player2Div = document.getElementById("player2-name");
     const countdownDiv = document.getElementById("countdown");
+    const helpModal = document.getElementById("help-modal");
     if (!leftPaddle) {
         console.log("error with left paddle");
         return;
@@ -74,6 +75,10 @@ export async function renderPong() {
         console.log("error with countdown div");
         return;
     }
+    if (!helpModal) {
+        console.log("error with help modal");
+        return;
+    }
     const trailBalls = [];
     for (let i = 1; i < 10; i++) {
         let trail = document.getElementById(`trail${i}`);
@@ -88,8 +93,16 @@ export async function renderPong() {
     const controller = new AbortController();
     document.addEventListener("keydown", (e) => {
         keysPressed[e.key] = true;
-        if (!launchRound && e.key === " ") {
+        if (e.key === " " && !launchRound) {
             launchRound = true;
+        }
+        if (e.key === "Escape") {
+            if (helpModal.classList.contains("hidden")) {
+                showHelpModal();
+            }
+            else {
+                hideHelpModal();
+            }
         }
     }, { signal: controller.signal });
     document.addEventListener("keyup", (e) => {
@@ -287,9 +300,12 @@ export async function renderPong() {
             ball.style.left = `50%`;
             await waitForSpacePress();
             await startCountdown(() => requestAnimationFrame(frame), 3);
-            function frame() {
+            async function frame() {
                 if (gameStopped)
                     return;
+                while (!helpModal.classList.contains("hidden")) {
+                    await delay(500);
+                }
                 movePaddles();
                 if (ballPosx[0] > 130) {
                     player1Score++;
