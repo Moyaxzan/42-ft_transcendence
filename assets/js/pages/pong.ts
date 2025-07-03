@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { showWinnerModal, hideWinnerModal } from './modals.js';
+import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 
 declare const confetti: any; 
@@ -121,8 +121,15 @@ export async function renderPong() {
 	const controller = new AbortController();
 	document.addEventListener("keydown", (e) => {
 		keysPressed[e.key] = true;
-		if (!launchRound && e.key === " ") {
+		if (e.key === " " && !launchRound) {
 			launchRound = true;
+		}
+		if (e.key === "Escape") {
+			if (helpModal.classList.contains("hidden")) {
+				showHelpModal();
+			} else {
+				hideHelpModal();
+			}
 		}
 	}, {signal: controller.signal});
 	document.addEventListener("keyup", (e) => {
