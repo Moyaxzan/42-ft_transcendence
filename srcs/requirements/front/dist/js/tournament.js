@@ -27,7 +27,6 @@ export async function sendMatchResult(userId, score, opponentScore, opponentId, 
             return;
         }
         const result = await response.json();
-        console.log('Score enregistré avec succès :', result);
     }
     catch (err) {
         console.error('Erreur réseau ou serveur :', err);
@@ -49,7 +48,6 @@ export async function sendMatchResult(userId, score, opponentScore, opponentId, 
             return;
         }
         const result = await response.json();
-        console.log('Score enregistré avec succès :', result);
     }
     catch (err) {
         console.error('Erreur réseau ou serveur :', err);
