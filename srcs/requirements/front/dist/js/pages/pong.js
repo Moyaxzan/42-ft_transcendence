@@ -378,7 +378,7 @@ export async function renderPong() {
             const result = await fetch(`/api/tournaments/${tournamentId}/matches`);
             const { matches } = await result.json();
             console.table(matches);
-            if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+            if (window.location.pathname != "/pong")
                 return;
             gameStopped = false;
             resetPaddles();
@@ -389,12 +389,17 @@ export async function renderPong() {
                 console.warn(`Pas de match trouvé pour round ${match_round}, index ${match_index}`);
                 continue;
             }
-            const players = await res.json();
-            if (players.length < 1) {
+            const resMatch = await res.json();
+            console.log("resMatch:");
+            console.log(resMatch);
+            if (resMatch.match.winner_id !== null && resMatch.match.winner_id !== -1) {
+                continue;
+            }
+            if (resMatch.players.length < 1) {
                 console.warn("Pas assez de joueurs pour ce match", match);
                 continue;
             }
-            const [player1, player2] = players;
+            const [player1, player2] = resMatch.players;
             if (!player1) {
                 await advanceWinner(Number(tournamentId), match_round, match_index, player2.id);
             }
@@ -432,7 +437,8 @@ export async function renderPong() {
             });
         }
         else {
-            alert("Pas de gagnant trouvé");
+            console.log("Tournament finished");
+            window.location.href = "/game-mode";
         }
     }
 }

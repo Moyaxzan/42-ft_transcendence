@@ -190,7 +190,7 @@ async function startTournament(playerNames: string[]) {
 
 		if (tournamentData.success && tournamentData.tournamentId) {
 			console.log("Tournoi créé avec l'ID :", tournamentData.tournamentId);
-			history.pushState(null, "", `/pong/#${tournamentData.tournamentId}`);
+			history.pushState(null, "", `/pong#${tournamentData.tournamentId}`);
 			router();
 		} else {
 			throw new Error(tournamentData.message || 'Failed to create tournament');

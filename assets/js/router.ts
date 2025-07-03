@@ -15,7 +15,6 @@ const routes: Record<string, () => void> = {
   '/pong': renderPong,
 
   '/profile': renderProfile,
-  '/pong/': renderPong,
   '/login': renderLogin,
   '/users': renderUser,
   '/matches': renderMatch,
@@ -34,7 +33,7 @@ export function router() {
 		}
 	}
 	const render = routes[path] || render404();
-	if (path != "/pong" && path != "/pong/") {
+	if (path != "/pong") {
 		console.log("game should stop");
 		stopGame();
 		const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
