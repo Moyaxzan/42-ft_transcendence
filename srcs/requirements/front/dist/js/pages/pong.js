@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { showWinnerModal, hideWinnerModal } from './winner.js';
+import { showWinnerModal, hideWinnerModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 let animationId = 0;
 let gameStopped = false;
