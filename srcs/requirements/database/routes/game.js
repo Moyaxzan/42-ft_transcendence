@@ -26,7 +26,6 @@ async function gameRoutes (fastify, options) {
 			if (!match) {
 				return reply.code(404).send({ error: 'Match not found' });
 			}
-
 			const players = await new Promise((resolve, reject) => {
 				db.all(
 					`SELECT * FROM users WHERE id IN (?, ?)`,
@@ -37,7 +36,7 @@ async function gameRoutes (fastify, options) {
 					}
 				);
 			});
-			return reply.send(players);
+			return reply.send({ match: match, players: players });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'Database error', details: err.message });
@@ -270,6 +269,10 @@ async function gameRoutes (fastify, options) {
 			UPDATE matches SET opponent_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
 		`;
 
+		const updateWinnerId = `
+			UPDATE matches SET winner_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
+		`;
+		await db.run(updateWinnerId, [winner_id, tournament_id, match_round, match_index]);
 
 		try {
 			const match = await new Promise((resolve, reject) => {
