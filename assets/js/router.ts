@@ -25,6 +25,14 @@ const routes: Record<string, () => void> = {
 export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
+	const helpBtn = document.getElementById("help-button") as HTMLDivElement;
+	if (helpBtn) {
+		if (routes[path]) {
+			helpBtn.classList.remove('hidden')
+		} else {
+			helpBtn.classList.add('hidden')
+		}
+	}
 	const render = routes[path] || render404();
 	if (path != "/pong" && path != "/pong/") {
 		console.log("game should stop");

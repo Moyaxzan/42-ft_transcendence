@@ -1,5 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { showWinnerModal, hideWinnerModal } from './winner.js';
+import { showWinnerModal, hideWinnerModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 
 declare const confetti: any; 
@@ -112,15 +112,16 @@ export async function renderPong() {
 	// keys handling
 	let launchRound = false;
 	let keysPressed: {[key: string] : boolean} = {};
+	const controller = new AbortController();
 	document.addEventListener("keydown", (e) => {
 		keysPressed[e.key] = true;
 		if (!launchRound && e.key === " ") {
 			launchRound = true;
 		}
-	});
+	}, {signal: controller.signal});
 	document.addEventListener("keyup", (e) => {
 		keysPressed[e.key] = false;
-	});
+	}, {signal: controller.signal});
 	
 	//utils
 	function getRandomBound(min: number, max: number): number {
@@ -310,7 +311,7 @@ export async function renderPong() {
 			}
 			countdownDiv.innerText = "Press space to start!";
 			countdownDiv.style.display = 'block';
-			document.addEventListener("keydown", onKeyDown);
+			document.addEventListener("keydown", onKeyDown, {signal: controller.signal});
 		});
 	}
 
@@ -455,7 +456,9 @@ export async function renderPong() {
 			await new Promise(resolve => setTimeout(resolve, 1000));
 
 		}
-
+		
+		//clears all event listeners
+		// controller.abort();
 		if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
 			return;
 		if (lastWinner != "None") {
@@ -464,12 +467,16 @@ export async function renderPong() {
 			//confettis
 			FireCannon();
 
+			const winnerModal = document.getElementById("winner-modal") as HTMLDivElement;
+			if (!winnerModal) {
+				window.location.href = "/game-mode";
+				return;
+			}
 			// Closes modal when clicking outside the content
-			document.getElementById('winnerModal')!.addEventListener('click', (e) => {
-				const content = document.getElementById('modalContent')!;
+			winnerModal.addEventListener('click', (e) => {
+				const content = document.getElementById('modal-content')!;
 				if (!content.contains(e.target as Node)) {
 					hideWinnerModal();
-					//redirects to /gameMode
 					window.location.href = "/game-mode";
 				}
 			});

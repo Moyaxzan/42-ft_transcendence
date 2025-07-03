@@ -24,21 +24,61 @@
 			></div>
 		</div>
 
+		<!-- Help Button -->
+		<a	id="help-button"
+			role="button"
+			class=" z-50 flex absolute bottom-[13px] right-[13px] h-[45px] w-[45px] bg-[#208EBF] rounded-lg
+					hover:bg-[#1B5665] hover:scale-125 transition-all duration-200
+					font-bold text-[#FFB942] text-4xl items-center justify-center"
+			>
+			?
+		</a>
+
+		<!-- help pop up -->
+		<div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+			<div id="help-modal-content" class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-gray-800">
+				<h2 class="text-xl font-bold mb-4 text-center">Game Controls</h2>
+				<ul class="space-y-2 text-sm">
+					<li>
+						Player 1:  
+						<kbd class="px-2 py-1 bg-gray-100 border rounded m-2">W</kbd> /
+						<kbd class="px-2 py-1 bg-gray-100 border rounded m-2">S</kbd>
+						to move up/down
+					</li>
+					<li>
+						Player 2: 
+						<kbd class="text-base px-2 py-1 bg-gray-100 border rounded m-2 font-bold">↑</kbd> /
+						<kbd class="text-base px-2 py-1 bg-gray-100 border rounded m-2 font-bold">↓</kbd>
+						to move up/down
+					</li>
+				</ul>
+				<div class="mt-6 text-center">
+					<button onclick="document.getElementById('help-modal').classList.add('hidden')"
+						  class="px-4 py-2 bg-[#00303C] text-[#FFB942] rounded-lg font-semibold hover:bg-[#1B5665] transition-all">
+					Got it!
+					</button>
+				</div>
+			</div>
+		</div>
+
+
 		<!-- Main App -->
 		<div class="relative z-10 h-full">
 			<div id="app" class="h-full overflow-hidden "></div>
 		</div>
 
-
-		<div id="winnerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 hidden">
-			<div id="modalContent"
+		<!-- winner pop up -->
+		<div id="winner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 hidden">
+			<div id="modal-content"
 				class="bg-white p-6 rounded-2xl shadow-xl text-center w-80">
 				<h2 class="text-2xl font-bold mb-4">🏆 Gagnant !</h2>
 				<p id="winnerName" class="text-lg mb-4">player</p>
 			</div>
 		</div>
 
+		<!-- Script for confettis -->
 		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
 		<!-- SPA Main Entry -->
 		<script type="module" src="./dist/js/main.js"></script>
 
