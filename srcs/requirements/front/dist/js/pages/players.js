@@ -138,7 +138,7 @@ async function startTournament(playerNames) {
         const tournamentData = await createTournamentFromPseudonyms(playerNames);
         if (tournamentData.success && tournamentData.tournamentId) {
             console.log("Tournoi créé avec l'ID :", tournamentData.tournamentId);
-            history.pushState(null, "", `/pong/#${tournamentData.tournamentId}`);
+            history.pushState(null, "", `/pong#${tournamentData.tournamentId}`);
             router();
         }
         else {

@@ -1,6 +1,7 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
 import { showWinnerModal, hideWinnerModal } from './modals.js';
+import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 
 declare const confetti: any; 
@@ -70,6 +71,8 @@ export async function renderPong() {
 	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
 	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
 	const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
+	const helpModal = document.getElementById("help-modal") as HTMLDivElement;
+
 	if (!leftPaddle) {
 		console.log("error with left paddle");
 		return;
@@ -103,6 +106,10 @@ export async function renderPong() {
 		console.log("error with countdown div");
 		return;
 	}
+	if (!helpModal) {
+		console.log("error with help modal");
+		return;
+	}
 	const trailBalls: HTMLDivElement[] = [];
 	for (let i = 1; i < 10; i++) {
 		let trail = document.getElementById(`trail${i}`) as HTMLDivElement | null;
@@ -118,8 +125,15 @@ export async function renderPong() {
 	const controller = new AbortController();
 	document.addEventListener("keydown", (e) => {
 		keysPressed[e.key] = true;
-		if (!launchRound && e.key === " ") {
+		if (e.key === " " && !launchRound) {
 			launchRound = true;
+		}
+		if (e.key === "Escape") {
+			if (helpModal.classList.contains("hidden")) {
+				showHelpModal();
+			} else {
+				hideHelpModal();
+			}
 		}
 	}, {signal: controller.signal});
 	document.addEventListener("keyup", (e) => {
@@ -349,9 +363,12 @@ export async function renderPong() {
 			ball.style.left = `50%`;
 			await waitForSpacePress();
 			await startCountdown(() => requestAnimationFrame(frame), 3);
-			function frame() {
+			async function frame() {
 				if (gameStopped)
 					return;
+				while (!helpModal.classList.contains("hidden")) {
+					await delay(500);
+				}
 				movePaddles();
 				if (ballPosx[0] > 130) {
 					player1Score++;
@@ -429,7 +446,7 @@ export async function renderPong() {
 			const { matches } = await result.json();
 			console.table(matches);
 
-			if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+			if (window.location.pathname != "/pong")
 				return;
 			gameStopped = false;
 			resetPaddles();
@@ -441,12 +458,17 @@ export async function renderPong() {
 				console.warn(`Pas de match trouvé pour round ${match_round}, index ${match_index}`);
 				continue;
 			}
-			const players = await res.json();
-			if (players.length < 1) {
+			const resMatch = await res.json();
+			console.log("resMatch:");
+			console.log(resMatch);
+			if (resMatch.match.winner_id !==  null && resMatch.match.winner_id !== -1) {
+				continue;
+			}
+			if (resMatch.players.length < 1) {
 				console.warn("Pas assez de joueurs pour ce match", match);
 				continue;
 			}
-			const [player1, player2] = players;
+			const [player1, player2] = resMatch.players;
 			if (!player1) {
 				await advanceWinner(Number(tournamentId), match_round, match_index, player2.id)
 			} else if (!player2) {
@@ -493,6 +515,8 @@ export async function renderPong() {
 				alert("Pas de gagnant trouvé");
 			if (lang == "jp")
 				alert("勝者が見つかりませんでした");
+			console.log("Tournament finished");
+			window.location.href = "/game-mode";
 		}
 	}
 }

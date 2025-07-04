@@ -1,5 +1,6 @@
 import { animateLinesToFinalState } from './navbar.js';
 export async function render404() {
+    document.title = "404 - Page Not Found";
     const app = document.getElementById('app');
     if (!app)
         return;
@@ -10,5 +11,4 @@ export async function render404() {
         { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
         { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
     ]);
-    const helpBtn = document.getElementById("help-button");
 }
