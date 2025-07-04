@@ -1,5 +1,6 @@
 import { renderHome } from './home.js';
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage } from '../lang.js';
 export async function renderProfile() {
     const app = document.getElementById('app');
     if (!app)
@@ -75,6 +76,7 @@ export async function renderUser() {
     const res = await fetch('/dist/html/profile.html');
     const html = await res.text();
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     const userLoadBtn = document.querySelector("#userLoad");
     const userList = document.querySelector("#userList");
     if (!userLoadBtn || !userList) {

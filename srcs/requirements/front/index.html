@@ -18,11 +18,34 @@
 		<div class="fixed inset-0 z-0">
 			<!-- Blue Background Lines -->
 			<div id="line-top"
-				 class="will-change-transform absolute top-0 left-[-25%] w-[150%] h-[50vh] bg-[#00303C] z-1 transition-all duration-700 ease-in-out -translate-y-[25vh]"
+				 class="pointer-events-none absolute top-0 left-[-25%] w-[150%] h-[50vh] bg-[#00303C] z-1 transition-all duration-700 ease-in-out -translate-y-[25vh]"
 			></div>
 			<div id="line-bottom"
-				 class="will-change-transform absolute bottom-0 left-[-25%] w-[150%] h-[50vh] bg-[#208EBF] z-1 transition-all duration-700 ease-in-out -translate-y-[-25vh]"
+				 class="pointer-events-none absolute bottom-0 left-[-25%] w-[150%] h-[50vh] bg-[#208EBF] z-1 transition-all duration-700 ease-in-out -translate-y-[-25vh]"
 			></div>
+		</div>
+
+		<!-- <button id="lang-toggle"
+			class="absolute top-4 right-4 z-50 px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-700 transition">
+			Switch Language
+		</button> -->
+		<div class="fixed top-4 right-4 z-50">
+			<div class="relative group">
+				<button class="px-4 py-2 rounded bg-gray-800 text-white hover:bg-gray-700 transition">
+					🌐​
+				</button>
+				<ul class="absolute right-0 hidden group-hover:block bg-gray-800 text-white rounded shadow-lg overflow-hidden">
+					<li>
+						<button id="en" class="lang-option w-full text-left px-4 py-2 hover:bg-gray-700">🇬🇧</button>
+					</li>
+					<li>
+						<button id="fr" class="lang-option w-full text-left px-4 py-2 hover:bg-gray-700">🇫🇷</button>
+					</li>
+					<li>
+						<button id="jp" class="lang-option w-full text-left px-4 py-2 hover:bg-gray-700">🇯🇵​</button>
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- Help Button -->
@@ -38,25 +61,38 @@
 		<!-- help pop up -->
 		<div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
 			<div id="help-modal-content" class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-gray-800">
-				<h2 class="text-xl font-bold mb-4 text-center">Game Controls</h2>
-				<ul class="space-y-2 text-sm">
+				<h2 class="text-xl font-bold mb-4 text-center">
+						<span lang="en" class="text-center">Game Controls</span>
+						<span lang="fr" class="text-center">Comment jouer</span>
+						<span lang="jp" class="text-center">ゲームの操作</span>
+				</h2>
+				<ul class="space-y-2  text-sm text-center">
+						<span lang="en" class="text-center">To move Up/Down</span>
+						<span lang="fr" class="text-center">Deplacer la raquette en Haut/Bas</span>
+						<span lang="jp" class="text-center">上に移動する/下に移動する</span>
+				</ul>
+				<ul class="space-y-2 text-sm mt-8">
 					<li>
-						Player 1:  
+						<span lang="en" class="text-center">Player 1:</span>
+						<span lang="fr" class="text-center">Joueur 1 :</span>
+						<span lang="jp" class="text-center">プレイヤー 1:</span>
 						<kbd class="px-2 py-1 bg-gray-100 border rounded m-2">W</kbd> /
 						<kbd class="px-2 py-1 bg-gray-100 border rounded m-2">S</kbd>
-						to move up/down
 					</li>
 					<li>
-						Player 2: 
+						<span lang="en" class="text-center">Player 2:</span>
+						<span lang="fr" class="text-center">Joueur 2 :</span>
+						<span lang="jp" class="text-center">プレイヤー 2:</span>
 						<kbd class="text-base px-2 py-1 bg-gray-100 border rounded m-2 font-bold">↑</kbd> /
 						<kbd class="text-base px-2 py-1 bg-gray-100 border rounded m-2 font-bold">↓</kbd>
-						to move up/down
 					</li>
 				</ul>
 				<div class="mt-6 text-center">
 					<button onclick="document.getElementById('help-modal').classList.add('hidden')"
 						  class="px-4 py-2 bg-[#00303C] text-[#FFB942] rounded-lg font-semibold hover:bg-[#1B5665] transition-all">
-					Got it!
+						<span lang="en">Got it!</span>
+						<span lang="fr">Recu 5/5 brah !</span>
+						<span lang="jp">わかった！</span>
 					</button>
 				</div>
 			</div>
@@ -72,7 +108,11 @@
 		<div id="winner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 hidden">
 			<div id="modal-content"
 				class="bg-white p-6 rounded-2xl shadow-xl text-center w-80">
-				<h2 class="text-2xl font-bold mb-4">🏆 Gagnant !</h2>
+				<h2 class="text-2xl font-bold mb-4">
+					<span lang="en">🏆 Winner!</span>
+					<span lang="fr">🏆 Gagnant !</span>
+					<span lang="jp">🏆 勝者!</span>
+				</h2>
 				<p id="winnerName" class="text-lg mb-4">player</p>
 			</div>
 		</div>

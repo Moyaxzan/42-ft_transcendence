@@ -1,6 +1,8 @@
 import { animateLinesToFinalState } from './navbar.js'
+import { setLanguage } from '../lang.js'
 
 export async function renderHome() {
+	console.log("renderHome called");
 	const app = document.getElementById('app');
 	if (!app)
 		return;
@@ -10,6 +12,8 @@ export async function renderHome() {
 
 	app.innerHTML = html;
 
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+	
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },

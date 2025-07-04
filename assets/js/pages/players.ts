@@ -1,5 +1,8 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage, getCurrentLang } from '../lang.js';
+import '../tournament.js'
 import { router } from '../router.js'
+import { servicesVersion } from 'typescript';
 
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
@@ -81,6 +84,8 @@ export async function	renderPlayers() {
 	// Injection du HTML dans l'app
 	app.innerHTML = html;
 
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+	
 	requestAnimationFrame(async () => { //permet l'execution de ces fonctions juste avant d'afficher le contenu de l'écran, on est sur que DOM est pret
 		animateLinesToFinalState([
 			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
@@ -179,6 +184,9 @@ async function createTournamentFromPseudonyms(playerNames: string[]): Promise<{ 
 
 // Function to start tournament
 async function startTournament(playerNames: string[]) {
+
+	const lang = getCurrentLang();
+	
 	try {
 		// Show loading state
 		const beginButton = document.getElementById("begin-game-btn") as HTMLButtonElement;
@@ -241,22 +249,31 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 
 	function	updateUI() {
 		// Mettre à jour les textes informatifs
-		playerLimits.textContent = gameMode.type === '1vs1' ? 'Exactly 2 players required' 
-			: `${gameMode.minPlayers} to ${gameMode.maxPlayers} players required`;
-
-		// Mettre à jour le compteur
-		playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
-
+		playerLimits.innerHTML = gameMode.type === '1vs1'
+			? `
+			<span lang="en">Exactly 2 players required</span>
+			<span lang="fr">Exactement 2 joueurs requis</span>
+			<span lang="jp">ちょうど2人のプレイヤーが必要です</span>
+			`
+			: `
+			<span lang="en">${gameMode.minPlayers} to ${gameMode.maxPlayers} players required</span>
+			<span lang="fr">${gameMode.minPlayers} à ${gameMode.maxPlayers} joueurs requis</span>
+			<span lang="jp">${gameMode.minPlayers} à ${gameMode.maxPlayers} プレイヤーが必要です</span>
+			`;
 		// État des boutons
-		const	atMaxCapacity = players.length >= gameMode.maxPlayers; // variable booléenne
+		const atMaxCapacity = players.length >= gameMode.maxPlayers;
+		// // Mettre à jour le compteur
+		playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
 		playerInput.disabled = atMaxCapacity;
 		addPlayerBtn.disabled = atMaxCapacity;
-		
-		if (atMaxCapacity) {
-			addPlayerBtn.textContent = gameMode.type === '1vs1' ? 'Players Complete' : 'Tournament Full';
-		} else {
-			addPlayerBtn.textContent = 'Add player';
-		}
+
+		addPlayerBtn.innerHTML = atMaxCapacity
+			? (gameMode.type === '1vs1'
+				? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span><span lang="jp">プレイヤーが揃いました</span>`
+				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
+			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
+
+		setLanguage(document.documentElement.lang as 'en' | 'fr');
 	}
 
 	// Fonction pour valider un alias
@@ -274,19 +291,32 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 
 	// Fonction pour ajouter un joueur
 	function	addPlayer(alias: string) {
+		const lang = getCurrentLang();
+
 		// Trim pour enlever les espaces au début et à la fin
 		const trimmedAlias = alias.trim();
 
 		// Affichage d'une alerte en cas d'alias invalide
 		if (!isValidAlias(trimmedAlias)) {
-			alert("Alias invalid or already used !");
+			if (lang == "en")
+				alert("Alias invalid or already used!");
+			else if (lang == "fr")
+				alert("Pseudo invalide ou deja utilise !");
+			else if (lang == "jp")
+				alert("無効なエイリアス、または既に使用されています");
 			return;
 		}
 		// Affichage d'une alerte en cas de joueurs max atteint
 		if (players.length >= gameMode.maxPlayers) {
-			alert(`Maximum ${gameMode.maxPlayers} players allowed for ${gameMode.type}`);
+			if (lang == "en")
+				alert(`Maximum ${gameMode.maxPlayers} players allowed for ${gameMode.type}`);
+			else if (lang == "fr")
+				alert(`Un maximum de ${gameMode.maxPlayers} joueurs sont autorises pour un ${gameMode.type}`);
+			else if (lang == "jp")
+				alert(`${gameMode.maxPlayers} には最大X人のプレイヤーが参加できます ${gameMode.type}`);
 			return;
 		}
+		
 		// Création du nouveau joueur
 		const	newPlayer: Player = {
 			id: nextPlayerId++,
