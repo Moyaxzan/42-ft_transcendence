@@ -32,7 +32,7 @@ export function router() {
 			helpBtn.classList.add('hidden')
 		}
 	}
-	const render = routes[path] || render404();
+	const render = routes[path] || render404;
 	if (path != "/pong") {
 		console.log("game should stop");
 		stopGame();
