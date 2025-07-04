@@ -184,6 +184,9 @@ async function createTournamentFromPseudonyms(playerNames: string[]): Promise<{ 
 
 // Function to start tournament
 async function startTournament(playerNames: string[]) {
+
+	const lang = getCurrentLang();
+	
 	try {
 		// Show loading state
 		const beginButton = document.getElementById("begin-game-btn") as HTMLButtonElement;
@@ -289,7 +292,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	// Fonction pour ajouter un joueur
 	function	addPlayer(alias: string) {
 		const lang = getCurrentLang();
-		console.log("langue: ", lang);
+
 		// Trim pour enlever les espaces au début et à la fin
 		const trimmedAlias = alias.trim();
 

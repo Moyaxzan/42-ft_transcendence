@@ -22,6 +22,7 @@ all:
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
+	@npm install canvas-confetti
 	@tsc
 	docker compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml up --build
 

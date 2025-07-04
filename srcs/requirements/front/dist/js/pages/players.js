@@ -128,6 +128,7 @@ async function createTournamentFromPseudonyms(playerNames) {
 }
 // Function to start tournament
 async function startTournament(playerNames) {
+    const lang = getCurrentLang();
     try {
         // Show loading state
         const beginButton = document.getElementById("begin-game-btn");
@@ -223,7 +224,6 @@ function initialisePlayersLogic(gameMode) {
     // Fonction pour ajouter un joueur
     function addPlayer(alias) {
         const lang = getCurrentLang();
-        console.log("langue: ", lang);
         // Trim pour enlever les espaces au début et à la fin
         const trimmedAlias = alias.trim();
         // Affichage d'une alerte en cas d'alias invalide
