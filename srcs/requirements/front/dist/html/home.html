@@ -1,7 +1,7 @@
 <div class="flex flex-col h-full w-full overflow-hidden relative">
 
 	<!-- Header avec Titre/navigation -->
-	<header class="relative z-50 flex justify-between items-start px-12 py-6">
+	<header class="relative z-50 flex justify-between items-start px-12 py-6 h-[20%]">
 
 		<!--Titre de la page-->
 		<div class="relative z-10 pt-10 pl-36">
@@ -26,8 +26,8 @@
 		</section>
 	
 		<!-- Section droite - Boutons de jeu -->
-		<section class="flex-[5] h-full flex flex-col justify-start items-start pt-8">
-			<div class="w-full max-w-sm space-y-6">
+		<section class="flex-[5] h-full flex flex-col justify-start items-start">
+			<div class="w-full max-w-sm space-y-6 absolute top-[35%]">
 				<!-- Bouton Play -->
 				<a	href="/game-mode" data-link
 					id="play-button"
@@ -37,38 +37,18 @@
 					Play
 				</a>
 	
-				<!-- Champ Username -->
-				<div class="w-full">
-					<input	type="text" 
-							id="username_input"
-							class="w-full h-14 px-4 bg-[#E6EBEC] border-2 border-gray-300 text-gray-900 text-base 
-							rounded-lg focus:ring-2 focus:ring-[#208EBF] focus:border-[#208EBF] 
-							placeholder-gray-500 transition-all duration-200"
-							placeholder="Username" required />
-				</div>
-	
-				<!-- Champ Password -->
-				<div class="w-full">
-					<input	type="password" 
-							id="password_input"
-							class="w-full h-14 px-4 bg-[#E6EBEC] border-2 border-gray-300 text-gray-900 text-base 
-							rounded-lg focus:ring-2 focus:ring-[#208EBF] focus:border-[#208EBF] 
-							placeholder-gray-500 transition-all duration-200"
-							placeholder="Password" required />
-				</div>
-	
 				<!-- Boutons Login -->
-				<div class="flex w-full space-x-4">
+				<!-- <div class="flex w-full space-x-4"> -->
 					<button id="login-button"
 							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
 							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
-							flex items-center justify-center">
+							flex items-center justify-center w-full">
 						Login or Sign up
 					</button>
 					<button id="google-button"
 							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
 							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
-							flex items-center justify-center space-x-2">
+							flex items-center justify-center space-x-2 w-full">
 						<img src="../../google.svg" alt="Google" class="w-5 h-5">
 						<!-- <svg class="w-5 h-5" viewBox="0 0 24 24">
 							<path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -78,7 +58,7 @@
 						</svg> -->
 						 <span>Login with Google</span> <!--span equivalent à div mais sur une ligne et non un bloc -->
 					</button>
-				</div>
+				<!-- </div> -->
 			</div>
 		</section>
 	</main>

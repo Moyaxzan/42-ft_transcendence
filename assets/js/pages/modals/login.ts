@@ -1,6 +1,6 @@
-import { renderProfile } from './profile.js'
-import { renderHome } from './home.js'
-import { animateLinesToFinalState } from './navbar.js'
+import { renderProfile } from '../profile.js'
+import { renderHome } from '../home.js'
+import { animateLinesToFinalState } from '../navbar.js'
 
 declare global {
 	interface Window {
@@ -31,7 +31,7 @@ export async function renderLogin(): Promise<void> {
 	if (!app)
 		return;
 
-	const res = await fetch('/dist/html/login.html');
+	const res = await fetch('/dist/html/modals/login.html');
 	const html = await res.text();
 	app.innerHTML = html;
 
