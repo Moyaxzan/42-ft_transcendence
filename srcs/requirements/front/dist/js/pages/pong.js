@@ -1,6 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
-import { showWinnerModal, hideWinnerModal } from './modals.js';
 import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 let animationId = 0;
