@@ -58,23 +58,6 @@ services:
       - transcendence
     restart: unless-stopped
 
-  hashicorp-vault:
-    hostname: hashicorp-vault
-    build:
-      context: requirements/hashicorp-vault
-    container_name: hashicorp-vault
-    env_file:
-      - .env
-    cap_add:
-      - IPC_LOCK
-    volumes:
-      - ./requirements/hashicorp-vault/config:/vault/config
-      - ./requirements/hashicorp-vault/certs:/vault/certs:ro
-      - ./requirements/hashicorp-vault/data:/vault/data
-    networks:
-      - transcendence
-    restart: unless-stopped
-
 volumes:
   nginx:
     driver: local

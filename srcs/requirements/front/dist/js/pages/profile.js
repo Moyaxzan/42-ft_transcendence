@@ -40,9 +40,8 @@ export async function renderProfile() {
         profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
         authActionContainer.innerHTML = `
