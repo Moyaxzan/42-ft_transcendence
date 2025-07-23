@@ -86,7 +86,7 @@ async function authRoutes (fastify, options) {
 			res = await fetch(`http://database:3000/api/users/google-signin`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, name, google_user: true, ip_address: request.ip || '0.0.0.0' })
+				body: JSON.stringify({ email, name, google_user: true })
 			});
 			if (!res.ok) {
 				const text = await res.text();
