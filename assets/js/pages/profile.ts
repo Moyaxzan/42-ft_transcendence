@@ -4,16 +4,9 @@ import { setLanguage } from '../lang.js';
 
 interface User {
 	id: string;
-	is_guest: string | null;
 	name: string;
-	email: string | null;
-	id_token: string | null;
-	password_hash: string | null;
-	reset_token: string | null;
-	reset_expiry: string | null;
-	ip_address: string;
-	is_log: string;
-	points: string;
+	wins: string;
+	losses: string;
 }
 
 interface Match {
@@ -60,8 +53,6 @@ export async function renderProfile() {
 		renderHome();
 	});
 
-
-
 	try {
 		const res = await fetch('/auth/me', {
 			method: 'GET',
@@ -75,12 +66,11 @@ export async function renderProfile() {
 		profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
-			authActionContainer.innerHTML = `
+		authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out
 			</button>
