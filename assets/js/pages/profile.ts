@@ -1,17 +1,12 @@
 import { renderHome } from './home.js'
+import { animateLinesToFinalState } from './navbar.js'
+import { setLanguage } from '../lang.js';
 
 interface User {
 	id: string;
-	is_guest: string | null;
 	name: string;
-	email: string | null;
-	id_token: string | null;
-	password_hash: string | null;
-	reset_token: string | null;
-	reset_expiry: string | null;
-	ip_address: string;
-	is_log: string;
-	points: string;
+	wins: string;
+	losses: string;
 }
 
 interface Match {
@@ -38,6 +33,13 @@ export async function renderProfile() {
 	const html = await htmlRes.text();
 	app.innerHTML = html;
 
+	requestAnimationFrame(() => {
+			animateLinesToFinalState([
+				{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+				{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+			]);
+		})
+
 	const authActionContainer = document.getElementById('authActionContainer');
 	const profileArea = document.querySelector("#profileArea");
 
@@ -50,8 +52,6 @@ export async function renderProfile() {
 	backBtn?.addEventListener('click', () => {
 		renderHome();
 	});
-
-
 
 	try {
 		const res = await fetch('/auth/me', {
@@ -66,12 +66,11 @@ export async function renderProfile() {
 		profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
-			authActionContainer.innerHTML = `
+		authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out
 			</button>
@@ -104,6 +103,8 @@ export async function renderUser() {
  	const res = await fetch('/dist/html/profile.html');
  	const html = await res.text();
  	app.innerHTML = html;
+
+	setLanguage(document.documentElement.lang as 'en' | 'fr');
 
  	const userLoadBtn = document.querySelector("#userLoad");
  	const userList = document.querySelector("#userList"); 

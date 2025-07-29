@@ -1,44 +1,49 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage, getCurrentLang } from '../lang.js';
+import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
+import { sendMatchResult, advanceWinner } from '../tournament.js';
+
+declare const confetti: any; 
 
 let animationId: number = 0;
 
-async function sendMatchResult(userId: number, score: number, opponentScore: number, opponentId: number) {
-	try {
+type Match = {
+  id: number;
+  user_id: number;
+  opponent_id: number;
+  match_round: number;
+  match_index: number;
+  winner_id: number | null;
+  score: number;
+  opponent_score: number;
+  tournament_id: number;
+};
 
-		const response = await fetch(`/api/users/history/${encodeURIComponent(userId)}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				user_id: userId,
-				score,
-				opponent_score: opponentScore,
-				opponent_id: opponentId
-			})
-		});
 
-		if (!response.ok) {
-			const errorText = await response.text();
-			console.error('Erreur lors de l’envoi du score :', errorText);
-			return;
-		}
+let gameStopped = false;
 
-		const result = await response.json();
-		console.log('Score enregistré avec succès :', result);
-	} catch (err) {
-		console.error('Erreur réseau ou serveur :', err);
-	}
+export function stopGame() {
+	cancelAnimationFrame(animationId);
+	animationId = 0;
+	gameStopped = true;
+}
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 export async function renderPong() {
 	stopGame();
+	console.log("🏓 renderPong()");
 	const app = document.getElementById('app');
 	if (!app)
 		return;
 	const res = await fetch(`/dist/html/pong.html`);
+	console.log(res);
 	const html = await res.text();
 	app.innerHTML = html;
+
+	setLanguage(document.documentElement.lang as 'en' | 'fr');
 
 	await new Promise((resolve) => requestAnimationFrame(resolve));
 
@@ -60,10 +65,50 @@ export async function renderPong() {
 	const leftPaddle = document.getElementById("left-paddle") as HTMLDivElement;
 	const rightPaddle = document.getElementById("right-paddle") as HTMLDivElement;
 	const ball = document.getElementById("ball") as HTMLDivElement;
-	const scoreDiv = document.getElementById("score") as HTMLDivElement;
-	if (!leftPaddle || !rightPaddle || !ball || !scoreDiv)
-		return;
+	const scorePlayer1Div = document.getElementById("score-player1") as HTMLDivElement;
+	const scorePlayer2Div = document.getElementById("score-player2") as HTMLDivElement;
+	const player1Div = document.getElementById("player1-name") as HTMLDivElement;
+	const player2Div = document.getElementById("player2-name") as HTMLDivElement;
+	const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
+	const helpModal = document.getElementById("help-modal") as HTMLDivElement;
 
+	if (!leftPaddle) {
+		console.log("error with left paddle");
+		return;
+	}
+	if (!rightPaddle) {
+		console.log("error with right paddle");
+		return;
+	}
+	if (!ball) {
+		console.log("error with ball");
+		return;
+	}
+	if (!scorePlayer1Div) {
+		console.log("error with scoreDiv1");
+		return;
+	}
+	if (!scorePlayer2Div) {
+		console.log("error with scoreDiv2");
+		return;
+	}
+	if (!player1Div) {
+		console.log("error with player1div");
+		return;
+	}
+	if (!player2Div) {
+		console.log("error with player2div");
+		return;
+	}
+
+	if (!countdownDiv) {
+		console.log("error with countdown div");
+		return;
+	}
+	if (!helpModal) {
+		console.log("error with help modal");
+		return;
+	}
 	const trailBalls: HTMLDivElement[] = [];
 	for (let i = 1; i < 10; i++) {
 		let trail = document.getElementById(`trail${i}`) as HTMLDivElement | null;
@@ -74,13 +119,25 @@ export async function renderPong() {
 	}
 
 	// keys handling
+	let launchRound = false;
 	let keysPressed: {[key: string] : boolean} = {};
+	const controller = new AbortController();
 	document.addEventListener("keydown", (e) => {
 		keysPressed[e.key] = true;
-	});
+		if (e.key === " " && !launchRound) {
+			launchRound = true;
+		}
+		if (e.key === "Escape") {
+			if (helpModal.classList.contains("hidden")) {
+				showHelpModal();
+			} else {
+				hideHelpModal();
+			}
+		}
+	}, {signal: controller.signal});
 	document.addEventListener("keyup", (e) => {
 		keysPressed[e.key] = false;
-	});
+	}, {signal: controller.signal});
 	
 	//utils
 	function getRandomBound(min: number, max: number): number {
@@ -89,7 +146,6 @@ export async function renderPong() {
 
 	function reflectAngle(ballVectx: number, ballVecty: number): number {
 		let angle = Math.atan2(ballVecty, ballVectx);
-		console.log("angle before :", angle * 180 / Math.PI);
 		let newAngle;
 		let tries = 0;
 		do {
@@ -100,17 +156,16 @@ export async function renderPong() {
 				break;
 		} while (++tries < 10);
 		if (tries == 10) {
-			console.log("bounce tries > 10");
 			return (Math.atan2(ballVecty, -ballVectx))
 		}
-		console.log("angle after :", newAngle * 180 / Math.PI);
 		return newAngle;
 	}
 
 	let startRound = Date.now();
 	let player1Score = 0;
 	let player2Score = 0;
-	scoreDiv.innerText = `${player1Score} - ${player2Score}`;
+	scorePlayer1Div.innerText = `${player1Score}`;
+	scorePlayer2Div.innerText = `${player2Score}`;
 
 	//initializations
 	let leftPaddlePos = 41;   // as %
@@ -122,30 +177,26 @@ export async function renderPong() {
 	let ballVectx = 0;
 	let ballVecty = 0;
 	let lastbounce = startRound;
-	let ballSpeed = 0.6;
+	let lastWallTouch = startRound;
+	let ballSpeed = 0.666;
 
 	function resetBall() {
-	  ballPosx = Array(10).fill(50);
-	  ballPosy = Array(10).fill(50);
-	  ballSpeed = 0.6;
+		ballPosx = Array(10).fill(50);
+		ballPosy = Array(10).fill(50);
+		ballSpeed = 0.666;
 
-	  ballVectx = 0;
-	  ballVecty = 0;
-
-	  // After a short delay, relaunch the ball at a new random angle
-		setTimeout(() => {
-			const angle = getInitialAngle();
-			ballVectx = Math.cos(angle);
-			ballVecty = Math.sin(angle);
-			lastbounce = Date.now();
-			startRound = lastbounce;
-			gameStarted = true;
-			console.log("New serve angle:", angle);
-		}, 1000); // 1 second pause before serve
+		ballVectx = 0;
+		ballVecty = 0;
+		const angle = getInitialAngle();
+		ballVectx = Math.cos(angle);
+		ballVecty = Math.sin(angle);
+		lastbounce = Date.now();
+		startRound = lastbounce;
+		gameStarted = true;
 	}
 
 	function getInitialAngle(): number {
-			let angle;
+		let angle;
 		let x, y;
 		do {
 			angle = Math.random() * 2 * Math.PI;
@@ -159,10 +210,8 @@ export async function renderPong() {
 	let angle = getInitialAngle();
 	ballVectx = Math.cos(angle);
 	ballVecty = Math.sin(angle);
-	console.log("launch angle:", angle);
 
 	function moveBall() {
-		console.log("ball pos:", ballPosx[0], ", ", ballPosy[0]);
 		for (let index = 9; index > 0; index--) {
 			ballPosy[index] = ballPosy[index - 1];
 			ballPosx[index] = ballPosx[index - 1];
@@ -179,7 +228,7 @@ export async function renderPong() {
 		}
 
 		//wall collisions
-		if (ballPosy[0] <= 2 || ballPosy[0] >= 98) {
+		if ((ballPosy[0] <= 2 || ballPosy[0] >= 98) && Date.now() - lastWallTouch > 100) {
 			ballVecty = -ballVecty;
 		}
 
@@ -190,7 +239,7 @@ export async function renderPong() {
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.02;
+				ballSpeed = ballSpeed + 0.03;
 				console.log("ball speed: ", ballSpeed);
 			}
 		} else if (ballPosx[0] <= 0 && ballPosx[0] > -2 && (ballPosy[0] >= leftPaddlePos && ballPosy[0] <= leftPaddlePos + 18)) {
@@ -199,11 +248,18 @@ export async function renderPong() {
 				ballVectx = Math.cos(newAngle);
 				ballVecty = Math.sin(newAngle);
 				lastbounce = Date.now();
-				ballSpeed = ballSpeed + 0.02;
+				ballSpeed = ballSpeed + 0.03;
 				console.log("ball speed: ", ballSpeed);
 			}
 		}
 
+	}
+
+	function resetPaddles() {
+		leftPaddlePos = 41;
+		rightPaddlePos = 41;
+		leftPaddle.style.top = `41%`;
+		rightPaddle.style.top = `41%`;
 	}
 
 	function movePaddles() {
@@ -230,48 +286,282 @@ export async function renderPong() {
 	
 	let gameStarted = false;
 
-	function framePong() {
-		movePaddles();
-		if (ballPosx[0] > 130) {
-			gameStarted = false;
-			player1Score++;
-			console.log("player 1 scored !");
-			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
-			resetBall();
-		} else if (ballPosx[0] < -30) {
-			gameStarted = false;
-			player2Score++;
-			console.log("player 2 scored !");
-			scoreDiv.innerText = `${player1Score} - ${player2Score}`;
-			resetBall();
-		} else if (player1Score == 1 || player2Score == 1) {
-			stopGame();
-			gameStarted = false;
-			console.log("game done !");
+	function startCountdown(afterCountdown?: () => void, duration = 3): Promise<void> {
+		return new Promise(resolve => {
+			countdownDiv.style.display = 'block';
+			let count = duration;
+			countdownDiv.innerText = count.toString();
+			ball.style.top = `50%`;
+			ball.style.left = `50%`;
 
-			const playerScore = player1Score;
-			const opponentScore = player2Score;
-			const opponentId = 0;
+			const interval = setInterval(() => {
+				count--;
+				if (count > 0) {
+					countdownDiv.innerText = count.toString();
+				} else {
+					countdownDiv.innerText = 'GO!';
+				}
 
-			sendMatchResult(0, playerScore, opponentScore, opponentId);
-			return ;
-		} else if (gameStarted || keysPressed[" "] || Math.floor((Date.now() - startRound) / 1000) > 5) {
-			gameStarted = true;
-			moveBall();
+				if (count < 0) {
+					clearInterval(interval);
+					countdownDiv.style.display = 'none';
+					if (afterCountdown) {
+						resetBall();
+						console.log("afterCountdown");
+						afterCountdown();
+					}
+					return ;
+				}
+			}, 1000);
+		});
+	}
+
+	function waitForSpacePress(): Promise<void> {
+		return new Promise(resolve => {
+			function onKeyDown(e: KeyboardEvent) {
+				if (e.code === "Space") {
+					document.removeEventListener("keydown", onKeyDown);
+					countdownDiv.innerText = "";
+					resolve();
+				}
+			}
+			countdownDiv.innerText = "Press space to start!";
+			countdownDiv.style.display = 'block';
+			document.addEventListener("keydown", onKeyDown, {signal: controller.signal});
+		});
+	}
+
+	async function playMatch(
+		player1: { id: number, name: string },
+		player2: { id: number, name: string },
+		tournamentId: number,
+		matchRound: number,
+		matchIndex: number
+	):
+	Promise<{ winnerId: number, winnerName: string }> {
+		let path = window.location.pathname;
+		if (path == "/pong/" || path == "/pong")
+			gameStopped = false;
+		player1Score = 0;
+		player2Score = 0;
+		scorePlayer1Div.innerText = "0";
+		scorePlayer2Div.innerText = "0";
+		resetBall();
+		resetPaddles();
+		player1Div.innerText = player1.name;
+		player2Div.innerText = player2.name;
+		console.log(player1.name);
+		console.log(" vs ");
+		console.log(player2.name);
+
+
+		return new Promise(async resolve => {
+			countdownDiv.style.display = 'block';
+			countdownDiv.innerText = "Press space to start !";
+			ball.style.top = `50%`;
+			ball.style.left = `50%`;
+			await waitForSpacePress();
+			await startCountdown(() => requestAnimationFrame(frame), 3);
+			async function frame() {
+				if (gameStopped)
+					return;
+				while (!helpModal.classList.contains("hidden")) {
+					await delay(500);
+				}
+				movePaddles();
+				if (ballPosx[0] > 130) {
+					player1Score++;
+					resetBall();
+					scorePlayer1Div.innerText = `${player1Score}`;
+					resetPaddles();
+					if (player1Score != 3) {
+			 			startCountdown(() => requestAnimationFrame(frame), 3);
+						return ;
+					}
+				} else if (ballPosx[0] < -30) {
+					player2Score++;
+					resetBall();
+					scorePlayer2Div.innerText = `${player2Score}`;
+					resetPaddles();
+					if (player2Score != 3) {
+						startCountdown(() => requestAnimationFrame(frame), 3);
+						return ;
+					}
+				}
+				if (player1Score === 3 || player2Score === 3) {
+					launchRound = false;
+					sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
+					stopGame();
+					let winnerId: number;
+					let winnerName: string;
+					if (player2Score < player1Score) {
+						winnerId = player1.id;
+						winnerName = player1.name;
+					} else {
+						winnerId = player2.id;
+						winnerName = player2.name;
+					}
+					resolve({ winnerId, winnerName});
+					return (winnerId);
+				} else {
+					moveBall();
+				}
+				animationId = requestAnimationFrame(frame);
+			}
+			animationId = requestAnimationFrame(frame);
+		});
+	}
+
+
+	const tournamentId = window.location.hash.slice(1);
+	if (!tournamentId) {
+		console.error("No tournament ID provided in URL");
+		return;
+	}
+
+	if (tournamentId) {
+		const matchesRes = await fetch(`/api/tournaments/${tournamentId}`);
+		if (!matchesRes.ok) {
+			console.error("Failed to load tournament matches");
+			return;
 		}
-		animationId = requestAnimationFrame(framePong)
+
+		const data = await matchesRes.json();
+		const matches = Array.isArray(data) ? data : data.matches;
+		if (!Array.isArray(matches)) {
+			console.error("'matches' n'est pas un tableau.");
+			return;
+		}
+		let lastWinner = "None" ;
+
+		// trie les matchs dans l'ordre round puis index
+		matches.sort((a, b) => a.match_round - b.match_round || a.match_index - b.match_index);
+		// console.log(matches);
+
+		for (const match of matches) {
+
+			//DEBUG
+			const result = await fetch(`/api/tournaments/${tournamentId}/matches`);
+			const { matches } = await result.json();
+			console.table(matches);
+
+			if (window.location.pathname != "/pong")
+				return;
+			gameStopped = false;
+			resetPaddles();
+			const { match_round, match_index } = match;
+
+			// Récupère les deux joueurs de ce match
+			const res = await fetch(`/api/play/${tournamentId}/${match_round}/${match_index}`);
+			if (!res.ok) {
+				console.warn(`Pas de match trouvé pour round ${match_round}, index ${match_index}`);
+				continue;
+			}
+			const resMatch = await res.json();
+			console.log("resMatch:");
+			console.log(resMatch);
+			if (resMatch.match.winner_id !==  null && resMatch.match.winner_id !== -1) {
+				continue;
+			}
+			if (resMatch.players.length < 1) {
+				console.warn("Pas assez de joueurs pour ce match", match);
+				continue;
+			}
+			const [player1, player2] = resMatch.players;
+			if (!player1) {
+				await advanceWinner(Number(tournamentId), match_round, match_index, player2.id)
+			} else if (!player2) {
+				await advanceWinner(Number(tournamentId), match_round, match_index, player1.id)
+			} else {
+				console.log(`🎮 Match ${match_round}-${match_index} entre ${player1.name} et ${player2.name}`);
+				const matchRes = await playMatch(player1, player2, Number(tournamentId), match_round, match_index);
+				lastWinner = matchRes.winnerName;
+			}
+			await new Promise(resolve => setTimeout(resolve, 1000));
+
+		}
+		
+		//clears all event listeners
+		// controller.abort();
+		if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
+			return;
+
+		const lang = getCurrentLang();
+
+		if (lastWinner != "None") {
+			//winner pop up
+			showWinnerModal(lastWinner);
+			//confettis
+			FireCannon();
+
+			const winnerModal = document.getElementById("winner-modal") as HTMLDivElement;
+			if (!winnerModal) {
+				window.location.href = "/game-mode";
+				return;
+			}
+			// Closes modal when clicking outside the content
+			winnerModal.addEventListener('click', (e) => {
+				const content = document.getElementById('modal-content')!;
+				if (!content.contains(e.target as Node)) {
+					hideWinnerModal();
+					window.location.href = "/game-mode";
+				}
+			});
+		} else {
+			if (lang == "en")
+				alert("No winner found");
+			else if (lang == "fr")
+				alert("Pas de gagnant trouvé");
+			if (lang == "jp")
+				alert("勝者が見つかりませんでした");
+			console.log("Tournament finished");
+			window.location.href = "/game-mode";
+		}
 	}
-
-	//get time of start
-	if (!animationId) {
-		console.log("game should start");
-		animationId = requestAnimationFrame(framePong)
-	}
-
-
 }
 
-export function stopGame() {
-	cancelAnimationFrame(animationId);
-	animationId = 0;
+const count = 200;
+const defaults: confetti.Options = {
+  origin: { y: 0.7 }
+};
+
+function Fire(particleRatio: number, opts: confetti.Options) {
+  confetti(Object.assign({}, defaults, opts, {
+    particleCount: Math.floor(count * particleRatio)
+  }));
 }
+
+export function FireCannon() {
+  Fire(0.25, {
+    spread: 26,
+    startVelocity: 55,
+  });
+
+  Fire(0.2, {
+    spread: 60,
+  });
+
+  Fire(0.35, {
+    spread: 100,
+    decay: 0.91,
+    scalar: 0.4,
+  });
+
+  Fire(0.1, {
+    spread: 120,
+    startVelocity: 25,
+    decay: 0.92,
+    scalar: 1.2,
+  });
+
+  Fire(0.1, {
+    spread: 120,
+    startVelocity: 45,
+  });
+
+  Fire(0.3, {
+    spread: 200,
+    startVelocity: 40,
+  });
+}
+

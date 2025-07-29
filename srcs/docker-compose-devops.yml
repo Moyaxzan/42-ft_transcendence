@@ -50,6 +50,11 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsu http://localhost:9600/_node/pipelines | grep -E '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - transcendence
     restart: unless-stopped

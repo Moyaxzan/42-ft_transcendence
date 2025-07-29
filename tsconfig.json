@@ -1,12 +1,12 @@
 {
-    "compilerOptions": {
-      "target": "es2017",
-      "lib": ["dom", "es2017"],
-      "module": "es6",
-      "rootDir": "assets/js",
-      "outDir": "srcs/requirements/front/dist/js",
-      "moduleResolution": "node",
-      "strict": true
+	"compilerOptions": {
+		"target": "es2020",
+		"lib": ["dom", "es2020"],
+		"module": "es6",
+		"rootDir": "assets/js",
+		"outDir": "srcs/requirements/front/dist/js",
+		"moduleResolution": "node",
+		"strict": true
     },
     "include": ["assets/js"]
 }

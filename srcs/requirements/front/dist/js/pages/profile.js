@@ -1,6 +1,7 @@
 import { renderHome } from './home.js';
+import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage } from '../lang.js';
 export async function renderProfile() {
-    var _a;
     const app = document.getElementById('app');
     if (!app)
         return;
@@ -11,6 +12,12 @@ export async function renderProfile() {
     }
     const html = await htmlRes.text();
     app.innerHTML = html;
+    requestAnimationFrame(() => {
+        animateLinesToFinalState([
+            { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
+            { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+        ]);
+    });
     const authActionContainer = document.getElementById('authActionContainer');
     const profileArea = document.querySelector("#profileArea");
     if (!profileArea || !authActionContainer) {
@@ -18,7 +25,7 @@ export async function renderProfile() {
         return;
     }
     const backBtn = document.getElementById('backHomeBtn');
-    backBtn === null || backBtn === void 0 ? void 0 : backBtn.addEventListener('click', () => {
+    backBtn?.addEventListener('click', () => {
         renderHome();
     });
     try {
@@ -33,9 +40,8 @@ export async function renderProfile() {
         profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${(_a = user.email) !== null && _a !== void 0 ? _a : 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
         authActionContainer.innerHTML = `
@@ -44,7 +50,7 @@ export async function renderProfile() {
 			</button>
 		`;
         const logoutBtn = document.getElementById('logoutBtn');
-        logoutBtn === null || logoutBtn === void 0 ? void 0 : logoutBtn.addEventListener('click', async () => {
+        logoutBtn?.addEventListener('click', async () => {
             await fetch('/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
@@ -69,6 +75,7 @@ export async function renderUser() {
     const res = await fetch('/dist/html/profile.html');
     const html = await res.text();
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     const userLoadBtn = document.querySelector("#userLoad");
     const userList = document.querySelector("#userList");
     if (!userLoadBtn || !userList) {

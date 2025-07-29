@@ -16,13 +16,6 @@ async function routes (fastify, options) {
 	});
 */
 
-
-	fastify.log.info("☺️ ☺️ ☺️");
-	const userIds = [145, 12, 33, 78798789798, 55, 56];
-	fastify.log.info(generateBracket(userIds));
-	fastify.log.info("☺️ ☺️ ☺️");
-
-
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
@@ -82,30 +75,17 @@ async function routes (fastify, options) {
   		}
 	});
 
-	// fastify.get('/users/history/:id', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { id } = request.params;
-	// 	try {
-	// 		const user = await new Promise((resolve, reject) => {
-	// 		db.get('SELECT * FROM matches WHERE user_id = ?', [id], (err, row) => {
-	// 			if (err) return reject(err);
-	// 			resolve(row);
-	// 			});
-	// 		});
-	// 		return reply.send(user);
-	// 	} catch (err) {
-	// 		fastigy.log.error(err);
-	// 		return reply.status(500).send({ error: 'database GET error', details: err.message });
-	// 	}
-	// })
+	fastify.get('/users/history/:id', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { id } = request.params;
+	})
 
+	//fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
 	fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		console.log(`🌲🌲🌲🌲🌲${request.body} avant`);
 		wins += 1;
-		console.log(`🌲🌲🌲🌲🌲${request.body} apres`);
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET wins = ? WHERE id = ?', [wins, id], function (err) {
@@ -130,9 +110,7 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		console.log(`🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​${request.body} avant`);
 		losses += 1;
-		console.log(`🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​🍄‍🟫​${request.body} apres`);
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET losses = ? WHERE id = ?', [losses, id], function (err) {
@@ -155,28 +133,41 @@ async function routes (fastify, options) {
 
 	fastify.post('/api/users/history/:id', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { id } = request.params;
-		const { user_id, score, opponent_score, opponent_id } = request.body;
-		const insertMatch = `INSERT INTO matches (user_id, opponent_id, score, opponent_score) VALUES (?, ?, ?, ?)`;
-		const joinMatchToUser = `INSERT INTO users_join_matches (user_id, match_id) VALUES (?, ?)`;
+		const { id: user_id } = request.params;
+		const { isWinner } = request.body;
+
 		try {
-			const matchId = await new Promise((resolve, reject) => {
-				db.run(insertMatch, [user_id, opponent_id, score, opponent_score],
-				function (err) {
-					if (err) return reject(err);
-					resolve(this.lastID);
-				});
-			});
-			await new Promise((resolve, reject) => {
-				db.run(joinMatchToUser, [user_id, matchId], function (err) {
-					if (err) return reject(err);
-					resolve(user_id, matchId);
-					});
-			});
-			reply.send({message: 'Match result succesfully added', matchId, score, opponent_score});
+			// vérifie si une entrée existe déjà pour cet utilisateur
+			const row = await db.get(
+				'SELECT * FROM user_stats WHERE user_id = ?',
+				[user_id]
+			);
+
+			if (row) {
+				// mise à jour des stats existantes
+				if (isWinner) {
+					await db.run(
+						'UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?',
+						[user_id]
+					);
+				} else {
+					await db.run(
+						'UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?',
+						[user_id]
+					);
+				}
+			} else {
+				//creation de la ligne si elle n'existe pas
+				await db.run(
+					'INSERT INTO user_stats (user_id, total_wins, total_losses) VALUES (?, ?, ?)',
+					[user_id, isWinner ? 1 : 0, isWinner ? 0 : 1]
+				);
+			}
+
+			reply.send({ success: true });
 		} catch (err) {
-			fastify.log.error(err);
-			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
+			console.error('Erreur lors de la mise à jour des stats :', err);
+			reply.status(500).send({ error: 'Erreur serveur' });
 		}
 	});
 
@@ -218,6 +209,26 @@ async function routes (fastify, options) {
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database DELETE error', details: err.message });
+		}
+	});
+
+	fastify.post('/api/users', async (request, reply) => {
+		const { name, is_guest } = request.body;
+
+		if (typeof name !== 'string' || !name.trim()) {
+			return reply.code(400).send({ error: 'Invalid name' });
+		}
+
+		try {
+			const result = await fastify.db.run(
+				`INSERT INTO users (name, is_guest) VALUES (?, ?)`,
+				[name.trim(), is_guest ? 1 : 0]
+			);
+			const userId = result.lastID;
+			return { userId };
+		} catch (err) {
+			console.error('User creation error:', err);
+			return reply.code(500).send({ error: 'User creation failed' });
 		}
 	});
 }
