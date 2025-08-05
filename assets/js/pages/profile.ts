@@ -22,6 +22,7 @@ interface Match {
 }
 
 export async function renderProfile() {
+	document.title = "Profile";
 	const app = document.getElementById('app');
 	if (!app) return;
 

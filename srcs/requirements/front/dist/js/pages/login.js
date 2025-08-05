@@ -18,6 +18,7 @@ function loadGoogleSdk() {
     });
 }
 export async function renderLogin() {
+    document.title = "Login";
     const app = document.getElementById('app');
     if (!app)
         return;

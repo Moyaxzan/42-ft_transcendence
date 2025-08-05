@@ -2,6 +2,7 @@ import { renderHome } from './home.js';
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage } from '../lang.js';
 export async function renderProfile() {
+    document.title = "Profile";
     const app = document.getElementById('app');
     if (!app)
         return;

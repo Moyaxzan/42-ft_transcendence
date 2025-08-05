@@ -33,6 +33,7 @@ function delay(ms: number) {
 }
 
 export async function renderPong() {
+	document.title = "Pong";
 	stopGame();
 	console.log("🏓 renderPong()");
 	const app = document.getElementById('app');

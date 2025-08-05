@@ -1,6 +1,7 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage } from '../lang.js';
 export async function renderGameMode() {
+    document.title = "Game mode";
     const app = document.getElementById('app');
     if (!app)
         return;

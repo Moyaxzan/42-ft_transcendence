@@ -28,6 +28,7 @@ function loadGoogleSdk(): Promise<void> {
 }
 
 export async function renderLogin(): Promise<void> {
+	document.title = "Login";
 	const app = document.getElementById('app');
 	if (!app)
 		return;

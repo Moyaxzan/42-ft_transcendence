@@ -2,6 +2,7 @@ import { animateLinesToFinalState } from './navbar.js'
 import { setLanguage } from '../lang.js'
 
 export async function renderHome() {
+	document.title = "ft_transcendence";
 	console.log("renderHome called");
 	const app = document.getElementById('app');
 	if (!app)

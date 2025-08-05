@@ -10,6 +10,7 @@ let connectedUser = null;
 let currentEventListeners = [];
 /* ---------------------------- FUNCTIONS ----------------------------------------------------------------------------------------------------- */
 export async function renderPlayers() {
+    document.title = "Choose players";
     // NETTOYAGE : Réinitialiser complètement à chaque rendu
     cleanupEventListeners();
     // Réinitialiser les joueurs

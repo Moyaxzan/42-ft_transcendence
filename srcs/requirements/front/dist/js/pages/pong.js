@@ -13,6 +13,7 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 export async function renderPong() {
+    document.title = "Pong";
     stopGame();
     console.log("🏓 renderPong()");
     const app = document.getElementById('app');
