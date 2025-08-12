@@ -2,21 +2,17 @@ const userBodyJsonSchema = {
         type: 'object',
         required: ['name'],
 	properties: {
-                is_guest: { type: 'integer' },
                 name: { type: 'string' },
+                is_guest: { type: 'integer' },
+		google_user: { type: 'integer' },
                 email: { type: 'string', format: 'email' },
-                id_token: { type: 'string' },
                 password_hash : { type: 'string' },
                 reset_token: { type: 'string' },
                 reset_expiry: { type: 'integer' },
-                ip_address: {
-			oneOf: [
-				{ type: 'string', format: 'ipv4' },
-				{ type: 'string', format: 'ipv6' }
-			],
-		},
-                is_log: { type: 'integer' },
-                points: { type: 'integer' },
+		twofa_enabled: { type: 'integer' },
+		twofa_secret: { type: 'integer' },
+                wins: { type: 'integer' },
+                losses: { type: 'integer' },
         },
         additionalProperties: false,
 };

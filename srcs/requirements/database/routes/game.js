@@ -1,7 +1,7 @@
 // DATABASE CONTAINER
 
 import schema from '../schemas/userBodyJsonSchema.js'
-import updatePointsSchema from '../schemas/updatePointsSchema.js'
+import updateRecordsSchema from '../schemas/updateRecordsSchema.js'
 import updateNameSchema from '../schemas/updateNameSchema.js'
 import generateBracket from '../utils/bracket.js'
 
@@ -92,10 +92,7 @@ async function gameRoutes (fastify, options) {
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { players } = request.body;
-
 		console.log("📦 Contenu complet du body :", request.body);
-
-		// Vérification minimale
 		if (!Array.isArray(players) || players.length < 2) {
 			return reply.status(400).send({ error: "At least two player names are required." });
 		}
@@ -108,17 +105,15 @@ async function gameRoutes (fastify, options) {
 			const is_guest = true;
 			const userIds = [];
 
-			// Créé les utilisateurs invités et récupérer leurs IDs
-			for (const name of players) {
-				await new Promise((resolve, reject) => {
-					db.run(insertGuest, [name, is_guest], function (err) {
+			for (const player of players) {
+				 await new Promise ((resolve, reject) => {
+					db.run(insertGuest, [player, is_guest], function (err) {
 						if (err) return reject(err);
 						resolve(null);
 					});
-				});
-
+				})
 				const userId = await new Promise((resolve, reject) => {
-					db.get(getUserId, [name], (err, row) => {
+					db.get(getUserId, [player], (err, row) => {
 						if (err) return reject(err);
 						resolve(row.id);
 					});
@@ -126,7 +121,6 @@ async function gameRoutes (fastify, options) {
 				userIds.push(userId);
 			}
 
-			// Créé le tournoi avec le premier joueur comme owner
 			const ownerId = userIds[0];
 			const tournamentId = await new Promise((resolve, reject) => {
 				db.run(insertTournament, [ownerId], function (err) {
@@ -303,55 +297,6 @@ async function gameRoutes (fastify, options) {
 			return reply.code(500).send({ error: 'Database error' });
 		}
 	});
-
-/*
-	fastify.post('/api/tournaments', async (request, reply) => {
-		const db = fastify.sqlite;
-		const { players } = request.body;
-
-		if (!Array.isArray(players) || players.length < 2) {
-			return reply.status(400).send({ error: "At least two player names are required." });
-		}
-
-		try {
-			await new Promise((resolve, reject) => {
-				db.serialize(() => {
-					// Step 1: Insert a new tournament
-					db.run(`INSERT INTO tournaments (user_id) VALUES (NULL)`,
-						function (err) {
-							if (err) return reject(err);
-							const tournamentId = this.lastID;
-
-							// Step 2: Insert users if they don't exist
-							const insertUser = db.prepare(`INSERT OR IGNORE INTO users (name, ip_address) VALUES (?, '0.0.0.0')`);
-							players.forEach(name => insertUser.run(name));
-							insertUser.finalize(() => {
-								// Step 3: Retrieve user IDs
-								db.all(
-									`SELECT id FROM users WHERE name IN (${players.map(() => '?').join(',')})`,
-									players,
-									(err, rows) => {
-										if (err) return reject(err);
-
-										// Step 4: Link users to the tournament
-										const link = db.prepare(`INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`);
-										rows.forEach(({ id }) => link.run(id, tournamentId));
-										link.finalize(resolve);
-									}
-								);
-							});
-						}
-					);
-				});
-			});
-
-			reply.send({ message: "Tournament created with users." });
-		} catch (err) {
-			fastify.log.error(err);
-			reply.status(500).send({ error: "Database error", details: err.message });
-		}
-	});
-*/
 }
 
 export default gameRoutes

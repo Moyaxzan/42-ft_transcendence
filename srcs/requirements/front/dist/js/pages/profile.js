@@ -1,6 +1,8 @@
 import { renderHome } from './home.js';
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage } from '../lang.js';
 export async function renderProfile() {
+    document.title = "Profile";
     const app = document.getElementById('app');
     if (!app)
         return;
@@ -39,9 +41,8 @@ export async function renderProfile() {
         profileArea.innerHTML = `
 			<h2>Welcome, ${user.name} 👋</h2>
 			<ul>
-				<li><strong>Email:</strong> ${user.email ?? 'no info'}</li>
-				<li><strong>IP:</strong> ${user.ip_address}</li>
-				<li><strong>Points:</strong> ${user.points}</li>
+				<li><strong>Losses:</strong> ${user.losses}</li>
+				<li><strong>Wins:</strong> ${user.wins}</li>
 			</ul>
 		`;
         authActionContainer.innerHTML = `
@@ -75,6 +76,7 @@ export async function renderUser() {
     const res = await fetch('/dist/html/profile.html');
     const html = await res.text();
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     const userLoadBtn = document.querySelector("#userLoad");
     const userList = document.querySelector("#userList");
     if (!userLoadBtn || !userList) {

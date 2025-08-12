@@ -1,4 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js';
+import { setLanguage, getCurrentLang } from '../lang.js';
 import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 let animationId = 0;
@@ -12,6 +13,7 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 export async function renderPong() {
+    document.title = "Pong";
     stopGame();
     console.log("🏓 renderPong()");
     const app = document.getElementById('app');
@@ -21,6 +23,7 @@ export async function renderPong() {
     console.log(res);
     const html = await res.text();
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     await new Promise((resolve) => requestAnimationFrame(resolve));
     // Animate the lines
     animateLinesToFinalState([
@@ -417,6 +420,7 @@ export async function renderPong() {
         // controller.abort();
         if (window.location.pathname != "/pong/" && window.location.pathname != "/pong")
             return;
+        const lang = getCurrentLang();
         if (lastWinner != "None") {
             //winner pop up
             showWinnerModal(lastWinner);
@@ -437,6 +441,12 @@ export async function renderPong() {
             });
         }
         else {
+            if (lang == "en")
+                alert("No winner found");
+            else if (lang == "fr")
+                alert("Pas de gagnant trouvé");
+            if (lang == "jp")
+                alert("勝者が見つかりませんでした");
             console.log("Tournament finished");
             window.location.href = "/game-mode";
         }
