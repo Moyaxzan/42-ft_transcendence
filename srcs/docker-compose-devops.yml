@@ -27,6 +27,8 @@ services:
       - .env
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      SERVER_BASEPATH: "/kibana"
+      SERVER_REWRITEBASEPATH: "true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -41,11 +43,16 @@ services:
       - .env
     environment:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./requirements/elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     depends_on:
       elasticsearch:
         condition: service_healthy
     networks:
       - transcendence
+    ports:
+      - "5000:5000"
     restart: unless-stopped
 
   elk:
@@ -55,6 +62,13 @@ services:
     container_name: elk
     env_file:
       - .env
+    volumes:
+      - ./logs:/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       - database
       - elasticsearch

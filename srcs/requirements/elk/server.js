@@ -1,17 +1,17 @@
-import Fastify from 'fastify'
-import elasticSearchRoutes from './routes/elasticsearch.js';
+import Fastify from 'fastify';
+import elasticsearchRoutes from './routes/elasticsearch.js'
 
 const fastify = Fastify({
 	logger: true
-})
+});
 
-fastify.register(elasticSearchRoutes);
+fastify.register(elasticsearchRoutes)
 
-fastify.listen({port: 3000, host: '0.0.0.0'}, function (err, address) {
-	if (err) {
-		fastify.log.error(err);
-		process.exit(1)
-	} else {
-		fastify.log.info(`server is listening on ${address}`)
-	}
+fastify.listen({ port: 3000, host: '0.0.0.0' })
+.then(() => {
+	fastify.log.info('Serveur lancé sur le port 3000');
 })
+.catch(err => {
+	fastify.log.error(err);
+		process.exit(1);
+});

@@ -20,7 +20,7 @@ export async function renderLogin() {
     const app = document.getElementById('app');
     if (!app)
         return;
-    const res = await fetch('/dist/html/login.html');
+    const res = await fetch('/dist/html/home.html');
     const html = await res.text();
     app.innerHTML = html;
     requestAnimationFrame(() => {
@@ -60,8 +60,8 @@ export async function renderLogin() {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const target = e.target;
-        const email = target.elements.namedItem('email')?.value.trim();
-        const password = target.elements.namedItem('password')?.value.trim();
+        const email = target.elements.namedItem('email_input')?.value.trim();
+        const password = target.elements.namedItem('password_input')?.value.trim();
         messageEl.style.color = 'red';
         messageEl.textContent = '';
         twofaSection.classList.add('hidden');

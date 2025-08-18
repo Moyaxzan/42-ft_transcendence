@@ -31,7 +31,7 @@ export async function renderLogin(): Promise<void> {
 	if (!app)
 		return;
 
-	const res = await fetch('/dist/html/login.html');
+	const res = await fetch('/dist/html/home.html');
 	const html = await res.text();
 	app.innerHTML = html;
 
@@ -80,8 +80,8 @@ export async function renderLogin(): Promise<void> {
 		e.preventDefault();
 
 		const target = e.target as HTMLFormElement;
-		const email = (target.elements.namedItem('email') as HTMLInputElement)?.value.trim();
-		const password = (target.elements.namedItem('password') as HTMLInputElement)?.value.trim();
+		const email = (target.elements.namedItem('email_input') as HTMLInputElement)?.value.trim();
+		const password = (target.elements.namedItem('password_input') as HTMLInputElement)?.value.trim();
 
 		messageEl.style.color = 'red';
 		messageEl.textContent = '';

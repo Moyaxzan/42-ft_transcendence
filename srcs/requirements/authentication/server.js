@@ -7,10 +7,32 @@ import protectedRoutes from './routes/protected.js';
 import authRoutes from './routes/auth.js';
 import cookie from '@fastify/cookie'
 import cors from '@fastify/cors';
+import net from 'net'
 
+const LOGSTASH_HOST = 'logstash'
+const LOGSTASH_PORT = 5000
+
+const logstashSocket = new net.Socket()
+
+logstashSocket.connect(LOGSTASH_PORT, LOGSTASH_HOST, () => {
+	console.log('Connected to Logstash')
+})
+
+logstashSocket.on('error', (err) => {
+	console.error('Logstash connection error:', err)
+})
 
 const fastify = Fastify({
-	logger: true
+	logger: {
+		level: 'info',
+		stream: {
+			write: (msg) => {
+ 				if (logstashSocket.writable) {
+    				logstashSocket.write(msg.endsWith('\n') ? msg : msg + '\n')
+  				}
+			}
+		}	
+	}
 })
 
 fastify.register(cors, {
