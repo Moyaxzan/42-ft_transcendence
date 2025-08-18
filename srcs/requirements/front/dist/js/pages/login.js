@@ -1,5 +1,6 @@
 import { renderProfile } from './profile.js';
 import { renderHome } from './home.js';
+import { setLanguage } from '../lang.js';
 import { animateLinesToFinalState } from './navbar.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
@@ -17,12 +18,14 @@ function loadGoogleSdk() {
     });
 }
 export async function renderLogin() {
+    document.title = "Login";
     const app = document.getElementById('app');
     if (!app)
         return;
     const res = await fetch('/dist/html/home.html');
     const html = await res.text();
     app.innerHTML = html;
+    setLanguage(document.documentElement.lang);
     requestAnimationFrame(() => {
         animateLinesToFinalState([
             { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },

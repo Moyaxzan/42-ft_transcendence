@@ -66,7 +66,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ../data/nginx
+      device: ../data/modsec_logs
   database:
     driver: local
     driver_opts:

@@ -12,7 +12,6 @@ const routes = {
     '/players': renderPlayers,
     '/pong': renderPong,
     '/profile': renderProfile,
-    '/pong/': renderPong,
     '/login': renderLogin,
     '/users': renderUser,
     '/matches': renderMatch,
@@ -21,10 +20,23 @@ const routes = {
 export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
-    const render = routes[path] || render404();
-    if (path != "/pong" && path != "/pong/") {
+    const helpBtn = document.getElementById("help-button");
+    if (helpBtn) {
+        if (routes[path]) {
+            helpBtn.classList.remove('hidden');
+        }
+        else {
+            helpBtn.classList.add('hidden');
+        }
+    }
+    const render = routes[path] || render404;
+    if (path != "/pong") {
         console.log("game should stop");
         stopGame();
+        const countdownDiv = document.getElementById("countdown");
+        if (countdownDiv) {
+            countdownDiv.style.display = "none";
+        }
     }
     render();
 }
@@ -53,4 +65,4 @@ l’interception ne se fait pas.
 En utilisant closest('[data-link]'), on remonte jusqu’au lien contenant
 (si présent), même si l’élément cliqué est imbriqué dans un bouton,
 une icône, etc.
-C’est le comportement standard attendu d’un système SPA */ 
+C’est le comportement standard attendu d’un système SPA */

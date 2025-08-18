@@ -15,7 +15,6 @@ const routes: Record<string, () => void> = {
   '/pong': renderPong,
 
   '/profile': renderProfile,
-  '/pong/': renderPong,
   '/login': renderLogin,
   '/users': renderUser,
   '/matches': renderMatch,
@@ -25,10 +24,22 @@ const routes: Record<string, () => void> = {
 export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
-	const render = routes[path] || render404();
-	if (path != "/pong" && path != "/pong/") {
+	const helpBtn = document.getElementById("help-button") as HTMLDivElement;
+	if (helpBtn) {
+		if (routes[path]) {
+			helpBtn.classList.remove('hidden')
+		} else {
+			helpBtn.classList.add('hidden')
+		}
+	}
+	const render = routes[path] || render404;
+	if (path != "/pong") {
 		console.log("game should stop");
 		stopGame();
+		const countdownDiv = document.getElementById("countdown") as HTMLDivElement;
+		if (countdownDiv) {
+			countdownDiv.style.display = "none";
+		}
 	}
 	render();
 }

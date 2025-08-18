@@ -16,9 +16,9 @@ export default async function protectedRoutes(fastify) {
 
 		return {
 			name: user.name,
-			ip_address: user.ip_address,
-			email: user.email,
-			points: user.points
+		//	email: user.email,
+			wins: user.wins,
+			losses: user.losses
 		};
 	});
 }

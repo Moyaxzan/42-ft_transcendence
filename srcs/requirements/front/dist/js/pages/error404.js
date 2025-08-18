@@ -1,5 +1,6 @@
 import { animateLinesToFinalState } from './navbar.js';
 export async function render404() {
+    document.title = "404 - Page Not Found";
     const app = document.getElementById('app');
     if (!app)
         return;

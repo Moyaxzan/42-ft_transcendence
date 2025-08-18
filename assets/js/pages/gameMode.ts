@@ -1,6 +1,8 @@
 import { animateLinesToFinalState } from './navbar.js'
+import { setLanguage } from '../lang.js';
 
 export async function renderGameMode() {
+	document.title = "Game mode";
 	const app = document.getElementById('app');
 	if (!app)
 		return;
@@ -9,6 +11,11 @@ export async function renderGameMode() {
 	const html = await res.text();
 
 	app.innerHTML = html;
+
+	//setLanguage(document.documentElement.lang as 'en' | 'fr');
+	// requestAnimationFrame(() => {
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+	// });
 
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
