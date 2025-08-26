@@ -11,11 +11,15 @@ services:
     volumes:
       - ./requirements/front:/var/www
     depends_on:
-      - elasticsearch
-      - kibana
+      - logstash
     networks:
       - transcendence
     restart: unless-stopped
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://127.0.0.1:5000" #gelf doesnt use Docker DNS hence localhost:5000 for logstash--wouldnt work in prod tho lol
+        tag: "ngnix-service"
 
   database:
     hostname: database
@@ -26,9 +30,16 @@ services:
       - .env
     volumes:
       - database:/data
+    depends_on:
+      - logstash
     networks:
       - transcendence
     restart: unless-stopped
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://127.0.0.1:5000"
+        tag: "database-service"
 
   pong:
     hostname: pong
@@ -39,10 +50,15 @@ services:
       - .env
     depends_on:
       - database
-      - elasticsearch
+      - logstash
     networks:
       - transcendence
     restart: unless-stopped
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://127.0.0.1:5000"
+        tag: "pong-service"
 
   authentication:
     hostname: authentication
@@ -53,10 +69,15 @@ services:
       - .env
     depends_on:
       - database
-      - elasticsearch
+      - logstash
     networks:
       - transcendence
     restart: unless-stopped
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://127.0.0.1:5000"
+        tag: "auth-service"
 
 volumes:
   nginx:
