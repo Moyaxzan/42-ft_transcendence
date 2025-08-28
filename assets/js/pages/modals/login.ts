@@ -1,7 +1,7 @@
-import { renderProfile } from './profile.js'
-import { renderHome } from './home.js'
-import { setLanguage } from '../lang.js';
-import { animateLinesToFinalState } from './navbar.js'
+import { renderProfile } from '../profile.js'
+import { renderHome } from '../home.js'
+import { setLanguage } from '../../lang.js';
+import { animateLinesToFinalState } from '../navbar.js'
 
 declare global {
 	interface Window {
