@@ -5,3 +5,4 @@ data/
 hash.js
 hashcmp.js
 client_secret_OAuth.json
+.DS_Store

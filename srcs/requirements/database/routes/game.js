@@ -100,7 +100,7 @@ async function gameRoutes (fastify, options) {
 		try {
 			const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
 			const getUserId = `SELECT id FROM users WHERE name = ?`;
-			const insertTournament = `INSERT INTO tournaments (user_id, match_id) VALUES (?, NULL)`;
+			const insertTournament = `INSERT INTO tournaments (user_id) VALUES (?)`;
 			const linkUserToTournament = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`;
 			const is_guest = true;
 			const userIds = [];

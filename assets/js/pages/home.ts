@@ -16,7 +16,22 @@ export async function renderHome() {
 	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 	
 	animateLinesToFinalState([
-		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+		{ id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
+		{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
 	]);
+
+
+	const	loginBtn = document.getElementById('login-button');
+
+	if (!loginBtn) {
+		console.error("Some DOM elements have not been found");
+		return;
+	}
+
+	loginBtn.addEventListener('click', (e) => {
+		e.preventDefault();
+		// Utiliser système de navigation SPA
+		window.history.pushState({}, '', '/login');
+		window.dispatchEvent(new CustomEvent('routeChanged'));
+	});
 }
