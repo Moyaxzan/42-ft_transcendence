@@ -34,6 +34,37 @@ async function authRoutes (fastify, options) {
 		}
 	});
 
+	fastify.post('/api/users/register', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { email, name, password_hash } = request.body;
+
+		try {
+			const insertQuery = `INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)`;
+			await new Promise((resolve, reject) => {
+				db.run(insertQuery, [email, name, password_hash], function (err) {
+					if (err) return reject(err);
+					resolve();
+				});
+			});
+			const user = await new Promise((resolve, reject) => {
+				db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
+					if (err) return reject(err);
+					resolve(row);
+				});
+			});
+
+			if (!user) {
+				return reply.code(500).send({ error: 'User creation failed' });
+			}
+
+			return reply.send(user);
+
+		} catch (err) {
+			fastify.log.error(err);
+			return reply.code(500).send({ error: 'Database error', details: err.message });
+		}
+	});
+
 	fastify.post('/api/users/signin', { schema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { is_guest, name, email, id_token, password_hash, reset_token, reset_expiry } = request.body;
