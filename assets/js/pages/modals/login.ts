@@ -41,8 +41,8 @@ export async function renderLogin(): Promise<void> {
 
 	requestAnimationFrame(() => {
 		animateLinesToFinalState([
-			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-			{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+			{ id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
+			{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
 		]);
 	})
 
