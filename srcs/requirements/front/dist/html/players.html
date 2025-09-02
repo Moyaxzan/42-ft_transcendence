@@ -50,23 +50,52 @@
 		</section>
 
 		<!-- Section droite - Saisie/Affichage joueurs-->
-		<!-- <section class="p-4 flex-[5] h-full flex flex-col justify-between items-start"> -->
-		<section class="p-4 flex-[5] h-full flex flex-col justify-start gap-y-12 items-start">
-			<!-- Section d'affichage (haut) -->
+		<section class="flex-[5] h-full flex flex-raw justify-start gap-x-12 items-start pt-8 mr-20">
+			<!-- Section de saisie (gauche) -->
+			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4 mb-8">
+				<h2 class="text-xl font-bold text-gray-700 mb-4 text-center">
+					<span lang="en">New player</span>
+					<span lang="fr">Nouveau joueur</span>
+					<span lang="jp">新しいプレイヤー</span>
+				</h2>
+
+				<!-- Formulaire de saisie -->
+				<div class="w-full">
+					<input lang="en" type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
+					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+					<input lang="fr" type="text" id="player-input-fr" placeholder="Veuillez entrer le nom du joueur..." maxlength="20"
+					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+					<input lang="jp" type="text" id="player-input-jp" placeholder="プレイヤー名を入力してください..." maxlength="20"
+					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+
+					<!-- Info sur les limites de joueurs -->
+					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
+
+					<!-- Bouton add player -->
+					<!-- <button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#218DBE] text-white font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"> -->
+					<button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#FFB942] text-gray-00 font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">	
+						<span lang="en">Add player</span>
+						<span lang="fr">Ajouter un joueur</span>
+						<span lang="jp">プレイヤーを追加</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- Section d'affichage (droite) -->
 			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4">
-				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
+				<h2 class="text-xl font-bold text-gray-700 mb-4 text-center">
 					<span lang="en">Registered players</span>
 					<span lang="fr">Joueurs inscrits</span>
 					<span lang="jp"> 登録済みのプレイヤー</span>
 				</h2>
 		
 				<!-- Liste des joueurs -->
-				<div id="players-list" class="space-y-4 max-h-64 overflow-y-auto">
+				<div id="players-list" class="space-y-4 max-h-64 overflow-y-auto pb-2">
 				<!-- Les joueurs apparaîtront ici dynamiquement -->
 				</div>
 
 				<!-- Message si aucun joueur -->
-				<div id="no-players" class="text-center text-gray-500 text-base">
+				<div id="no-players" class="text-center text-gray-500 text-base pb-2">
 					<span lang="en">No player registered</span>
 					<span lang="fr">Aucun joueur inscrit</span>
 					<span lang="jp">プレイヤが登録され</span>			
@@ -78,35 +107,7 @@
 				</span>
 			</div>
 
-			<!-- Section de saisie (bas) -->
-			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4 mb-8">
-				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
-					<span lang="en">New player</span>
-					<span lang="fr">Nouveau joueur</span>
-					<span lang="jp">新しいプレイヤー</span>
-				</h2>
-
-				<!-- Formulaire de saisie -->
-				<div class="w-full">
-					<input lang="en" type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
-					<input lang="fr" type="text" id="player-input" placeholder="Veuillez entrer le nom du joueur..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
-					<input lang="jp" type="text" id="player-input" placeholder="プレイヤー名を入力してください..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
-
-					<!-- Info sur les limites de joueurs -->
-					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
-
-					<!-- Bouton add player -->
-					<!-- <button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#218DBE] text-white font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"> -->
-					<button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#218DBE] text-black font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">	
-						<span lang="en">Add player</span>
-						<span lang="fr">Ajouter un joueur</span>
-						<span lang="jp">プレイヤーを追加</span>
-					</button>
-				</div>
-			</div>
+			
 		</section>
 	
 		<!-- Bouton Begin -->
