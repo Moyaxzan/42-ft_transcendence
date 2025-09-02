@@ -33,15 +33,15 @@ export async function renderLogin(): Promise<void> {
 	if (!app)
 		return;
 
-	const res = await fetch('/dist/html/modals/login.html');
-	const html = await res.text();
+	// const res = await fetch('/dist/html/modals/login.html');
+	// const html = await res.text();
 	// app.innerHTML = html;
 
 	setLanguage(document.documentElement.lang as 'en' | 'fr');
 
 	requestAnimationFrame(() => {
 		animateLinesToFinalState([
-			{ id: "line-top", rotationDeg: 0, translateYvh: -30, height: "50vh" },
+			{ id: "line-top", rotationDeg: 0, translateYvh: -20, height: "50vh" },
 			{ id: "line-bottom", rotationDeg: 0, translateYvh: 30, height: "50vh" },
 		]);
 	})
@@ -60,14 +60,14 @@ export async function renderLogin(): Promise<void> {
 	const twofaSetupModal = document.getElementById('twofa-setup-modal');
 	const qrCodeContainer = document.getElementById('qrCodeContainer');
 	const close2FAModalBtn = document.getElementById('close2FAModal');
-	const googleDiv = document.getElementById('googleSignInDiv');
-	if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
-		window.google.accounts.id.renderButton(googleDiv, {
-			theme: 'outline',
-			size: 'large',
-			width: 280
-		});
-	}
+	// const googleDiv = document.getElementById('googleSignInDiv');
+	// if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
+	// 	window.google.accounts.id.renderButton(googleDiv, {
+	// 		theme: 'outline',
+	// 		size: 'large',
+	// 		width: 280
+	// 	});
+	// }
 
 	let pendingEmail = '';
 	let pendingPassword = '';

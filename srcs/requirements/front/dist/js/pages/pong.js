@@ -429,7 +429,8 @@ export async function renderPong() {
             FireCannon();
             const winnerModal = document.getElementById("winner-modal");
             if (!winnerModal) {
-                window.location.href = "/game-mode";
+                window.history.pushState({}, "", "/game-mode");
+                router();
                 return;
             }
             // Closes modal when clicking outside the content
