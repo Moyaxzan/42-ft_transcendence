@@ -89,8 +89,8 @@ export async function	renderPlayers() {
 	
 	requestAnimationFrame(async () => { //permet l'execution de ces fonctions juste avant d'afficher le contenu de l'écran, on est sur que DOM est pret
 		animateLinesToFinalState([
-			{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-			{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
+			{ id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
+			{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
 		]);
 
 	// Réinitialiser les joueurs
