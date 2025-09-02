@@ -24,18 +24,12 @@ export async function renderPlayers() {
     // Récupérer le mode depuis sessionStorage
     const mode = sessionStorage.getItem('gameMode') || '1vs1';
     localStorage.setItem("mode", mode);
-    const lang = localStorage.getItem("lang") || 'en';
     const gameModes = {
         '1vs1': {
             type: '1vs1',
             minPlayers: 2,
             maxPlayers: 2,
             subtitle: 'Match 1 vs 1'
-            // subtitle: {
-            // 	en: 'Match 1 vs 1',
-            // 	fr: 'Match 1 contre 1',
-            // 	jp: 'en japonais tsais'
-            // }[lang]
         },
         'tournament': {
             type: 'tournament',
