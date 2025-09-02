@@ -35,14 +35,14 @@ export async function renderLogin(): Promise<void> {
 
 	const res = await fetch('/dist/html/modals/login.html');
 	const html = await res.text();
-	app.innerHTML = html;
+	// app.innerHTML = html;
 
 	setLanguage(document.documentElement.lang as 'en' | 'fr');
 
 	requestAnimationFrame(() => {
 		animateLinesToFinalState([
-			{ id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
-			{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
+			{ id: "line-top", rotationDeg: 0, translateYvh: -30, height: "50vh" },
+			{ id: "line-bottom", rotationDeg: 0, translateYvh: 30, height: "50vh" },
 		]);
 	})
 

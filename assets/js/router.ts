@@ -3,6 +3,7 @@ import { renderGameMode } from './pages/gameMode.js';
 import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { render404 } from './pages/error404.js';
+import { showLoginModal } from './pages/modals.js'
 
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
@@ -40,6 +41,10 @@ export function router() {
 		if (countdownDiv) {
 			countdownDiv.style.display = "none";
 		}
+	}
+	if (path === "/login") {
+		showLoginModal();
+		return ;
 	}
 	render();
 }
