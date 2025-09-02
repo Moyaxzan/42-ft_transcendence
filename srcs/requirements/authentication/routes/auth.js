@@ -52,6 +52,12 @@ async function authRoutes (fastify, options) {
 			.send({ success: true });
 	});
 
+	// fastify.get('auth/me', asyc (request, replay) => {
+	// 	try {
+	// 		const decoded = await request.jwtVerify();
+	// 		reutnr 
+	// 	}
+	// })
 	fastify.post('/register', async (request, reply) => {
 		const { email, name, password } = request.body;
 

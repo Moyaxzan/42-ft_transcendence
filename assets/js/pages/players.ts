@@ -59,6 +59,7 @@ export async function	renderPlayers() {
 
 	// Récupérer le mode depuis sessionStorage
 	const mode = sessionStorage.getItem('gameMode') || '1vs1';
+	localStorage.setItem("mode", mode);
 
 	const	gameModes: Record<string, GameMode> = {
 		'1vs1': {
@@ -274,7 +275,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
 			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
 
-		setLanguage(document.documentElement.lang as 'en' | 'fr');
+		setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 	}
 
 	// Fonction pour valider un alias

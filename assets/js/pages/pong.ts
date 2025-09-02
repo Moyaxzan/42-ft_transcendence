@@ -44,7 +44,7 @@ export async function renderPong() {
 	const html = await res.text();
 	app.innerHTML = html;
 
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 
 	await new Promise((resolve) => requestAnimationFrame(resolve));
 

@@ -11,6 +11,13 @@ export function setLanguage(lang: 'en' | 'fr' | 'jp') {
 		const elLang = el.getAttribute('lang');
 		(el as HTMLElement).style.display = elLang === lang ? '' : 'none';
 	});
+
+	const currentMode = localStorage.getItem("mode") || sessionStorage.getItem("gameMode") || '1vs1';
+	const modeSpans = document.querySelectorAll('span[mode]');
+	modeSpans.forEach(span => {
+		const spanMode = span.getAttribute('mode');
+		(span as HTMLElement).style.display = spanMode === currentMode ? '' : 'none';
+	});
 }
 
 export function getCurrentLang(): string {

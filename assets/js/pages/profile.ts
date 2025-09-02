@@ -105,7 +105,7 @@ export async function renderUser() {
  	const html = await res.text();
  	app.innerHTML = html;
 
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 
  	const userLoadBtn = document.querySelector("#userLoad");
  	const userList = document.querySelector("#userList"); 
