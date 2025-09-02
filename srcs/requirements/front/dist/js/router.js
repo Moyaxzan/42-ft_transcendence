@@ -4,7 +4,7 @@ import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { render404 } from './pages/error404.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
-import { renderLogin } from './pages/login.js';
+import { renderLogin } from './pages/modals/login.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
