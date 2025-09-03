@@ -55,11 +55,12 @@ export async function renderLogin() {
     // }
     let pendingEmail = '';
     let pendingPassword = '';
-    if (!loginForm || !messageEl || !twofaSection || !submit2FABtn || !totpInput || !twofaSetupModal || !qrCodeContainer || !close2FAModalBtn)
+    if (!loginForm || !messageEl)
         return;
-    close2FAModalBtn.addEventListener('click', () => {
-        twofaSetupModal.classList.add('hidden');
-        qrCodeContainer.innerHTML = '';
+    close2FAModalBtn?.addEventListener('click', () => {
+        twofaSetupModal?.classList.add('hidden');
+        if (qrCodeContainer)
+            qrCodeContainer.innerHTML = '';
     });
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -69,7 +70,7 @@ export async function renderLogin() {
         const password = target.elements.namedItem('password')?.value.trim();
         messageEl.style.color = 'red';
         messageEl.textContent = '';
-        twofaSection.classList.add('hidden');
+        twofaSection?.classList.add('hidden');
         if (!email || !password) {
             messageEl.textContent = 'Please fill all the fields';
             return;
@@ -86,7 +87,7 @@ export async function renderLogin() {
             if (!res.ok) {
                 if (data?.error === '2FA_REQUIRED') {
                     messageEl.textContent = 'Two-factor authentication required';
-                    twofaSection.classList.remove('hidden');
+                    twofaSection?.classList.remove('hidden');
                     pendingEmail = email;
                     pendingPassword = password;
                     return;
@@ -95,8 +96,9 @@ export async function renderLogin() {
                     messageEl.textContent = 'Two-factor authentication setup required';
                     pendingEmail = email;
                     pendingPassword = password;
-                    twofaSetupModal.classList.remove('hidden');
-                    qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+                    twofaSetupModal?.classList.remove('hidden');
+                    if (qrCodeContainer)
+                        qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
                     try {
                         const qrRes = await fetch('/auth/2fa/setup', {
                             method: 'POST',
@@ -105,13 +107,16 @@ export async function renderLogin() {
                         });
                         const qrData = await qrRes.json();
                         if (!qrRes.ok || !qrData.qrCodeUrl) {
-                            qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+                            if (qrCodeContainer)
+                                qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
                             return;
                         }
-                        qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
+                        if (qrCodeContainer)
+                            qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
                     }
                     catch (err) {
-                        qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+                        if (qrCodeContainer)
+                            qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
                         console.error(err);
                     }
                     return;
@@ -129,7 +134,7 @@ export async function renderLogin() {
             console.error(err);
         }
     });
-    submit2FABtn.addEventListener('click', async () => {
+    submit2FABtn?.addEventListener('click', async () => {
         const code = totpInput?.value.trim();
         if (!code || !pendingEmail || !pendingPassword) {
             messageEl.textContent = 'Please enter the 2FA code';

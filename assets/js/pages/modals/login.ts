@@ -59,9 +59,9 @@ export async function renderLogin(): Promise<void> {
 	const twofaSection = document.getElementById('twofa-section') as HTMLElement | null;
 	const submit2FABtn = document.getElementById('submit2FA') as HTMLButtonElement | null;
 	const totpInput = document.getElementById('totp') as HTMLInputElement | null;
-	const twofaSetupModal = document.getElementById('twofa-setup-modal');
-	const qrCodeContainer = document.getElementById('qrCodeContainer');
-	const close2FAModalBtn = document.getElementById('close2FAModal');
+	const twofaSetupModal = document.getElementById('twofa-setup-modal') as HTMLElement | null;
+	const qrCodeContainer = document.getElementById('qrCodeContainer') as HTMLElement | null;
+	const close2FAModalBtn = document.getElementById('close2FAModal') as HTMLButtonElement | null;
 	// const googleDiv = document.getElementById('googleSignInDiv');
 	// if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
 	// 	window.google.accounts.id.renderButton(googleDiv, {
@@ -74,12 +74,13 @@ export async function renderLogin(): Promise<void> {
 	let pendingEmail = '';
 	let pendingPassword = '';
 
-	if (!loginForm || !messageEl || !twofaSection || !submit2FABtn || !totpInput || !twofaSetupModal || !qrCodeContainer || !close2FAModalBtn)
+	if (!loginForm || !messageEl)
 		return;
 
-	close2FAModalBtn.addEventListener('click', () => {
-		twofaSetupModal.classList.add('hidden');
-		qrCodeContainer.innerHTML = '';
+	close2FAModalBtn?.addEventListener('click', () => {
+		twofaSetupModal?.classList.add('hidden');
+		if (qrCodeContainer) 
+			qrCodeContainer.innerHTML = '';
 	});
 
 	loginForm.addEventListener('submit', async (e: Event) => {
@@ -92,7 +93,7 @@ export async function renderLogin(): Promise<void> {
 
 		messageEl.style.color = 'red';
 		messageEl.textContent = '';
-		twofaSection.classList.add('hidden');
+		twofaSection?.classList.add('hidden');
 
 		if (!email || !password) {
 			messageEl.textContent = 'Please fill all the fields';
@@ -112,7 +113,7 @@ export async function renderLogin(): Promise<void> {
 			if (!res.ok) {
 				if (data?.error === '2FA_REQUIRED') {
 					messageEl.textContent = 'Two-factor authentication required';
-					twofaSection.classList.remove('hidden');
+					twofaSection?.classList.remove('hidden');
 					pendingEmail = email;
 					pendingPassword = password;
 					return;
@@ -123,8 +124,9 @@ export async function renderLogin(): Promise<void> {
 					pendingEmail = email;
 					pendingPassword = password;
 
-					twofaSetupModal.classList.remove('hidden');
-					qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+					twofaSetupModal?.classList.remove('hidden');
+					if (qrCodeContainer) 
+						qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
 
 					try {
 						const qrRes = await fetch('/auth/2fa/setup', {
@@ -135,14 +137,16 @@ export async function renderLogin(): Promise<void> {
 						const qrData = await qrRes.json();
 
 						if (!qrRes.ok || !qrData.qrCodeUrl) {
-							qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+							if (qrCodeContainer) 
+								qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
 							return;
 						}
-
-						qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
+						if (qrCodeContainer) 
+							qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
 					}
 					catch (err) {
-						qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+						if (qrCodeContainer) 
+							qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
 						console.error(err);
 					}
 
@@ -164,7 +168,7 @@ export async function renderLogin(): Promise<void> {
 		}
 	});
 
-	submit2FABtn.addEventListener('click', async () => {
+	submit2FABtn?.addEventListener('click', async () => {
 		const code = totpInput?.value.trim();
 
 		if (!code || !pendingEmail || !pendingPassword) {
