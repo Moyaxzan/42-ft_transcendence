@@ -1,7 +1,7 @@
-import { renderProfile } from '../profile.js';
-import { renderHome } from '../home.js';
+// import { renderHome } from '../home.js'
 import { setLanguage } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js';
+import { router } from '../../router.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts) {
@@ -34,7 +34,8 @@ export async function renderLogin() {
     });
     const backBtn = document.getElementById('backHomeBtn');
     backBtn?.addEventListener('click', () => {
-        renderHome();
+        window.history.pushState({}, "", "/");
+        router();
     });
     const loginForm = document.getElementById('loginForm');
     const messageEl = document.getElementById('loginMessage');
@@ -62,6 +63,7 @@ export async function renderLogin() {
     });
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
         const target = e.target;
         const email = target.elements.namedItem('email')?.value.trim();
         const password = target.elements.namedItem('password')?.value.trim();
@@ -78,6 +80,8 @@ export async function renderLogin() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
+            console.log("POST DONE !!! ->");
+            console.log(res);
             const data = await res.json().catch(() => null);
             if (!res.ok) {
                 if (data?.error === '2FA_REQUIRED') {
@@ -117,7 +121,8 @@ export async function renderLogin() {
             }
             messageEl.style.color = 'green';
             messageEl.textContent = 'Connexion successful';
-            setTimeout(() => renderProfile(), 500);
+            window.history.pushState({}, "", "/");
+            router();
         }
         catch (err) {
             messageEl.textContent = 'Network error, please try again later';
@@ -148,7 +153,8 @@ export async function renderLogin() {
             }
             messageEl.style.color = 'green';
             messageEl.textContent = 'Connexion successful';
-            setTimeout(() => renderProfile(), 500);
+            window.history.pushState({}, "", "/");
+            router();
         }
         catch (err) {
             messageEl.textContent = 'Network error during 2FA';
@@ -173,7 +179,8 @@ export async function renderLogin() {
             }
             const data = await res.json();
             console.log('Connected via Google, got token:', data);
-            renderProfile();
+            window.history.pushState({}, "", "/");
+            router();
         };
         window.google.accounts.id.initialize({
             client_id: clientId,

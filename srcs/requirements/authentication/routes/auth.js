@@ -7,6 +7,13 @@ import { OAuth2Client } from 'google-auth-library';
 
 async function authRoutes (fastify, options) {
 	fastify.post('/auth', async (request, reply) => {
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
+		fastify.log.info("🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂🎂");
 		const { email, password } = request.body;
 
 		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`, {

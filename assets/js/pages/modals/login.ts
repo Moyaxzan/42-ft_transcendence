@@ -1,7 +1,8 @@
-import { renderProfile } from '../profile.js'
-import { renderHome } from '../home.js'
+// import { renderHome } from '../home.js'
 import { setLanguage } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js'
+import { router } from '../../router.js'
+
 
 declare global {
 	interface Window {
@@ -49,7 +50,8 @@ export async function renderLogin(): Promise<void> {
 
 	const backBtn = document.getElementById('backHomeBtn');
 	backBtn?.addEventListener('click', () => {
-		renderHome();
+		window.history.pushState({}, "", "/");
+		router();
 	});
 
 	const loginForm = document.getElementById('loginForm') as HTMLFormElement | null;
@@ -82,6 +84,7 @@ export async function renderLogin(): Promise<void> {
 
 	loginForm.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
+		console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
 
 		const target = e.target as HTMLFormElement;
 		const email = (target.elements.namedItem('email') as HTMLInputElement)?.value.trim();
@@ -102,7 +105,8 @@ export async function renderLogin(): Promise<void> {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email, password }),
 			});
-
+			console.log("POST DONE !!! ->");
+			console.log(res);
 			const data = await res.json().catch(() => null);
 
 			if (!res.ok) {
@@ -151,7 +155,8 @@ export async function renderLogin(): Promise<void> {
 
 			messageEl.style.color = 'green';
 			messageEl.textContent = 'Connexion successful';
-			setTimeout(() => renderProfile(), 500);
+			window.history.pushState({}, "", "/");
+			router();
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error, please try again later';
@@ -188,7 +193,8 @@ export async function renderLogin(): Promise<void> {
 
 			messageEl.style.color = 'green';
 			messageEl.textContent = 'Connexion successful';
-			setTimeout(() => renderProfile(), 500);
+			window.history.pushState({}, "", "/");
+			router();
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error during 2FA';
@@ -219,7 +225,8 @@ export async function renderLogin(): Promise<void> {
 
 			const data = await res.json();
 			console.log('Connected via Google, got token:', data);
-			renderProfile(); 
+			window.history.pushState({}, "", "/");
+			router();
 		};
 
 		window.google.accounts.id.initialize({
