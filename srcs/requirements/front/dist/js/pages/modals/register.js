@@ -1,7 +1,6 @@
 // import { renderHome } from '../home.js'
 import { setLanguage } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js';
-import { hideRegisterModal } from '../modals.js';
 import { router } from '../../router.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
@@ -69,23 +68,25 @@ export async function renderRegister() {
         const target = e.target;
         const email = target.elements.namedItem('email')?.value.trim();
         const password = target.elements.namedItem('password')?.value.trim();
+        const nameInput = target.elements.namedItem('name-input')?.value;
         messageEl.style.color = 'red';
         messageEl.textContent = '';
         twofaSection?.classList.add('hidden');
-        if (!email || !password) {
+        if (!email || !password || !nameInput) {
             messageEl.textContent = 'Please fill all the fields';
             return;
         }
         try {
-            const res = await fetch('/auth', {
+            const res = await fetch('/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, nameInput, password }),
             });
             console.log("POST DONE !!! ->");
             console.log(res);
             const data = await res.json().catch(() => null);
             if (!res.ok) {
+                console.log(res);
                 if (data?.error === '2FA_REQUIRED') {
                     messageEl.textContent = 'Two-factor authentication required';
                     twofaSection?.classList.remove('hidden');
@@ -127,8 +128,9 @@ export async function renderRegister() {
             }
             messageEl.style.color = 'green';
             messageEl.textContent = 'Connexion successful';
+            //TODO trad
             //TODO better register message (persistent on home)
-            hideRegisterModal();
+            // hideRegisterModal();
         }
         catch (err) {
             messageEl.textContent = 'Network error, please try again later';

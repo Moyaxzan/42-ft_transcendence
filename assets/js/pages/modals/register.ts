@@ -91,27 +91,29 @@ export async function renderRegister(): Promise<void> {
 		const target = e.target as HTMLFormElement;
 		const email = (target.elements.namedItem('email') as HTMLInputElement)?.value.trim();
 		const password = (target.elements.namedItem('password') as HTMLInputElement)?.value.trim();
+		const nameInput = (target.elements.namedItem('name-input') as HTMLInputElement)?.value;
 
 		messageEl.style.color = 'red';
 		messageEl.textContent = '';
 		twofaSection?.classList.add('hidden');
 
-		if (!email || !password) {
+		if (!email || !password || !nameInput) {
 			messageEl.textContent = 'Please fill all the fields';
 			return;
 		}
 
 		try {
-			const res = await fetch('/auth', {
+			const res = await fetch('/register', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password }),
+				body: JSON.stringify({ email, nameInput, password }),
 			});
 			console.log("POST DONE !!! ->");
 			console.log(res);
 			const data = await res.json().catch(() => null);
 
 			if (!res.ok) {
+				console.log(res);
 				if (data?.error === '2FA_REQUIRED') {
 					messageEl.textContent = 'Two-factor authentication required';
 					twofaSection?.classList.remove('hidden');
@@ -160,8 +162,9 @@ export async function renderRegister(): Promise<void> {
 
 			messageEl.style.color = 'green';
 			messageEl.textContent = 'Connexion successful';
+			//TODO trad
 			//TODO better register message (persistent on home)
-			hideRegisterModal();
+			// hideRegisterModal();
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error, please try again later';
