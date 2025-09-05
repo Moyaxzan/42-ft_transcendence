@@ -2,7 +2,6 @@
 import { setLanguage } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js';
 import { router } from '../../router.js';
-import { hideLoginModal } from '../modals.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts) {
@@ -18,12 +17,12 @@ function loadGoogleSdk() {
         document.head.appendChild(script);
     });
 }
-export async function renderLogin() {
-    document.title = "Login";
+export async function renderRegister() {
+    document.title = "Register";
     const app = document.getElementById('app');
     if (!app)
         return;
-    // const res = await fetch('/dist/html/modals/login.html');
+    // const res = await fetch('/dist/html/modals/register.html');
     // const html = await res.text();
     // app.innerHTML = html;
     setLanguage(document.documentElement.lang);
@@ -38,8 +37,8 @@ export async function renderLogin() {
         window.history.pushState({}, "", "/");
         router();
     });
-    const loginForm = document.getElementById('loginForm');
-    const messageEl = document.getElementById('loginMessage');
+    const registerForm = document.getElementById('registerForm');
+    const messageEl = document.getElementById('registerMessage');
     const twofaSection = document.getElementById('twofa-section');
     const submit2FABtn = document.getElementById('submit2FA');
     const totpInput = document.getElementById('totp');
@@ -56,36 +55,38 @@ export async function renderLogin() {
     // }
     let pendingEmail = '';
     let pendingPassword = '';
-    if (!loginForm || !messageEl)
+    if (!registerForm || !messageEl)
         return;
     close2FAModalBtn?.addEventListener('click', () => {
         twofaSetupModal?.classList.add('hidden');
         if (qrCodeContainer)
             qrCodeContainer.innerHTML = '';
     });
-    loginForm.addEventListener('submit', async (e) => {
+    registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
         const target = e.target;
         const email = target.elements.namedItem('email')?.value.trim();
         const password = target.elements.namedItem('password')?.value.trim();
+        const nameInput = target.elements.namedItem('name-input')?.value;
         messageEl.style.color = 'red';
         messageEl.textContent = '';
         twofaSection?.classList.add('hidden');
-        if (!email || !password) {
+        if (!email || !password || !nameInput) {
             messageEl.textContent = 'Please fill all the fields';
             return;
         }
         try {
-            const res = await fetch('/auth', {
+            const res = await fetch('/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, nameInput, password }),
             });
             console.log("POST DONE !!! ->");
             console.log(res);
             const data = await res.json().catch(() => null);
             if (!res.ok) {
+                console.log(res);
                 if (data?.error === '2FA_REQUIRED') {
                     messageEl.textContent = 'Two-factor authentication required';
                     twofaSection?.classList.remove('hidden');
@@ -127,8 +128,9 @@ export async function renderLogin() {
             }
             messageEl.style.color = 'green';
             messageEl.textContent = 'Connexion successful';
-            //TODO better login message (persistent on home)
-            hideLoginModal();
+            //TODO trad
+            //TODO better register message (persistent on home)
+            // hideRegisterModal();
         }
         catch (err) {
             messageEl.textContent = 'Network error, please try again later';
