@@ -1,0 +1,102 @@
+<!-- Register Modal -->
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
+  <div class="bg-gray-100 rounded-lg shadow-lg p-8 max-w-sm w-full relative">
+    <!-- Close button -->
+    <button
+      id="closeRegisterModal"
+      class="absolute top-2 right-2 text-gray-700 hover:text-black text-2xl font-bold"
+    >
+      &times;
+    </button>
+
+    <!-- Title -->
+    <h2 class="text-2xl mb-4 text-center font-bold text-[#FFB942]">
+      <span lang="en">Register</span>
+      <span lang="fr">S'inscrire</span>
+      <span lang="jp">登録する</span>
+    </h2>
+
+    <!-- Register form -->
+    <!-- <form id="registerForm" method="post" action="" class="space-y-3"> -->
+    <form id="registerForm" class="space-y-3">
+      <div>
+        <label for="email" class="block mb-1 font-medium text-gray-700">
+          <span lang="en">Email</span>
+          <span lang="fr">Email</span>
+          <span lang="jp">メールアドレス</span>
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="exemple@domaine.com"
+        />
+      </div>
+      <div>
+        <label for="password" class="block mb-1 font-medium text-gray-700">
+          <span lang="en">Password</span>
+          <span lang="fr">Mot de passe</span>
+          <span lang="jp">パスワード</span>
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="w-full px-4 py-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="********"
+        />
+      </div>
+      <button
+        type="submit"
+        class="w-full py-3 bg-[#F27D01] text-white text-lg font-bold rounded-md hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span lang="en">Log in</span>
+        <span lang="fr">Connexion</span>
+        <span lang="jp">ログイン</span>
+      </button>
+    </form>
+
+    <!-- Register message -->
+    <div id="registerMessage" class="mt-4 text-center text-red-600"></div>
+
+    <!-- 2FA Section -->
+    <div id="twofa-section" class="hidden space-y-4 mt-2">
+      <label for="totp" class="block font-medium text-gray-700">
+        <span lang="en">2FA Code:</span>
+        <span lang="fr">Code 2FA :</span>
+        <span lang="jp">2要素認証コード:</span>
+      </label>
+      <input
+        type="text"
+        id="totp"
+        name="totp"
+        maxlength="6"
+        inputmode="numeric"
+        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="123456"
+      />
+      <button
+        id="submit2FA"
+        type="button"
+        class="w-full bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600"
+      >
+        <span lang="en">Verify code</span>
+        <span lang="fr">Vérification du code</span>
+        <span lang="jp">コードを確認</span>
+      </button>
+    </div>
+
+    <!-- Alternative sign-in -->
+    <!-- <div class="mt-6 text-center"> -->
+    <!--   <p class="mb-2 text-gray-700 font-medium"> -->
+    <!--     <span lang="en">or</span> -->
+    <!--     <span lang="fr">ou</span> -->
+    <!--     <span lang="jp">または</span> -->
+    <!--   </p> -->
+    <!--   <div id="googleSignInDiv"></div> -->
+    <!-- </div> -->
+  </div>
+</div>

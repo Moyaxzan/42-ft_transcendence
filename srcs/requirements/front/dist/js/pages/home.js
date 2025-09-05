@@ -25,4 +25,15 @@ export async function renderHome() {
         window.history.pushState({}, '', '/login');
         window.dispatchEvent(new CustomEvent('routeChanged'));
     });
+    const registerBtn = document.getElementById('register-button');
+    if (!registerBtn) {
+        console.error("Some DOM elements have not been found");
+        return;
+    }
+    registerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Utiliser système de navigation SPA
+        window.history.pushState({}, '', '/register');
+        window.dispatchEvent(new CustomEvent('routeChanged'));
+    });
 }

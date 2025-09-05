@@ -1,8 +1,8 @@
 // import { renderHome } from '../home.js'
 import { setLanguage } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js'
+import { hideRegisterModal } from '../modals.js';
 import { router } from '../../router.js'
-import { hideLoginModal } from '../modals.js';
 
 
 declare global {
@@ -29,13 +29,13 @@ function loadGoogleSdk(): Promise<void> {
 	});
 }
 
-export async function renderLogin(): Promise<void> {
-	document.title = "Login";
+export async function renderRegister(): Promise<void> {
+	document.title = "Register";
 	const app = document.getElementById('app');
 	if (!app)
 		return;
 
-	// const res = await fetch('/dist/html/modals/login.html');
+	// const res = await fetch('/dist/html/modals/register.html');
 	// const html = await res.text();
 	// app.innerHTML = html;
 
@@ -55,8 +55,8 @@ export async function renderLogin(): Promise<void> {
 		router();
 	});
 
-	const loginForm = document.getElementById('loginForm') as HTMLFormElement | null;
-	const messageEl = document.getElementById('loginMessage') as HTMLElement | null;
+	const registerForm = document.getElementById('registerForm') as HTMLFormElement | null;
+	const messageEl = document.getElementById('registerMessage') as HTMLElement | null;
 	const twofaSection = document.getElementById('twofa-section') as HTMLElement | null;
 	const submit2FABtn = document.getElementById('submit2FA') as HTMLButtonElement | null;
 	const totpInput = document.getElementById('totp') as HTMLInputElement | null;
@@ -75,7 +75,7 @@ export async function renderLogin(): Promise<void> {
 	let pendingEmail = '';
 	let pendingPassword = '';
 
-	if (!loginForm || !messageEl)
+	if (!registerForm || !messageEl)
 		return;
 
 	close2FAModalBtn?.addEventListener('click', () => {
@@ -84,7 +84,7 @@ export async function renderLogin(): Promise<void> {
 			qrCodeContainer.innerHTML = '';
 	});
 
-	loginForm.addEventListener('submit', async (e: Event) => {
+	registerForm.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
 		console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
 
@@ -160,8 +160,8 @@ export async function renderLogin(): Promise<void> {
 
 			messageEl.style.color = 'green';
 			messageEl.textContent = 'Connexion successful';
-			//TODO better login message (persistent on home)
-			hideLoginModal();
+			//TODO better register message (persistent on home)
+			hideRegisterModal();
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error, please try again later';
