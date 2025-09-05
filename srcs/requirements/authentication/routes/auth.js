@@ -52,6 +52,54 @@ async function authRoutes (fastify, options) {
 			.send({ success: true });
 	});
 
+	fastify.post('/register', async (request, reply) => {
+		const { email, name, password } = request.body;
+
+		let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
+		let user;
+
+		if (res.ok) {
+			return reply.code(500).send({ error: 'User already exists', details: text });
+		} else {
+			const bcrypt = require('bcrypt');
+			const saltRounds = 10; //computational cost of hashing
+			bcrypt.genSalt(saltRounds, (err, salt) => {
+				if (err)
+					return reply.code(500).send({ error: 'Error in generating salt', details: text });
+			});
+
+			bcrypt.hash(password, salt, (err, hash) => {
+				if (err)
+					return reply.code(500).send({ error: 'Error in passwd hash', details: text });
+			});
+
+			res = await fetch(`http://database:3000/api/users/register`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, name, hash })
+			});
+			if (!res.ok) {
+				const text = await res.text();
+				console.error("Error creating user:", text);
+				return reply.code(500).send({ error: 'Could not create user', details: text });
+		}
+			try {
+				user = await res.json();
+			} catch (e) {
+				console.error("Failed to parse user JSON:", e);
+				return reply.code(500).send({ error: 'Invalid JSON from user creation' });
+			}
+		}
+
+		// const token = fastify.jwt.sign({
+		// 	id: user.id,
+		// 	email: user.email,
+		// 	name: user.name,
+		// });
+
+		return reply.send({ success: true });
+	});
+
 
 	fastify.post('/auth/google', async (request, reply) => {
 		const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
