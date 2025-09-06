@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
  is_guest NUMERIC DEFAULT 0,
  google_user NUMERIC DEFAULT 0,
  email TEXT UNIQUE DEFAULT NULL,
- password_hash TEXT UNIQUE DEFAULT NULL,
+ password_hash TEXT DEFAULT NULL,
  reset_token TEXT UNIQUE DEFAULT NULL,
  reset_expiry NUMERIC DEFAULT 0,
  twofa_enabled NUMERIC DEFAULT 1,

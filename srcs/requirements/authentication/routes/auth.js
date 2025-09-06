@@ -55,62 +55,58 @@ async function authRoutes (fastify, options) {
 	fastify.post('/register', async (request, reply) => {
 		const { email, name, password } = request.body;
 
-		let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
-		let user;
-
-		fastify.log.info("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-		fastify.log.info("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-
-		if (res.ok) {
-			return reply.code(500).send({ error: 'User already exists', details: text });
-		} else {
-			const bcrypt = require('bcrypt');
-			const saltRounds = 10; //computational cost of hashing
-			bcrypt.genSalt(saltRounds, (err, salt) => {
-				if (err)
-					return reply.code(500).send({ error: 'Error in generating salt', details: text });
-			});
-
-			bcrypt.hash(password, salt, (err, hash) => {
-				if (err)
-					return reply.code(500).send({ error: 'Error in passwd hash', details: text });
-			});
-
-			res = await fetch(`http://database:3000/api/users/register`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, name, hash })
-			});
-			if (!res.ok) {
-				const text = await res.text();
-				console.error("Error creating user:", text);
-				return reply.code(500).send({ error: 'Could not create user', details: text });
-		}
-			try {
-				user = await res.json();
-			} catch (e) {
-				console.error("Failed to parse user JSON:", e);
-				return reply.code(500).send({ error: 'Invalid JSON from user creation' });
-			}
+		if (!email || !name || !password) {
+			return reply.code(400).send({ error: 'ValidationError', message: 'email, name and password are required' });
 		}
 
-		// const token = fastify.jwt.sign({
-		// 	id: user.id,
-		// 	email: user.email,
-		// 	name: user.name,
-		// });
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("user created");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		return reply.send({ success: true });
+		let res;
+		try {
+			res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
+		} catch (err) {
+			fastify.log.error(err, "Failed to contact database service when checking user existence");
+        	return reply.code(502).send({ error: 'ServiceUnavailable', message: 'Database service unreachable' });
+		}
+
+		if (res.status === 200) {
+        	const text = await res.text().catch(() => null);
+        	return reply.code(400).send({ error: 'UserAlreadyExists', details: text || 'User with that email already exists' });
+    	}
+
+		if (res.status !== 404 && res.status !== 200) {
+        	const text = await res.text().catch(() => null);
+        	fastify.log.warn({ status: res.status, body: text }, "Unexpected status when checking user existence");
+        	return reply.code(502).send({ error: 'DatabaseError', message: 'Unexpected response from database', details: text });
+    	}
+
+
+		try {
+			const saltRounds = 10;
+			const hash = await bcrypt.hash(password, saltRounds);
+			
+			fastify.log.info({ email, name, hash }, "Creating user");
+			const createRes = await fetch(`http://database:3000/api/users/register`, {
+	  			method: 'POST',
+	 			headers: { 'Content-Type': 'application/json' },
+	  			body: JSON.stringify({ email, name, password_hash: hash })
+			});
+
+			if (!createRes.ok) {
+	 			const text = await createRes.text().catch(() => null);
+				fastify.log.error({ status: createRes.status, body: text }, "Error creating user");
+	  			if (createRes.status === 409) {
+                	return reply.code(409).send({ error: 'Conflict', message: text || 'Unique constraint violation' });
+            	}
+            	return reply.code(500).send({ error: 'CouldNotCreateUser', details: text || 'Unknown error from database' });
+        	}
+
+			const user = await createRes.json();
+			fastify.log.info({ email: user.email }, "User created");
+
+			return reply.send({ success: true, user });
+  		} catch (err) {
+			fastify.log.error(err, "Server error during registration");
+        	return reply.code(500).send({ error: 'ServerError', details: err.message });
+  		}
 	});
 
 

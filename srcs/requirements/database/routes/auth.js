@@ -35,8 +35,13 @@ async function authRoutes (fastify, options) {
 	});
 
 	fastify.post('/api/users/register', async (request, reply) => {
+		fastify.log.info(request.body, "REGISTER BODY");
 		const db = fastify.sqlite;
 		const { email, name, password_hash } = request.body;
+		
+		if (!email || !name || !password_hash) {
+        	return reply.code(400).send({ error: 'ValidationError', message: 'email, name and password_hash required' });
+    	}
 
 		try {
 			const insertQuery = `INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)`;
@@ -46,6 +51,7 @@ async function authRoutes (fastify, options) {
 					resolve();
 				});
 			});
+
 			const user = await new Promise((resolve, reject) => {
 				db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
 					if (err) return reject(err);
@@ -61,7 +67,13 @@ async function authRoutes (fastify, options) {
 
 		} catch (err) {
 			fastify.log.error(err);
-			return reply.code(500).send({ error: 'Database error', details: err.message });
+			if (err && err.message && err.message.includes('UNIQUE')) {
+            	let conflictField = 'unknown';
+        		if (err.message.includes('users.email')) conflictField = 'email';
+            	else if (err.message.includes('users.name')) conflictField = 'name';
+            	return reply.code(409).send({ error: 'UniqueConstraint', field: conflictField, message: `${conflictField} already in use` });
+        	}
+        	return reply.code(500).send({ error: 'DatabaseError', details: err.message });
 		}
 	});
 
