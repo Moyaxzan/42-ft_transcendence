@@ -23,6 +23,7 @@ export async function renderPlayers() {
         return;
     // Récupérer le mode depuis sessionStorage
     const mode = sessionStorage.getItem('gameMode') || '1vs1';
+    localStorage.setItem("mode", mode);
     const gameModes = {
         '1vs1': {
             type: '1vs1',
