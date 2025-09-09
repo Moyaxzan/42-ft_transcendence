@@ -2,6 +2,7 @@ import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
 import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
+import { router } from '../router.js';
 let animationId = 0;
 let gameStopped = false;
 export function stopGame() {
@@ -428,7 +429,8 @@ export async function renderPong() {
             FireCannon();
             const winnerModal = document.getElementById("winner-modal");
             if (!winnerModal) {
-                window.location.href = "/game-mode";
+                window.history.pushState({}, "", "/game-mode");
+                router();
                 return;
             }
             // Closes modal when clicking outside the content
@@ -436,7 +438,9 @@ export async function renderPong() {
                 const content = document.getElementById('modal-content');
                 if (!content.contains(e.target)) {
                     hideWinnerModal();
-                    window.location.href = "/game-mode";
+                    // window.location.href = "/game-mode";
+                    window.history.pushState({}, "", "/game-mode");
+                    router();
                 }
             });
         }
@@ -448,7 +452,9 @@ export async function renderPong() {
             if (lang == "jp")
                 alert("勝者が見つかりませんでした");
             console.log("Tournament finished");
-            window.location.href = "/game-mode";
+            // window.location.href = "/game-mode";
+            window.history.pushState({}, "", "/game-mode");
+            router();
         }
     }
 }

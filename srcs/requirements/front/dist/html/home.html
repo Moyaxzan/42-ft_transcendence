@@ -30,8 +30,8 @@
 		</section>
 	
 		<!-- Section droite - Boutons de jeu -->
-		<section class="flex-[5] h-full flex flex-col justify-start items-start">
-			<div class="w-full max-w-sm space-y-6 absolute top-[35%]">
+		<section class="flex-[5] h-full flex flex-col justify-start items-start scale-110">
+			<div class="w-full max-w-sm space-y-6 absolute top-[25%]">
 				<!-- Bouton Play -->
 				<a	href="/game-mode" data-link
 					id="play-button"
@@ -44,14 +44,24 @@
 				</a>
 	
 				<!-- Boutons Login -->
-				<button id="login-button"
-						class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
-						rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
-						flex items-center justify-center w-full">
-					<span lang="en">Log in or Sign up</span>
-					<span lang="fr">Se connecter ou s'identifier</span>
-					<span lang="jp">ログインまたはサインアップ</span>
-				</button>
+				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4">
+					<button id="login-button"
+							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
+							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
+							flex items-center justify-center">
+						<span lang="en">Log in</span>
+						<span lang="fr">Connexion</span>
+						<span lang="jp">ログイン</span>
+					</button>
+					<button id="register-button"
+							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
+							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
+							flex items-center justify-center">
+						<span lang="en">Register</span>
+						<span lang="fr">Inscription</span>
+						<span lang="jp">登録する</span>
+					</button>
+				</div>
 				<button id="google-button"
 						class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
 						rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200

@@ -3,9 +3,11 @@ import { renderGameMode } from './pages/gameMode.js';
 import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { render404 } from './pages/error404.js';
+import { showLoginModal, showRegisterModal } from './pages/modals.js'
 
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
+import { renderRegister } from './pages/modals/register.js';
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
@@ -16,6 +18,7 @@ const routes: Record<string, () => void> = {
 
   '/profile': renderProfile,
   '/login': renderLogin,
+  '/register': renderRegister,
   '/users': renderUser,
   '/matches': renderMatch,
 };
@@ -40,6 +43,14 @@ export function router() {
 		if (countdownDiv) {
 			countdownDiv.style.display = "none";
 		}
+	}
+	if (path === "/login") {
+		showLoginModal();
+		return ;
+	}
+	if (path === "/register") {
+		showRegisterModal();
+		return ;
 	}
 	render();
 }

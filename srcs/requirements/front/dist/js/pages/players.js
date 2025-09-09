@@ -156,25 +156,30 @@ async function startTournament(playerNames) {
         beginButton.disabled = false;
     }
 }
+function getCurrentPlayerInput() {
+    const lang = getCurrentLang();
+    return document.getElementById(`player-input-${lang}`);
+}
 function initialisePlayersLogic(gameMode) {
     console.log("Initialising players logic for mode:", gameMode.type);
     // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
+    // const	lang = getCurrentLang();
     const modeIndicator = document.getElementById('mode-indicator');
     const playerLimits = document.getElementById('player-limits');
     const playerCount = document.getElementById('player-count');
-    const playerInput = document.getElementById("player-input");
+    // const	playerInput = document.getElementById(`player-input-${lang}`) as HTMLInputElement;
     const addPlayerBtn = document.getElementById("add-player-btn");
     const playersList = document.getElementById("players-list");
     const noPlayersMsg = document.getElementById("no-players");
     const beginGameBtn = document.getElementById("begin-game-btn");
     // Vérification que tous les éléments existent
-    if (!modeIndicator || !playerLimits || !playerCount || !playerInput || !addPlayerBtn || !playersList || !noPlayersMsg || !beginGameBtn) {
+    if (!modeIndicator || !playerLimits || !playerCount || !addPlayerBtn || !playersList || !noPlayersMsg || !beginGameBtn) {
         console.error("Some DOM elements have not been found");
         console.log("Missing elements:", {
             modeIndicator: !!modeIndicator,
             playerLimits: !!playerLimits,
             playerCount: !!playerCount,
-            playerInput: !!playerInput,
+            // playerInput: !!playerInput,
             addPlayerBtn: !!addPlayerBtn,
             playersList: !!playersList,
             noPlayersMsg: !!noPlayersMsg,
@@ -202,7 +207,11 @@ function initialisePlayersLogic(gameMode) {
         const atMaxCapacity = players.length >= gameMode.maxPlayers;
         // // Mettre à jour le compteur
         playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
-        playerInput.disabled = atMaxCapacity;
+        ['en', 'fr', 'jp'].forEach(lang => {
+            const input = document.getElementById(`player-input-${lang}`);
+            if (input)
+                input.disabled = atMaxCapacity;
+        });
         addPlayerBtn.disabled = atMaxCapacity;
         addPlayerBtn.innerHTML = atMaxCapacity
             ? (gameMode.type === '1vs1'
@@ -225,9 +234,9 @@ function initialisePlayersLogic(gameMode) {
     }
     // Fonction pour ajouter un joueur
     function addPlayer(alias) {
-        const lang = getCurrentLang();
         // Trim pour enlever les espaces au début et à la fin
         const trimmedAlias = alias.trim();
+        const lang = getCurrentLang();
         // Affichage d'une alerte en cas d'alias invalide
         if (!isValidAlias(trimmedAlias)) {
             if (lang == "en")
@@ -257,8 +266,10 @@ function initialisePlayersLogic(gameMode) {
         players.push(newPlayer);
         // Mise à jour de l'affichage
         updatePlayersDisplay();
-        // Reset du champ input
-        playerInput.value = "";
+        // Reset du champ input actif
+        const activeInput = getCurrentPlayerInput();
+        if (activeInput)
+            activeInput.value = "";
         // Mise à jour du bouton BEGIN
         updateBeginButton();
         updateUI();
@@ -336,20 +347,27 @@ function initialisePlayersLogic(gameMode) {
     const addPlayerHandler = (e) => {
         console.log("Add player button clicked");
         e.preventDefault();
-        addPlayer(playerInput.value);
+        const activeInput = getCurrentPlayerInput();
+        if (activeInput)
+            addPlayer(activeInput.value);
     };
     addPlayerBtn.addEventListener("click", addPlayerHandler);
     currentEventListeners.push(() => addPlayerBtn.removeEventListener("click", addPlayerHandler));
     // Appui sur Entrée dans le champ input
-    const keyPressHandler = (e) => {
-        if (e.key === "Enter") {
-            console.log("Enter key pressed");
-            e.preventDefault();
-            addPlayer(playerInput.value);
+    ['en', 'fr', 'jp'].forEach(lang => {
+        const input = document.getElementById(`player-input-${lang}`);
+        if (input) {
+            const keyPressHandler = (e) => {
+                if (e.key === "Enter") {
+                    console.log("Enter key pressed");
+                    e.preventDefault();
+                    addPlayer(input.value);
+                }
+            };
+            input.addEventListener("keypress", keyPressHandler);
+            currentEventListeners.push(() => input.removeEventListener("keypress", keyPressHandler));
         }
-    };
-    playerInput.addEventListener("keypress", keyPressHandler);
-    currentEventListeners.push(() => playerInput.removeEventListener("keypress", keyPressHandler));
+    });
     // Clic sur le bouton BEGIN
     const beginGameHandler = async (e) => {
         e.preventDefault();
@@ -372,7 +390,9 @@ function initialisePlayersLogic(gameMode) {
     updatePlayersDisplay();
     updateBeginButton();
     // Focus automatique sur le champ input: met automatiquement le curseur dans le champ texte
-    playerInput.focus();
+    const activeInput = getCurrentPlayerInput();
+    if (activeInput)
+        activeInput.focus();
     console.log("Players logic initialized successfully");
     return { addPlayer };
 }

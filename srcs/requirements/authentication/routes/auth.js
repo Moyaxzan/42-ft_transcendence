@@ -64,6 +64,9 @@ async function authRoutes (fastify, options) {
 		let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
 		let user;
 
+		fastify.log.info("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+		fastify.log.info("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
 		if (res.ok) {
 			return reply.code(500).send({ error: 'User already exists', details: text });
 		} else {
@@ -102,7 +105,17 @@ async function authRoutes (fastify, options) {
 		// 	email: user.email,
 		// 	name: user.name,
 		// });
-
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("user created");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		fastify.log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		return reply.send({ success: true });
 	});
 
