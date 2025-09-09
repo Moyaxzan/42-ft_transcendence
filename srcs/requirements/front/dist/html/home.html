@@ -33,7 +33,7 @@
 		<section class="flex-[5] h-full flex flex-col justify-start items-start scale-110">
 			<div class="w-full max-w-sm space-y-6 absolute top-[15%]">
 				<!-- Welcome message-->
-				<div class="h-14 flex-1 flex-row w-full flex items-left justify-left space-x-4 text-lack text-3xl font-bold" style="font-family: 'Inter', sans-serif;">
+				<div id="welcome-message" class="h-14 flex-1 flex-row w-full flex items-left justify-left space-x-4 text-lack text-3xl font-bold" style="font-family: 'Inter', sans-serif;">
 					<span lang="en">Welcome Antoine</span>
 					<span lang="fr">Welcome Antoine</span>
 					<span lang="jp">Welcome Antoine</span>
@@ -48,16 +48,15 @@
 					<span lang="fr">Jouer</span>
 					<span lang="jp">プレイ</span>
 				</a>
-	
 
-
-				<div class="h-7 flex-1 flex-row w-full flex items-center justify-center text-2xl font-bold" style="font-family: 'Inter', sans-serif;">
+				<!-- stats -->
+				<div id="stats-header"class="h-7 flex-1 flex-row w-full flex items-center justify-center text-2xl font-bold" style="font-family: 'Inter', sans-serif;">
 					<span lang="en">My Stats</span>
 					<span lang="fr">Mes Statistiques</span>
 					<span lang="jp">私の統計</span>
 				</div>
 
-				<div class="h-14 w-full flex flex-col items-center justify-center font-sans">
+				<div id="stats" class="h-14 w-full flex flex-col items-center justify-center font-sans">
 					<span id="match-number" class="font-bold"></span>
 					<span id="win-number" class="font-bold"></span>
 					<span id="loss-number" class="font-bold"></span>

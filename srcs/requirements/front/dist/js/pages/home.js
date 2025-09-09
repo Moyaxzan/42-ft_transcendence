@@ -1,14 +1,7 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { getCurrentLang, setLanguage } from '../lang.js';
 import { getCurrentUser } from '../auth.js';
-function displayStats() {
-    // Example stats data
-    const stats = {
-        matches: 10,
-        wins: 6,
-        losses: 4,
-        winrate: 60,
-    };
+function displayStats(stats) {
     // Translations
     const translations = {
         en: { matches: "Matches", wins: "Wins", losses: "Losses", winrate: "Winrate" },
@@ -21,13 +14,13 @@ function displayStats() {
     const lossEl = document.getElementById('loss-number');
     const winrateEl = document.getElementById('winrate-pourcent');
     if (matchEl)
-        matchEl.textContent = `10 ${t.matches}`;
+        matchEl.textContent = `${stats.wins + stats.losses} ${t.matches}`;
     if (winEl)
-        winEl.textContent = `6 ${t.wins}`;
+        winEl.textContent = `${stats.wins} ${t.wins}`;
     if (lossEl)
-        lossEl.textContent = `4 ${t.losses}`;
+        lossEl.textContent = `${stats.losses} ${t.losses}`;
     if (winrateEl)
-        winrateEl.textContent = `60% ${t.winrate}`;
+        winrateEl.textContent = `${stats.wins * 100 / (stats.wins + stats.losses)}% ${t.winrate}`;
 }
 export async function renderHome() {
     document.title = "ft_transcendence";
@@ -46,24 +39,30 @@ export async function renderHome() {
     const registerBtn = document.getElementById('register-button');
     const loginBtn = document.getElementById('login-button');
     const googleBtn = document.getElementById('google-button');
-    if (!loginBtn || !registerBtn || !googleBtn) {
+    const statsHeader = document.getElementById('stats-header');
+    const statsElems = document.getElementById('stats');
+    const welcomeMessage = document.getElementById('welcome-message');
+    if (!loginBtn
+        || !registerBtn
+        || !googleBtn
+        || !statsHeader
+        || !statsElems
+        || !welcomeMessage) {
         console.error("Some DOM elements have not been found");
         return;
     }
-    registerBtn.classList.add('hidden');
-    loginBtn.classList.add('hidden');
-    googleBtn.classList.add('hidden');
-    displayStats();
-    const langSelector = document.getElementById('lang-select');
-    langSelector.addEventListener('change', (e) => {
-        displayStats();
-    });
     const user = await getCurrentUser();
-    if (!user) {
-        // redirect to /login
+    if (user) {
+        registerBtn.classList.add('hidden');
+        loginBtn.classList.add('hidden');
+        googleBtn.classList.add('hidden');
+        displayStats({ wins: user.wins, losses: user.losses });
+        console.log("Logged in as", user.name);
     }
     else {
-        console.log("Logged in as", user.name);
+        statsHeader.classList.add("hidden");
+        statsElems.classList.add("hidden");
+        welcomeMessage.classList.add("hidden");
     }
     loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
