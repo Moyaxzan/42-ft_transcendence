@@ -4,7 +4,6 @@ import { showHelpModal, hideHelpModal } from './pages/modals.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 	router();
-	// setLanguage(document.documentElement.lang as 'en' | 'fr');
 	const lang = (localStorage.getItem("lang") as 'en' | 'fr' | 'jp') || 'en';
 	setLanguage(lang);
 
