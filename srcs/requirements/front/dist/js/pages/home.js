@@ -1,5 +1,34 @@
 import { animateLinesToFinalState } from './navbar.js';
-import { setLanguage } from '../lang.js';
+import { getCurrentLang, setLanguage } from '../lang.js';
+import { getCurrentUser } from '../auth.js';
+function displayStats() {
+    // Example stats data
+    const stats = {
+        matches: 10,
+        wins: 6,
+        losses: 4,
+        winrate: 60,
+    };
+    // Translations
+    const translations = {
+        en: { matches: "Matches", wins: "Wins", losses: "Losses", winrate: "Winrate" },
+        fr: { matches: "Matchs", wins: "Victoires", losses: "Défaites", winrate: "Taux de victoire" },
+        jp: { matches: "試合", wins: "勝ち", losses: "負け", winrate: "勝率" },
+    };
+    const t = translations[getCurrentLang()];
+    const matchEl = document.getElementById('match-number');
+    const winEl = document.getElementById('win-number');
+    const lossEl = document.getElementById('loss-number');
+    const winrateEl = document.getElementById('winrate-pourcent');
+    if (matchEl)
+        matchEl.textContent = `10 ${t.matches}`;
+    if (winEl)
+        winEl.textContent = `6 ${t.wins}`;
+    if (lossEl)
+        lossEl.textContent = `4 ${t.losses}`;
+    if (winrateEl)
+        winrateEl.textContent = `60% ${t.winrate}`;
+}
 export async function renderHome() {
     document.title = "ft_transcendence";
     console.log("renderHome called");
@@ -14,10 +43,27 @@ export async function renderHome() {
         { id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
         { id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
     ]);
+    const registerBtn = document.getElementById('register-button');
     const loginBtn = document.getElementById('login-button');
-    if (!loginBtn) {
+    const googleBtn = document.getElementById('google-button');
+    if (!loginBtn || !registerBtn || !googleBtn) {
         console.error("Some DOM elements have not been found");
         return;
+    }
+    registerBtn.classList.add('hidden');
+    loginBtn.classList.add('hidden');
+    googleBtn.classList.add('hidden');
+    displayStats();
+    const langSelector = document.getElementById('lang-select');
+    langSelector.addEventListener('change', (e) => {
+        displayStats();
+    });
+    const user = await getCurrentUser();
+    if (!user) {
+        // redirect to /login
+    }
+    else {
+        console.log("Logged in as", user.name);
     }
     loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -25,11 +71,6 @@ export async function renderHome() {
         window.history.pushState({}, '', '/login');
         window.dispatchEvent(new CustomEvent('routeChanged'));
     });
-    const registerBtn = document.getElementById('register-button');
-    if (!registerBtn) {
-        console.error("Some DOM elements have not been found");
-        return;
-    }
     registerBtn.addEventListener('click', (e) => {
         e.preventDefault();
         // Utiliser système de navigation SPA

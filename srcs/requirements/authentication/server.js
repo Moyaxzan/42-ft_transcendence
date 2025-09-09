@@ -28,6 +28,7 @@ fastify.register(healthRoutes);
 fastify.register(userRoutes);
 fastify.register(authRoutes);
 fastify.register(protectedRoutes);
+// fastify.register(cookie);
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
 	if (err) {

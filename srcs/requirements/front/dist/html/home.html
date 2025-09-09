@@ -31,7 +31,13 @@
 	
 		<!-- Section droite - Boutons de jeu -->
 		<section class="flex-[5] h-full flex flex-col justify-start items-start scale-110">
-			<div class="w-full max-w-sm space-y-6 absolute top-[25%]">
+			<div class="w-full max-w-sm space-y-6 absolute top-[15%]">
+				<!-- Welcome message-->
+				<div class="h-14 flex-1 flex-row w-full flex items-left justify-left space-x-4 text-lack text-3xl font-bold" style="font-family: 'Inter', sans-serif;">
+					<span lang="en">Welcome Antoine</span>
+					<span lang="fr">Welcome Antoine</span>
+					<span lang="jp">Welcome Antoine</span>
+				</div>
 				<!-- Bouton Play -->
 				<a	href="/game-mode" data-link
 					id="play-button"
@@ -43,8 +49,23 @@
 					<span lang="jp">プレイ</span>
 				</a>
 	
+
+
+				<div class="h-7 flex-1 flex-row w-full flex items-center justify-center text-2xl font-bold" style="font-family: 'Inter', sans-serif;">
+					<span lang="en">My Stats</span>
+					<span lang="fr">Mes Statistiques</span>
+					<span lang="jp">私の統計</span>
+				</div>
+
+				<div class="h-14 w-full flex flex-col items-center justify-center font-sans">
+					<span id="match-number" class="font-bold"></span>
+					<span id="win-number" class="font-bold"></span>
+					<span id="loss-number" class="font-bold"></span>
+					<span id="winrate-pourcent" class="font-bold"></span>
+				</div>
+
 				<!-- Boutons Login -->
-				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4">
+				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4" style="font-family: 'Inter', sans-serif;">
 					<button id="login-button"
 							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
 							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
