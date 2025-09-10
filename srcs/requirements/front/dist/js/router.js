@@ -7,6 +7,7 @@ import { showLoginModal, showRegisterModal } from './pages/modals.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
+import { renderTestXSS } from './pages/testXSS.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
@@ -18,6 +19,7 @@ const routes = {
     '/register': renderRegister,
     '/users': renderUser,
     '/matches': renderMatch,
+    '/test-xss': renderTestXSS,
 };
 // Run this when URL changes or app first loads
 export function router() {

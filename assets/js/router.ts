@@ -9,6 +9,7 @@ import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
 
+
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,
