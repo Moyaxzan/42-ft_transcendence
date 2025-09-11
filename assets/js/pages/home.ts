@@ -75,16 +75,20 @@ export async function renderHome() {
 	const	statsHeader = document.getElementById('stats-header');
 	const	statsElems = document.getElementById('stats');
 	const	welcomeMessage = document.getElementById('welcome-message');
+	const	headLoginButton = document.getElementById('head-login-button');
+
 	if (!loginBtn
 		|| !registerBtn
 		|| !googleBtn
 		|| !statsHeader
 		|| !statsElems
-		|| !welcomeMessage) {
+		|| !welcomeMessage
+	    || !headLoginButton) {
 		console.error("Some DOM elements have not been found");
 		return;
 	}
-
+	headLoginButton.classList.add('hidden');
+	
 	const user = await getCurrentUser();
 	if (user) {
 		registerBtn.classList.add('hidden');

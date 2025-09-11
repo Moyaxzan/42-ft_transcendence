@@ -50,6 +50,12 @@ export async function renderPlayers() {
             { id: "line-top", rotationDeg: -7, translateYvh: -30, height: "50vh" },
             { id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
         ]);
+        const headLoginButton = document.getElementById('head-login-button');
+        if (!headLoginButton) {
+            console.error("Some DOM elements have not been found");
+            return;
+        }
+        headLoginButton.classList.remove('hidden');
         // Réinitialiser les joueurs
         players = [];
         nextPlayerId = 1;

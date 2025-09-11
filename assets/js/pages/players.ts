@@ -2,7 +2,7 @@ import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
 import '../tournament.js'
 import { router } from '../router.js'
-import { servicesVersion } from 'typescript';
+// import { servicesVersion } from 'typescript';
 
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
@@ -93,6 +93,14 @@ export async function	renderPlayers() {
 			{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
 		]);
 
+	const	headLoginButton = document.getElementById('head-login-button');
+	if (!headLoginButton) {
+		console.error("Some DOM elements have not been found");
+		return;
+	}
+
+	headLoginButton.classList.remove('hidden');
+		
 	// Réinitialiser les joueurs
 	players = [];
 	nextPlayerId = 1;
