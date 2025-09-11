@@ -23,5 +23,4 @@ http {
     include /etc/nginx/conf.d/*.conf;
 }
 EOF
-echo "bonjour 😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
 exec nginx -g "daemon off;"
