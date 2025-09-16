@@ -1,4 +1,5 @@
 import { animateLinesToFinalState } from './navbar.js'
+import { setLanguage } from '../lang.js';
 
 export async function render404() {
 	document.title = "404 - Page Not Found";
@@ -10,6 +11,9 @@ export async function render404() {
 	const html = await res.text();
 
 	app.innerHTML = html;
+
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+
 
 	animateLinesToFinalState([
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },

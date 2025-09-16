@@ -3,7 +3,6 @@ import { setLanguage } from './lang.js';
 import { showHelpModal, hideHelpModal } from './pages/modals.js';
 document.addEventListener("DOMContentLoaded", () => {
     router();
-    // setLanguage(document.documentElement.lang as 'en' | 'fr');
     const lang = localStorage.getItem("lang") || 'en';
     setLanguage(lang);
     enableLinkInterception(); // Intercepte les liens [data-link]

@@ -23,7 +23,18 @@
 				<span lang="jp">誰がプレイしますか？</span>
 			</h1>
 			<!-- Indicateur de mode -->
-			<p id="mode-indicator" class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;"></p>
+			<h1 class="text-xl text-[#FFB942] opacity-80" style="font-family: 'Inter', sans-serif;">
+				<span mode="1vs1">
+					<span lang="en">1 vs 1 Match</span>
+					<span lang="fr">Match 1 contre 1</span>
+					<span lang="jp">1対1の試合</span>
+				</span>
+				<span mode="tournament">
+					<span lang="en">Tournament</span>
+					<span lang="fr">Tournoi</span>
+					<span lang="jp">トーナメント</span>
+				</span>
+			</h1>
 		</div>
 
 		<div class="flex-1"></div>
@@ -34,73 +45,79 @@
 	<main class="flex flex-1 overflow-hidden relative">
 
 		<!-- Section gauche - Image -->
-		<section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32">
+		<!-- <section class="flex-[7] h-full relative flex flex-col items-start justify-start pl-32"> -->
+		<section class="flex-[7] h-full relative">
 			<img src="../../characters.png" alt="Pong characters"
 				 class="absolute bottom-0 left-0 w-auto h-[70%] object-contain pointer-events-none z-0 align-bottom object-bottom">
 		</section>
 
 		<!-- Section droite - Saisie/Affichage joueurs-->
-		<!-- <section class="p-4 flex-[5] h-full flex flex-col justify-between items-start"> -->
-		<section class="p-4 flex-[5] h-full flex flex-col justify-start gap-y-12 items-start">
-			<!-- Section d'affichage (haut) -->
-			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4">
-				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
-					<span lang="en">Registered players</span>
-					<span lang="fr">Joueurs inscrits</span>
-					<span lang="jp"> 登録済みのプレイヤー</span>
-				</h2>
-		
-				<!-- Liste des joueurs -->
-				<div id="players-list" class="space-y-4 max-h-64 overflow-y-auto">
-				<!-- Les joueurs apparaîtront ici dynamiquement -->
-				</div>
+		<!-- <section class="flex-[5] h-full flex flex-raw justify-start gap-x-6 items-start pt-8 mr-20"> -->
+		<section class="absolute top-6 right-[10%] z-10 flex gap-x-6">
+			<!-- Section de saisie (bloc gauche) -->
+			<!-- <div class="w-full max-w-lg"> -->
+			<div class="w-[22rem] p-4">
+				<div class="w-full bg-gray-100 rounded-lg shadow-lg p-4 mb-8">
+					<h2 class="text-xl font-bold text-gray-700 mb-4 text-center">
+						<span lang="en">New player</span>
+						<span lang="fr">Nouveau joueur</span>
+						<span lang="jp">新しいプレイヤー</span>
+					</h2>
 
-				<!-- Message si aucun joueur -->
-				<div id="no-players" class="text-center text-gray-500 text-base">
-					<span lang="en">No player registered</span>
-					<span lang="fr">Aucun joueur inscrit</span>
-					<span lang="jp">プレイヤが登録され</span>			
-				</div>
+					<!-- Formulaire de saisie -->
+					<div class="w-full">
+						<input lang="en" type="text" id="player-input-en" placeholder="Enter player name..." maxlength="20"
+						class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+						<input lang="fr" type="text" id="player-input-fr" placeholder="Veuillez entrer le nom du joueur..." maxlength="20"
+						class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+						<input lang="jp" type="text" id="player-input-jp" placeholder="プレイヤー名を入力してください..." maxlength="20"
+						class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
 
-				<!-- Compteur de joueurs -->
-				<span id="player-count" class="text-sm font-medium text-[#145c72] bg-white px-2 py-0.5 rounded-full mt-6">
-					0/2
-				</span>
+						<!-- Info sur les limites de joueurs -->
+						<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
+
+						<!-- Bouton add player -->
+						<button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#FFB942] text-gray-800 font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">	
+							<span lang="en">Add player</span>
+							<span lang="fr">Ajouter un joueur</span>
+							<span lang="jp">プレイヤーを追加</span>
+						</button>
+					</div>
+				</div>
 			</div>
 
-			<!-- Section de saisie (bas) -->
-			<div class="w-full max-w-sm bg-gray-100 rounded-lg shadow-lg p-4 mb-8">
-				<h2 class="text-xl font-bold text-gray-700 mb-8 text-center">
-					<span lang="en">New player</span>
-					<span lang="fr">Nouveau joueur</span>
-					<span lang="jp">新しいプレイヤー</span>
-				</h2>
+			<!-- Section d'affichage (bloc droit) -->
+			<!-- <div class="w-full max-w-lg"> -->
+			<div class="w-[22rem] p-4">
+				<div class="w-full bg-gray-100 rounded-lg shadow-lg p-4">
+					<h2 class="text-xl font-bold text-gray-700 mb-4 text-center">
+						<span lang="en">Registered players</span>
+						<span lang="fr">Joueurs inscrits</span>
+						<span lang="jp"> 登録済みのプレイヤー</span>
+					</h2>
+		
+					<!-- Liste des joueurs -->
+					<div id="players-list" class="space-y-4 max-h-64 overflow-y-auto pb-2">
+					<!-- Les joueurs apparaîtront ici dynamiquement -->
+					</div>
 
-				<!-- Formulaire de saisie -->
-				<div class="w-full">
-					<input lang="en" type="text" id="player-input" placeholder="Enter player name..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
-					<input lang="fr" type="text" id="player-input" placeholder="Veuillez entrer le nom du joueur..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
-					<input lang="jp" type="text" id="player-input" placeholder="プレイヤー名を入力してください..." maxlength="20"
-					class="w-full p-2 text-base border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200">
+					<!-- Message si aucun joueur -->
+					<div id="no-players" class="text-center text-gray-500 text-base pb-2">
+						<span lang="en">No player registered</span>
+						<span lang="fr">Aucun joueur inscrit</span>
+						<span lang="jp">プレイヤが登録され</span>			
+					</div>
 
-					<!-- Info sur les limites de joueurs -->
-					<p id="player-limits" class="text-sm text-gray-600 mt-2"></p>
-
-					<!-- Bouton add player -->
-					<!-- <button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#218DBE] text-white font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"> -->
-					<button id="add-player-btn" class="w-full mt-2 p-2 text-xl bg-[#218DBE] text-black font-bold rounded-lg hover:bg-[#1a6f96] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">	
-						<span lang="en">Add player</span>
-						<span lang="fr">Ajouter un joueur</span>
-						<span lang="jp">プレイヤーを追加</span>
-					</button>
+					<!-- Compteur de joueurs -->
+					<span id="player-count" class="text-sm font-medium text-[#145c72] bg-white px-2 py-0.5 rounded-full mt-6">
+						0/2
+					</span>
 				</div>
 			</div>
 		</section>
 	
 		<!-- Bouton Begin -->
-		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+		<div class="absolute bottom-8 left-[65%] transform -translate-x-1/2 z-50">
 			<button id="begin-game-btn" disabled
 					class="px-12 py-4 bg-[#F27D01] text-white text-4xl font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
 						<span lang="en">BEGIN</span>
@@ -108,5 +125,7 @@
 						<span lang="jp">開始</span>
 			</button>
 		</div>
-	</main>
+	</main>	
 </div>
+
+
