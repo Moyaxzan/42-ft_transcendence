@@ -22,6 +22,14 @@ export async function renderGameMode() {
 		{ id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
 	]);
 
+	const	headLoginButton = document.getElementById('head-login-button');
+	if (!headLoginButton) {
+		console.error("Some DOM elements have not been found");
+		return;
+	}
+
+	headLoginButton.classList.remove('hidden');
+
 	// Event listeners pour les boutons
 	setupGameModeButtons();
 }

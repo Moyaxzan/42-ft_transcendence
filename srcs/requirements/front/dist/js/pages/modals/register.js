@@ -80,7 +80,7 @@ export async function renderRegister() {
             const res = await fetch('/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, nameInput, password }),
+                body: JSON.stringify({ email, name: nameInput, password }),
             });
             console.log("POST DONE !!! ->");
             console.log(res);

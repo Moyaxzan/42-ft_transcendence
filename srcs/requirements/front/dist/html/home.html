@@ -31,7 +31,14 @@
 	
 		<!-- Section droite - Boutons de jeu -->
 		<section class="flex-[5] h-full flex flex-col justify-start items-start scale-110">
-			<div class="w-full max-w-sm space-y-6 absolute top-[25%]">
+			<div class="w-full max-w-sm space-y-6 absolute top-[15%]">
+				<!-- Welcome message-->
+				<div id="welcome-message" class="h-14 flex-1 flex-row w-full flex items-left justify-left space-x-4 text-lack text-3xl font-bold" style="font-family: 'Inter', sans-serif;">
+					<span lang="en">Welcome</span>
+					<span lang="fr">Bienvenue</span>
+					<span lang="jp">ようこそ</span>
+					<span id="welcome-username"></span>
+				</div>
 				<!-- Bouton Play -->
 				<a	href="/game-mode" data-link
 					id="play-button"
@@ -42,9 +49,43 @@
 					<span lang="fr">Jouer</span>
 					<span lang="jp">プレイ</span>
 				</a>
-	
+
+				<!-- stats -->
+				<div id="stats-header"class="h-7 flex-1 flex-row w-full flex items-center justify-center text-2xl font-bold" style="font-family: 'Inter', sans-serif;">
+					<span lang="en">My Stats</span>
+					<span lang="fr">Mes Statistiques</span>
+					<span lang="jp">私の統計</span>
+				</div>
+
+				<div id="stats" class="h-14 w-full flex flex-col items-center justify-center font-sans">
+					<p id="match-number" class="font-bold">
+						<span class="stat-value"></span>
+						<span lang="en">Matches</span>
+						<span lang="fr">Matchs</span>
+						<span lang="jp">試合</span>
+					</p>
+					<p id="win-number" class="font-bold">
+						<span class="stat-value"></span>
+						<span lang="en">Wins</span>
+						<span lang="fr">Victoires</span>
+						<span lang="jp">勝ち</span>
+					</p>
+					<p id="loss-number" class="font-bold">
+						<span class="stat-value"></span>
+						<span lang="en">Losses</span>
+						<span lang="fr">Défaites</span>
+						<span lang="jp">負け</span>
+					</p>
+					<p id="winrate-pourcent" class="font-bold">
+						<span class="stat-value"></span>
+						<span lang="en">Winrate</span>
+						<span lang="fr">Taux de victoire</span>
+						<span lang="jp">勝率</span>
+					</p>
+				</div>
+
 				<!-- Boutons Login -->
-				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4">
+				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4" style="font-family: 'Inter', sans-serif;">
 					<button id="login-button"
 							class="flex-1 h-14 border-2 border-[#00303C] text-[#00303C] font-bold text-base 
 							rounded-lg hover:bg-[#00303C] hover:text-white transition-all duration-200
