@@ -1,28 +1,54 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage } from '../lang.js';
 import { getCurrentUser } from '../auth.js';
+async function refreshAuthUI() {
+    const registerBtn = document.getElementById('register-button');
+    const loginBtn = document.getElementById('login-button');
+    const googleBtn = document.getElementById('google-button');
+    const statsHeader = document.getElementById('stats-header');
+    const statsElems = document.getElementById('stats');
+    const welcomeMessage = document.getElementById('welcome-message');
+    const headLoginButton = document.getElementById('head-login-button');
+    const headLogoutButton = document.getElementById('head-logout-button');
+    if (!loginBtn
+        || !registerBtn
+        || !googleBtn
+        || !statsHeader
+        || !statsElems
+        || !welcomeMessage
+        || !headLoginButton
+        || !headLogoutButton) {
+        console.error("Some DOM elements have not been found");
+        return;
+    }
+    // Always hide the login button in the header until we know the state
+    headLoginButton.classList.add('hidden');
+    const user = await getCurrentUser();
+    if (user) {
+        // User logged in → hide login/register/google, show logout
+        registerBtn.classList.add('hidden');
+        loginBtn.classList.add('hidden');
+        googleBtn.classList.add('hidden');
+        headLogoutButton.classList.remove('hidden');
+        displayStats({ wins: user.wins, losses: user.losses });
+        const usernameEl = document.getElementById('welcome-username');
+        if (usernameEl)
+            usernameEl.textContent = user.name;
+        console.log("Logged in as", user.name);
+    }
+    else {
+        // User not logged in → show login/register/google, hide logout + stats
+        registerBtn.classList.remove('hidden');
+        loginBtn.classList.remove('hidden');
+        googleBtn.classList.remove('hidden');
+        headLogoutButton.classList.add('hidden');
+        statsHeader.classList.add("hidden");
+        statsElems.classList.add("hidden");
+        welcomeMessage.classList.add("hidden");
+        console.log("Not logged in");
+    }
+}
 function displayStats(stats) {
-    // interface Translations {
-    // 	matches: string;
-    // 	wins: string;
-    // 	losses: string;
-    // 	winrate: string;
-    // }
-    // // Translations
-    // const translations: Record<string, Translations> = {
-    // 	en: { matches: "Matches", wins: "Wins", losses: "Losses", winrate: "Winrate" },
-    // 	fr: { matches: "Matchs", wins: "Victoires", losses: "Défaites", winrate: "Taux de victoire" },
-    // 	jp: { matches: "試合", wins: "勝ち", losses: "負け", winrate: "勝率" },
-    // };
-    // const t = translations[getCurrentLang()];
-    // const matchEl = document.getElementById('match-number');
-    // const winEl = document.getElementById('win-number');
-    // const lossEl = document.getElementById('loss-number');
-    // const winrateEl = document.getElementById('winrate-pourcent');
-    // if (matchEl) matchEl.textContent = `${stats.wins + stats.losses} ${t.matches}`;
-    // if (winEl) winEl.textContent = `${stats.wins} ${t.wins}`;
-    // if (lossEl) lossEl.textContent = `${stats.losses} ${t.losses}`;
-    // if (winrateEl) winrateEl.textContent = `${stats.wins * 100 / (stats.wins + stats.losses)}% ${t.winrate}`;
     const matchEl = document.getElementById('match-number')?.querySelector(".stat-value");
     const winEl = document.getElementById('win-number')?.querySelector(".stat-value");
     const lossEl = document.getElementById('loss-number')?.querySelector(".stat-value");
@@ -60,42 +86,39 @@ export async function renderHome() {
     const statsElems = document.getElementById('stats');
     const welcomeMessage = document.getElementById('welcome-message');
     const headLoginButton = document.getElementById('head-login-button');
+    const headLogoutButton = document.getElementById('head-logout-button');
     if (!loginBtn
         || !registerBtn
         || !googleBtn
         || !statsHeader
         || !statsElems
         || !welcomeMessage
-        || !headLoginButton) {
+        || !headLoginButton
+        || !headLogoutButton) {
         console.error("Some DOM elements have not been found");
         return;
     }
-    headLoginButton.classList.add('hidden');
-    const user = await getCurrentUser();
-    if (user) {
-        registerBtn.classList.add('hidden');
-        loginBtn.classList.add('hidden');
-        googleBtn.classList.add('hidden');
-        displayStats({ wins: user.wins, losses: user.losses });
-        const usernameEl = document.getElementById('welcome-username');
-        if (usernameEl)
-            usernameEl.textContent = user.name;
-        console.log("Logged in as", user.name);
-    }
-    else {
-        statsHeader.classList.add("hidden");
-        statsElems.classList.add("hidden");
-        welcomeMessage.classList.add("hidden");
-    }
+    refreshAuthUI();
     loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
         // Utiliser système de navigation SPA
+        refreshAuthUI();
         window.history.pushState({}, '', '/login');
         window.dispatchEvent(new CustomEvent('routeChanged'));
+    });
+    headLogoutButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        refreshAuthUI();
+        location.reload();
     });
     registerBtn.addEventListener('click', (e) => {
         e.preventDefault();
         // Utiliser système de navigation SPA
+        refreshAuthUI();
         window.history.pushState({}, '', '/register');
         window.dispatchEvent(new CustomEvent('routeChanged'));
     });
