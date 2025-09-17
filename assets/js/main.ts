@@ -4,8 +4,7 @@ import { showHelpModal, hideHelpModal } from './pages/modals.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 	router();
-	// setLanguage(document.documentElement.lang as 'en' | 'fr');
-	const lang = (localStorage.getItem("lang") as 'en' | 'fr') || 'en';
+	const lang = (localStorage.getItem("lang") as 'en' | 'fr' | 'jp') || 'en';
 	setLanguage(lang);
 
 	enableLinkInterception(); // Intercepte les liens [data-link]
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const langButtons = document.querySelectorAll(".lang-option");
 	langButtons.forEach(button =>  {
 		button.addEventListener("click", (e) => {
-			const lang = (e.currentTarget as HTMLElement).id as 'en' | 'fr';
+			const lang = (e.currentTarget as HTMLElement).id as 'en' | 'fr' | 'jp';
 			console.log(`Language selected: ${lang}`);
 			setLanguage(lang);
 		})

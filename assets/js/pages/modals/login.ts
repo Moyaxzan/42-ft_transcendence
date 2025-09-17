@@ -39,7 +39,7 @@ export async function renderLogin(): Promise<void> {
 	// const html = await res.text();
 	// app.innerHTML = html;
 
-	setLanguage(document.documentElement.lang as 'en' | 'fr');
+	setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 
 	requestAnimationFrame(() => {
 		animateLinesToFinalState([
