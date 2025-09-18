@@ -3,6 +3,7 @@ import { setLanguage, getCurrentLang } from '../lang.js';
 import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from './modals.js';
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 import { router } from '../router.js'
+import { getCurrentUser } from '../auth.js';
 
 declare const confetti: any; 
 
@@ -118,6 +119,21 @@ export async function renderPong() {
 			return;
 		}
 		trailBalls.push(trail);
+	}
+
+	const	headLoginButton = document.getElementById('head-login-button');
+	const	headLogoutButton = document.getElementById('head-logout-button');
+	if (!headLoginButton || !headLogoutButton) {
+		console.error("Some DOM elements have not been found");
+		return;
+	}
+
+	if (await getCurrentUser()) {
+		headLoginButton.classList.add('hidden');
+		headLogoutButton.classList.remove('hidden');
+	} else {
+		headLoginButton.classList.remove('hidden');
+		headLogoutButton.classList.add('hidden');
 	}
 
 	// keys handling
