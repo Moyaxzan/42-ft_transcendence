@@ -19,4 +19,10 @@ export async function render404() {
 		{ id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
 		{ id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
 	]);
+
+	const	headLoginButton = document.getElementById('head-login-button');
+	const	headLogoutButton = document.getElementById('head-logout-button');
+
+	headLoginButton?.classList.add('hidden');
+	headLogoutButton?.classList.add('hidden');
 }

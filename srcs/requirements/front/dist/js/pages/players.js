@@ -2,6 +2,7 @@ import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
 import '../tournament.js';
 import { router } from '../router.js';
+import { getCurrentUser } from '../auth.js';
 // Variable globale pour stocker les joueurs
 let players = [];
 let nextPlayerId = 1;
@@ -52,11 +53,19 @@ export async function renderPlayers() {
             { id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
         ]);
         const headLoginButton = document.getElementById('head-login-button');
-        if (!headLoginButton) {
+        const headLogoutButton = document.getElementById('head-logout-button');
+        if (!headLoginButton || !headLogoutButton) {
             console.error("Some DOM elements have not been found");
             return;
         }
-        headLoginButton.classList.remove('hidden');
+        if (await getCurrentUser()) {
+            headLoginButton.classList.add('hidden');
+            headLogoutButton.classList.remove('hidden');
+        }
+        else {
+            headLoginButton.classList.remove('hidden');
+            headLogoutButton.classList.add('hidden');
+        }
         // Réinitialiser les joueurs
         players = [];
         nextPlayerId = 1;
