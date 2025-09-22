@@ -36,6 +36,16 @@ export function router() {
 			helpBtn.classList.add('hidden')
 		}
 	}
+
+	const langSwitch = document.getElementById("lang-switch") as HTMLButtonElement;
+	if (langSwitch) {
+		if (!(path in routes)) {
+			langSwitch.classList.add("hidden");
+		} else {
+			langSwitch.classList.remove("hidden");
+		}
+	}
+
 	const render = routes[path] || render404;
 	if (path != "/pong") {
 		console.log("game should stop");
