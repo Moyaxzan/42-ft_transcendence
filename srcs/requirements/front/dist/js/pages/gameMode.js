@@ -1,5 +1,6 @@
 import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage } from '../lang.js';
+import { getCurrentUser } from '../auth.js';
 export async function renderGameMode() {
     document.title = "Game mode";
     const app = document.getElementById('app');
@@ -17,11 +18,19 @@ export async function renderGameMode() {
         { id: "line-bottom", rotationDeg: -7, translateYvh: 30, height: "50vh" },
     ]);
     const headLoginButton = document.getElementById('head-login-button');
-    if (!headLoginButton) {
+    const headLogoutButton = document.getElementById('head-logout-button');
+    if (!headLoginButton || !headLogoutButton) {
         console.error("Some DOM elements have not been found");
         return;
     }
-    headLoginButton.classList.remove('hidden');
+    if (await getCurrentUser()) {
+        headLoginButton.classList.add('hidden');
+        headLogoutButton.classList.remove('hidden');
+    }
+    else {
+        headLoginButton.classList.remove('hidden');
+        headLogoutButton.classList.add('hidden');
+    }
     // Event listeners pour les boutons
     setupGameModeButtons();
 }

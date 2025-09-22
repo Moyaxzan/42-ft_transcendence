@@ -2,7 +2,8 @@ import { animateLinesToFinalState } from './navbar.js';
 import { setLanguage, getCurrentLang } from '../lang.js';
 import '../tournament.js'
 import { router } from '../router.js'
-// import { servicesVersion } from 'typescript';
+import { servicesVersion } from 'typescript';
+import { getCurrentUser } from '../auth.js';
 
 /* ---------------------------- INTERFACES ----------------------------------------------------------------------------------------------------- */
 interface	GameMode {
@@ -95,12 +96,19 @@ export async function	renderPlayers() {
 		]);
 
 	const	headLoginButton = document.getElementById('head-login-button');
-	if (!headLoginButton) {
+	const	headLogoutButton = document.getElementById('head-logout-button');
+	if (!headLoginButton || !headLogoutButton) {
 		console.error("Some DOM elements have not been found");
 		return;
 	}
 
-	headLoginButton.classList.remove('hidden');
+	if (await getCurrentUser()) {
+		headLoginButton.classList.add('hidden');
+		headLogoutButton.classList.remove('hidden');
+	} else {
+		headLoginButton.classList.remove('hidden');
+		headLogoutButton.classList.add('hidden');
+	}
 		
 	// Réinitialiser les joueurs
 	players = [];
