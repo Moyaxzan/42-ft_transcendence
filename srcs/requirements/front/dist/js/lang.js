@@ -15,7 +15,11 @@ export function setLanguage(lang) {
         const spanMode = span.getAttribute('mode');
         span.style.display = spanMode === currentMode ? '' : 'none';
     });
+    window.dispatchEvent(new Event("languageChanged"));
 }
 export function getCurrentLang() {
-    return document.documentElement.lang || 'en';
+    const lang = document.documentElement.lang;
+    if (lang === 'en' || lang === 'fr' || lang === 'jp')
+        return (lang);
+    return ('en');
 }

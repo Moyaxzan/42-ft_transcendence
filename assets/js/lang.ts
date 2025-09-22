@@ -18,8 +18,13 @@ export function setLanguage(lang: 'en' | 'fr' | 'jp') {
 		const spanMode = span.getAttribute('mode');
 		(span as HTMLElement).style.display = spanMode === currentMode ? '' : 'none';
 	});
+	window.dispatchEvent(new Event("languageChanged"));
 }
 
-export function getCurrentLang(): string {
-	return document.documentElement.lang || 'en';
+export function getCurrentLang(): 'en' | 'fr' | 'jp' {
+	const	lang = document.documentElement.lang;
+
+	if (lang === 'en' || lang === 'fr' || lang === 'jp')
+		return (lang);
+	return ('en');
 }

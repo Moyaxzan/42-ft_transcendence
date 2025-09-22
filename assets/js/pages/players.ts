@@ -10,7 +10,7 @@ interface	GameMode {
 	type: '1vs1' | 'tournament';
 	minPlayers: number;
 	maxPlayers: number;
-	subtitle: string;
+	subtitle: Record<'en' | 'fr' | 'jp', string>;
 }
 
 // Interface pour définir les joueurs
@@ -67,17 +67,26 @@ export async function	renderPlayers() {
 			type: '1vs1',
 			minPlayers: 2,
 			maxPlayers: 2,
-			subtitle: 'Match 1 vs 1'
+			subtitle: {
+				en: 'Match 1 vs 1',
+				fr: 'Match 1 contre 1',
+				jp: '1対1の試合'
+			}
 		},
 		'tournament': {
 			type: 'tournament',
 			minPlayers: 3,
 			maxPlayers: 8,
-			subtitle: 'Tournament Mode'
+			subtitle: {
+				en: 'Tournament',
+				fr: 'Tournoi',
+				jp: 'トーナメント'
+			}
 		}
 	};
 
 	const	currentMode = gameModes[mode];
+	console.log("Mode indicator set to:", currentMode);
 
 	// Chargement du HTML de la page players
 	const	res = await fetch('/dist/html/players.html');
@@ -240,12 +249,11 @@ function getCurrentPlayerInput(): HTMLInputElement | null {
 
 function	initialisePlayersLogic(gameMode: GameMode) {	
 	console.log("Initialising players logic for mode:", gameMode.type);
+
 	// Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
-	// const	lang = getCurrentLang();
 	const	modeIndicator = document.getElementById('mode-indicator') as HTMLParagraphElement;
 	const	playerLimits = document.getElementById('player-limits') as HTMLParagraphElement;
 	const	playerCount = document.getElementById('player-count') as HTMLSpanElement;
-	// const	playerInput = document.getElementById(`player-input-${lang}`) as HTMLInputElement;
 	const	addPlayerBtn = document.getElementById("add-player-btn") as HTMLButtonElement;
 	const	playersList = document.getElementById("players-list") as HTMLDivElement;
 	const	noPlayersMsg = document.getElementById("no-players") as HTMLDivElement;
@@ -258,7 +266,6 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			modeIndicator: !!modeIndicator,
 			playerLimits: !!playerLimits,
 			playerCount: !!playerCount,
-			// playerInput: !!playerInput,
 			addPlayerBtn: !!addPlayerBtn,
 			playersList: !!playersList,
 			noPlayersMsg: !!noPlayersMsg,
@@ -267,12 +274,22 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 		return (null);
 	}
 
+	// modeIndicator.innerHTML = `	<span lang="en">${gameMode.subtitle.en}</span>
+	// 							<span lang="fr">${gameMode.subtitle.fr}</span>
+	// 							<span lang="jp">${gameMode.subtitle.jp}</span>
+	// `;
+
+	function	updateSubtitle() {
+		modeIndicator.textContent = gameMode.subtitle[getCurrentLang()];
+	}
+
 	// Définir le sous-titre du mode
-	modeIndicator.textContent = gameMode.subtitle;
-	console.log("Mode indicator set to:", gameMode.subtitle);
+	// modeIndicator.textContent = gameMode.subtitle[getCurrentLang()];
+	// console.log("Mode indicator set to:", gameMode.subtitle);
 
 	function	updateUI() {
 		// Mettre à jour les textes informatifs
+		updateSubtitle();
 		playerLimits.innerHTML = gameMode.type === '1vs1'
 			? `
 			<span lang="en">Exactly 2 players required</span>
@@ -284,9 +301,11 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			<span lang="fr">${gameMode.minPlayers} à ${gameMode.maxPlayers} joueurs requis</span>
 			<span lang="jp">${gameMode.minPlayers} à ${gameMode.maxPlayers} プレイヤーが必要です</span>
 			`;
+
 		// État des boutons
 		const atMaxCapacity = players.length >= gameMode.maxPlayers;
-		// // Mettre à jour le compteur
+
+		// Mettre à jour le compteur
 		playerCount.textContent = `${players.length}/${gameMode.maxPlayers}`;
 		['en', 'fr', 'jp'].forEach(lang => {
 			const	input = document.getElementById(`player-input-${lang}`) as HTMLInputElement;
@@ -301,7 +320,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
 			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
 
-		setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+		setLanguage(getCurrentLang());
 	}
 
 	// Fonction pour valider un alias
@@ -437,6 +456,11 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	}
 
 	// EVENT LISTENERS avec nettoyage
+
+	// Changement de la langue
+	const	langHandler = () => updateSubtitle();
+	window.addEventListener("languageChanged", langHandler);
+	currentEventListeners.push(() => window.removeEventListener("languageChanged", langHandler));
 
 	// Clic sur le bouton "Ajouter joueur"
 	const	addPlayerHandler = (e: Event) => {
