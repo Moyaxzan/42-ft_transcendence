@@ -1,6 +1,31 @@
 import { animateLinesToFinalState } from './navbar.js'
 import { getCurrentLang, setLanguage } from '../lang.js'
 import { getCurrentUser } from '../auth.js';
+import { router } from '../router.js'
+
+declare global {
+	interface Window {
+		google: any;
+		handleGoogleCredentialResponse: (response: any) => void;
+	}
+}
+
+function loadGoogleSdk(lang = "en"): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (window.google && window.google.accounts) {
+			resolve();
+			return;
+		}
+
+		const script = document.createElement('script');
+		script.src = 'https://accounts.google.com/gsi/client?hl=${}';
+		script.async = true;
+		script.defer = true;
+		script.onload = () => resolve();
+		script.onerror = () => reject(new Error('Failed to load Google SDK'));
+		document.head.appendChild(script);
+	});
+}
 
 interface Stats {
   wins: number;
@@ -142,4 +167,61 @@ export async function renderHome() {
 		window.history.pushState({}, '', '/register');
 		window.dispatchEvent(new CustomEvent('routeChanged'));
 	});
+
+
+	try {
+		await loadGoogleSdk(getCurrentLang());
+
+		const clientIdRes = await fetch("/auth/google/client-id");
+		const { clientId } = await clientIdRes.json();
+
+		console.log("Id received:", clientId);
+
+		window.handleGoogleCredentialResponse = async function (response) {
+			const { credential } = response;
+			const res = await fetch("/auth/google", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ token: credential }),
+			});
+
+			if (!res.ok) {
+				console.error(await res.text());
+				return;
+			}
+
+			const data = await res.json();
+			console.log("Connected via Google, got token:", data);
+			window.history.pushState({}, "", "/");
+			router();
+		};
+
+		window.google.accounts.id.initialize({
+			client_id: clientId,
+			callback: window.handleGoogleCredentialResponse,
+			itp_support: true,
+			cancel_on_tap_outside: false,
+		});
+
+		const googleBtn = document.getElementById("google-button");
+		if (googleBtn) {
+			googleBtn.addEventListener("click", () => {
+				window.google.accounts.id.prompt((notification: any) => {
+					console.log("[GSI] prompt notification:", notification);
+
+					if (notification.isNotDisplayed?.()) {
+						console.warn("[GSI] One Tap NOT displayed:", notification.getNotDisplayedReason?.());
+					} else if (notification.isSkippedMoment?.()) {
+						console.warn("[GSI] One Tap SKIPPED:", notification.getSkippedReason?.());
+					} else if (notification.isDismissedMoment?.()) {
+						console.warn("[GSI] One Tap DISMISSED:", notification.getDismissedReason?.());
+					} else if (notification.isDisplayed?.()) {
+						console.log("[GSI] One Tap DISPLAYED.");
+					}
+				});
+			});
+		}
+	} catch (err) {
+		console.error("Error loading Google Sign-In", err);
+	}
 }

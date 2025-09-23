@@ -64,7 +64,6 @@ export async function renderRegister() {
     });
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
         const target = e.target;
         const email = target.elements.namedItem('email')?.value.trim();
         const password = target.elements.namedItem('password')?.value.trim();

@@ -86,7 +86,6 @@ export async function renderRegister(): Promise<void> {
 
 	registerForm.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
-		console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
 
 		const target = e.target as HTMLFormElement;
 		const email = (target.elements.namedItem('email') as HTMLInputElement)?.value.trim();
