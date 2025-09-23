@@ -9,6 +9,12 @@ declare const confetti: any;
 
 let animationId: number = 0;
 
+const pressTranslation: Record<string, string> = {
+	en: "Press space to start",
+	fr: "Appuyez sur espace",
+	jp: "スタートでプレイ"
+};
+
 type Match = {
   id: number;
   user_id: number;
@@ -135,6 +141,14 @@ export async function renderPong() {
 		headLoginButton.classList.remove('hidden');
 		headLogoutButton.classList.add('hidden');
 	}
+
+	window.addEventListener("languageChanged", (e: Event) => {
+	const lang = (e as CustomEvent<string>).detail;
+
+		if (countdownDiv && countdownDiv.style.display === "block") {
+			countdownDiv.innerText = pressTranslation[getCurrentLang()];
+		}
+	});
 
 	// keys handling
 	let launchRound = false;
@@ -343,7 +357,7 @@ export async function renderPong() {
 					resolve();
 				}
 			}
-			countdownDiv.innerText = "Press space to start!";
+			countdownDiv.innerText = pressTranslation[getCurrentLang()];
 			countdownDiv.style.display = 'block';
 			document.addEventListener("keydown", onKeyDown, {signal: controller.signal});
 		});
@@ -375,7 +389,7 @@ export async function renderPong() {
 
 		return new Promise(async resolve => {
 			countdownDiv.style.display = 'block';
-			countdownDiv.innerText = "Press space to start !";
+			countdownDiv.innerText = pressTranslation[getCurrentLang()];
 			ball.style.top = `50%`;
 			ball.style.left = `50%`;
 			await waitForSpacePress();

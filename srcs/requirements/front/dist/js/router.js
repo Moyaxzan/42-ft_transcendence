@@ -7,6 +7,7 @@ import { showLoginModal, showRegisterModal } from './pages/modals.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
+import { getCurrentLang, setLanguage } from './lang.js';
 // Define a map of paths to render functions
 const routes = {
     '/': renderHome,
@@ -39,6 +40,15 @@ export function router() {
         }
         else {
             langSwitch.classList.remove("hidden");
+        }
+        if (!langSwitch.dataset.listenerAttached) {
+            langSwitch.addEventListener("click", () => {
+                const newLang = getCurrentLang();
+                setLanguage(newLang);
+                // envoie un événement global pour prévenir les autres modules (pong.ts, players.ts, etc.)
+                window.dispatchEvent(new CustomEvent("languageChanged", { detail: newLang }));
+            });
+            langSwitch.dataset.listenerAttached = "true";
         }
     }
     const render = routes[path] || render404;
