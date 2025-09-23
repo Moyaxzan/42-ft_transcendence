@@ -76,8 +76,8 @@ export async function renderPlayers() {
             headLogoutButton.classList.add('hidden');
         }
         // Réinitialiser les joueurs
-        players = [];
-        nextPlayerId = 1;
+        // players = [];
+        // nextPlayerId = 1;
         // Initialisation de la logique selon le mode de jeu
         const addPlayerFunction = initialisePlayersLogic(currentMode);
         const user = await getAuthUser();
@@ -95,9 +95,12 @@ export async function renderPlayers() {
 function isConnectedUser(obj) {
     return (obj &&
         typeof obj.name === 'string' &&
-        typeof obj.ip_address === 'string' &&
-        typeof obj.email === 'string' &&
-        typeof obj.points === 'number');
+        typeof obj.wins === 'number' &&
+        typeof obj.losses === 'number'
+    // typeof obj.ip_address === 'string' &&
+    // typeof obj.email === 'string' &&
+    // typeof obj.points === 'number'
+    );
 }
 async function getAuthUser() {
     try {

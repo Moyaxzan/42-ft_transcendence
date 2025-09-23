@@ -21,9 +21,11 @@ interface	Player {
 
 interface	ConnectedUser {
 	name: string;
-	ip_address: string;
-	email: string;
-	points: number;
+	wins: number;
+	losses: number;
+	// ip_address: string;
+	// email: string;
+	// points: number;
 }
 
 // Interface for tournament creation response
@@ -120,8 +122,8 @@ export async function	renderPlayers() {
 	}
 		
 	// Réinitialiser les joueurs
-	players = [];
-	nextPlayerId = 1;
+	// players = [];
+	// nextPlayerId = 1;
 
 		// Initialisation de la logique selon le mode de jeu
 		const	addPlayerFunction = initialisePlayersLogic(currentMode);
@@ -142,9 +144,11 @@ function	isConnectedUser(obj: any): obj is ConnectedUser {
 	return (
 		obj &&
 		typeof obj.name === 'string' &&
-		typeof obj.ip_address === 'string' &&
-		typeof obj.email === 'string' &&
-		typeof obj.points === 'number'
+		typeof obj.wins === 'number' &&
+		typeof obj.losses === 'number'
+		// typeof obj.ip_address === 'string' &&
+		// typeof obj.email === 'string' &&
+		// typeof obj.points === 'number'
 	);
 }
 
