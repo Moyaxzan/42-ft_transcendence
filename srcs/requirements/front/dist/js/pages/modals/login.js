@@ -31,14 +31,6 @@ export async function renderLogin() {
     const twofaSetupModal = document.getElementById('twofa-setup-modal');
     const qrCodeContainer = document.getElementById('qrCodeContainer');
     const close2FAModalBtn = document.getElementById('close2FAModal');
-    // const googleDiv = document.getElementById('googleSignInDiv');
-    // if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
-    // 	window.google.accounts.id.renderButton(googleDiv, {
-    // 		theme: 'outline',
-    // 		size: 'large',
-    // 		width: 280
-    // 	});
-    // }
     let pendingEmail = '';
     let pendingPassword = '';
     if (!loginForm || !messageEl)

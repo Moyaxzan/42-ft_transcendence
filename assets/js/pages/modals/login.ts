@@ -4,14 +4,6 @@ import { animateLinesToFinalState } from '../navbar.js'
 import { router } from '../../router.js'
 import { hideLoginModal } from '../modals.js';
 
-
-declare global {
-	interface Window {
-		google: any;
-		handleGoogleCredentialResponse: (response: any) => void;
-	}
-}
-
 export async function renderLogin(): Promise<void> {
 	document.title = "Login";
 	const app = document.getElementById('app');
@@ -46,14 +38,6 @@ export async function renderLogin(): Promise<void> {
 	const twofaSetupModal = document.getElementById('twofa-setup-modal') as HTMLElement | null;
 	const qrCodeContainer = document.getElementById('qrCodeContainer') as HTMLElement | null;
 	const close2FAModalBtn = document.getElementById('close2FAModal') as HTMLButtonElement | null;
-	// const googleDiv = document.getElementById('googleSignInDiv');
-	// if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
-	// 	window.google.accounts.id.renderButton(googleDiv, {
-	// 		theme: 'outline',
-	// 		size: 'large',
-	// 		width: 280
-	// 	});
-	// }
 
 	let pendingEmail = '';
 	let pendingPassword = '';

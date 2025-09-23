@@ -105,10 +105,24 @@ async function authRoutes (fastify, options) {
             	return reply.code(500).send({ error: 'CouldNotCreateUser', details: text || 'Unknown error from database' });
         	}
 
+
+
 			const user = await createRes.json();
 			fastify.log.info({ email: user.email }, "User created");
 
-			return reply.send({ success: true, user });
+			const token = fastify.jwt.sign({
+				email: user.email,
+				id: user.id,
+			});
+
+			return reply
+			.setCookie('token', token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/'
+			})
+			.send({ success: true });
   		} catch (err) {
 			fastify.log.error(err, "Server error during registration");
         	return reply.code(500).send({ error: 'ServerError', details: err.message });
