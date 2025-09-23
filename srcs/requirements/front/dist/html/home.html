@@ -52,9 +52,9 @@
 
 				<!-- stats -->
 				<div id="stats-header"class="h-7 flex-1 flex-row w-full flex items-center justify-center text-2xl font-bold" style="font-family: 'Inter', sans-serif;">
-					<span lang="en">My Stats</span>
-					<span lang="fr">Mes Statistiques</span>
-					<span lang="jp">私の統計</span>
+					<span lang="en">Your Stats</span>
+					<span lang="fr">Tes Statistiques</span>
+					<span lang="jp">あなたの統計</span>
 				</div>
 
 				<div id="stats" class="h-14 w-full flex flex-col items-center justify-center font-sans">
@@ -84,6 +84,23 @@
 					</p>
 				</div>
 
+				<div id="twofa-div" class="flex items-center justify-center h-14 w-full font-sans">
+					<label class="inline-flex items-center cursor-pointer">
+						<input id="twofa-toggle" type="checkbox" value="" class="sr-only peer">
+						<div class="relative w-11 h-6 bg-[#00303C]
+							rounded-full peer peer-checked:after:translate-x-full
+							rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white
+							after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white
+							after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all
+							peer-checked:bg-[#FFB942]">
+						</div>
+						<p class="ml-4 font-bold text-black">
+							<span lang="en">Two-Factor Authentication (2FA)</span>
+							<span lang="fr">Authentication à deux facteurs (2FA)</span>
+							<span lang="jp">二要素認証</span>
+						</p>
+					</label>
+				</div>
 				<!-- Boutons Login -->
 				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4" style="font-family: 'Inter', sans-serif;">
 					<button id="login-button"

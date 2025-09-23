@@ -41,6 +41,7 @@ async function refreshAuthUI() {
 	const welcomeMessage = document.getElementById('welcome-message');
 	const headLoginButton = document.getElementById('head-login-button');
 	const headLogoutButton = document.getElementById('head-logout-button');
+	const twofaDiv = document.getElementById('twofa-div');
 
 	if (!loginBtn
 		|| !registerBtn
@@ -49,12 +50,13 @@ async function refreshAuthUI() {
 		|| !statsElems
 		|| !welcomeMessage
 	    || !headLoginButton
-	    || !headLogoutButton) {
+	    || !headLogoutButton
+	    || !twofaDiv) {
 		console.error("Some DOM elements have not been found");
 		return;
 	}
 
-	// Always hide the login button in the header until we know the state
+	// Always hide the login button
 	headLoginButton.classList.add('hidden');
 
 	const user = await getCurrentUser();
@@ -64,10 +66,11 @@ async function refreshAuthUI() {
 		registerBtn.classList.add('hidden');
 		loginBtn.classList.add('hidden');
 		googleBtn.classList.add('hidden');
+	
+		//display logout, stats, 2FA and Welcome
 		headLogoutButton.classList.remove('hidden');
-
+		twofaDiv.classList.remove('hidden');
 		displayStats({ wins: user.wins, losses: user.losses });
-
 		const usernameEl = document.getElementById('welcome-username');
 		if (usernameEl) usernameEl.textContent = user.name;
 
@@ -77,10 +80,12 @@ async function refreshAuthUI() {
 		registerBtn.classList.remove('hidden');
 		loginBtn.classList.remove('hidden');
 		googleBtn.classList.remove('hidden');
+	
+		// hide logout, stats, 2FA & Welcome
 		headLogoutButton.classList.add('hidden');
-
 		statsHeader.classList.add("hidden");
 		statsElems.classList.add("hidden");
+		twofaDiv.classList.add('hidden');
 		welcomeMessage.classList.add("hidden");
 
 		console.log("Not logged in");
@@ -100,6 +105,40 @@ function displayStats(stats: Stats) {
 		(stats.wins + stats.losses > 0
 			? (stats.wins * 100 / (stats.wins + stats.losses)).toFixed(1)
 			: "0") + "%";
+}
+
+async function init2FAToggle(email: string) {
+	const toggle = document.getElementById("twofa-toggle") as HTMLInputElement | null;
+	if (!toggle) return;
+
+	// handle changes
+	toggle.addEventListener("change", async () => {
+		if (toggle.checked) {
+			// user enabled 2FA -> call your setup endpoint
+			const res = await fetch("/auth/2fa/setup", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email, password: "user-password" })
+			});
+
+			const data = await res.json();
+			if (res.ok) {
+				// show QR code in modal
+				console.log("2FA setup data:", data);
+			} else {
+				alert(data.error || "Failed to enable 2FA");
+				toggle.checked = false; // revert
+			}
+		} else {
+			// user disabled 2FA -> call a disable endpoint
+			// const res = await fetch("/auth/2fa/disable", {
+			// 	method: "POST",
+			// 	headers: { "Content-Type": "application/json" },
+			// 	body: JSON.stringify({ email })
+			// });
+			// if (!res.ok) toggle.checked = true; // revert if failed
+		}
+	});
 }
 
 export async function renderHome() {
