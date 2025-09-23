@@ -102,9 +102,8 @@ export async function renderLogin() {
                 messageEl.textContent = data?.message || 'Authentication failed.';
                 return;
             }
-            messageEl.style.color = 'green';
-            messageEl.textContent = 'Connexion successful';
-            //TODO better login message (persistent on home)
+            // messageEl.style.color = 'green';
+            // messageEl.textContent = 'Connexion successful';
             hideLoginModal();
         }
         catch (err) {

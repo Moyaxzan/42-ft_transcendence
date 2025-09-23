@@ -115,10 +115,8 @@ export async function renderRegister() {
                 messageEl.textContent = data?.message || 'Authentication failed.';
                 return;
             }
-            messageEl.style.color = 'green';
-            messageEl.textContent = 'Connexion successful';
-            //TODO trad
-            //TODO better register message (persistent on home)
+            // messageEl.style.color = 'green';
+            // messageEl.textContent = 'Connexion successful';
             localStorage.setItem('authToken', data.token);
             hideRegisterModal();
         }

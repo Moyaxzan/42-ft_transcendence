@@ -125,9 +125,8 @@ export async function renderLogin(): Promise<void> {
 				return;
 			}
 
-			messageEl.style.color = 'green';
-			messageEl.textContent = 'Connexion successful';
-			//TODO better login message (persistent on home)
+			// messageEl.style.color = 'green';
+			// messageEl.textContent = 'Connexion successful';
 			hideLoginModal();
 		}
 		catch (err) {
