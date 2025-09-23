@@ -16,3 +16,15 @@ export function animateLinesToFinalState(targets) {
         el.classList.add(`rotate-[${rotationDeg}deg]`, `translate-y-[${translateYvh}vh]`, `h-[${height}]`);
     });
 }
+export function setLinesFinalState(configs) {
+    configs.forEach(({ id, rotationDeg, translateYvh, height }) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.transition = "none"; // pas d’animation
+            el.style.transform = `rotate(${rotationDeg}deg) translateY(${translateYvh}vh)`;
+            el.style.height = height;
+            void el.offsetHeight; // reflow pour appliquer transition:none
+            el.style.transition = ""; // remet la transition normale pour les prochaines pages
+        }
+    });
+}

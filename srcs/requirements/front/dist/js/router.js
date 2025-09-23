@@ -4,6 +4,7 @@ import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { render404 } from './pages/error404.js';
 import { showLoginModal, showRegisterModal } from './pages/modals.js';
+import { updateBackground } from './pages/bg_video.js';
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
@@ -23,6 +24,7 @@ const routes = {
 export function router() {
     const path = window.location.pathname;
     console.log("Routing to:", path);
+    updateBackground();
     const helpBtn = document.getElementById("help-button");
     if (helpBtn) {
         if (routes[path]) {
