@@ -11,9 +11,11 @@ export default fp(async (fastify) => {
 
 	fastify.decorate("authenticate", async function (request, reply) {
 		try {
+  console.log("🥵🥵 🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵Cookies received:", request.cookies);
 			const token = request.cookies.token;
 			const decoded = await fastify.jwt.verify(token);
 			request.user = decoded;
+console.log("😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱😱 JWT decoded:", decoded.id);
 		} catch (err) {
 			reply.code(401).send({ error: "Unauthorized" });
 		}

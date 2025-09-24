@@ -98,8 +98,16 @@ async function init2FAToggle() {
             credentials: "include" // cookie JWT
         });
         console.log("after /api/me");
-        console.log(resUser);
-        const user = await resUser.json();
+        const text = await resUser.text();
+        console.log("Response body:", text);
+        let user;
+        try {
+            user = JSON.parse(text);
+            console.log("USER OBJECT:", user);
+        }
+        catch (e) {
+            console.log("Pas de JSON valide");
+        }
         if (toggle.checked) {
             console.log("trying to activate 2FA");
             const res = await fetch("/auth/2fa/setup", {
@@ -107,7 +115,8 @@ async function init2FAToggle() {
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({
-                    email: user.email
+                    email: user.email,
+                    password: user.password
                 })
             });
             const data = await res.json();

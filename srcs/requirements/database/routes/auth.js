@@ -129,6 +129,45 @@ async function authRoutes (fastify, options) {
 			return reply.status(500).send({ error: 'Database update error', details: err.message });
 		}
 	});
+
+	fastify.get('/api/me', { prevValidation: [fastify.authenticate] }, async (request, reply) => {
+		const db = fastify.sqlite;
+
+		console.log("DEBUG request object:", request); // Log complet
+		console.log("DEBUG request body:", request.body); // corps de la requête (POST/PUT)
+		console.log("DEBUG request params:", request.params); // paramètres URL
+		console.log("DEBUG request query:", request.query); // query string
+		console.log("DEBUG request headers:", request.headers); // headers complets
+		console.log("DEBUG request cookies:", request.cookies); // cookies
+
+
+		console.log(`🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢🤢request.user: ${request}`); 
+		const userId = request.user.id;
+
+		try {
+		//		const userId = request.user.id;
+
+		const user = await new Promise((resolve, reject) => {
+				db.all('SELECT * FROM users WHERE id = ?', [userId],
+						(err, row) => {
+						if (err) return reject(err);
+						resolve(row);
+						});
+				});
+		if (!user)
+			return reply.status(404).send({ error: 'User not found' });
+		delete user.password_hash;
+		delete user.reset_token;
+		delete user.reset_expiry;
+		return reply.send(user);
+		} catch (err)
+		{
+			fastify.log.error(err);
+			if (err.message === 'User me not found')
+				return reply.status(404).send({ error: 'User me not found' });
+			return reply.status(500).send({ error: 'Database GET error', details: err.message });
+		}
+	});
 }
 
 export default authRoutes

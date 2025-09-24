@@ -28,7 +28,7 @@ all:
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@tsc
-	@docker $(COMPOSE) up --build
+	@docker $(COMPOSE) up --build -d
 
 
 clean:

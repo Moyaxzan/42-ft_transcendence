@@ -36,10 +36,11 @@ async function userRoutes (fastify, options) {
 			if (!res.ok) {
 				return reply.code(404).send({ error: 'User not found' });
 			}
-			const user = await resUser.json();
+			const user = await res.json();
 
 			// supprimer le password avant de renvoyer
 			delete user.password;
+			delete user.password_hash;
 
 			return reply.send(user);
 		} catch (err) {
