@@ -4,6 +4,8 @@ export default async function protectedRoutes(fastify) {
 	fastify.get('/auth/me', { preHandler: [fastify.authenticate] }, async (request, reply) => {
 		const { email } = request.user;
 
+		if (!email)
+			return;
 		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`, {
 			method: 'GET',
 		});

@@ -26,6 +26,7 @@ async function refreshAuthUI() {
     const welcomeMessage = document.getElementById('welcome-message');
     const headLoginButton = document.getElementById('head-login-button');
     const headLogoutButton = document.getElementById('head-logout-button');
+    const twofaDiv = document.getElementById('twofa-div');
     if (!loginBtn
         || !registerBtn
         || !googleBtn
@@ -33,11 +34,12 @@ async function refreshAuthUI() {
         || !statsElems
         || !welcomeMessage
         || !headLoginButton
-        || !headLogoutButton) {
+        || !headLogoutButton
+        || !twofaDiv) {
         console.error("Some DOM elements have not been found");
         return;
     }
-    // Always hide the login button in the header until we know the state
+    // Always hide the login button
     headLoginButton.classList.add('hidden');
     const user = await getCurrentUser();
     if (user) {
@@ -45,7 +47,9 @@ async function refreshAuthUI() {
         registerBtn.classList.add('hidden');
         loginBtn.classList.add('hidden');
         googleBtn.classList.add('hidden');
+        //display logout, stats, 2FA and Welcome
         headLogoutButton.classList.remove('hidden');
+        twofaDiv.classList.remove('hidden');
         displayStats({ wins: user.wins, losses: user.losses });
         const usernameEl = document.getElementById('welcome-username');
         if (usernameEl)
@@ -57,9 +61,11 @@ async function refreshAuthUI() {
         registerBtn.classList.remove('hidden');
         loginBtn.classList.remove('hidden');
         googleBtn.classList.remove('hidden');
+        // hide logout, stats, 2FA & Welcome
         headLogoutButton.classList.add('hidden');
         statsHeader.classList.add("hidden");
         statsElems.classList.add("hidden");
+        twofaDiv.classList.add('hidden');
         welcomeMessage.classList.add("hidden");
         console.log("Not logged in");
     }
@@ -80,6 +86,81 @@ function displayStats(stats) {
             (stats.wins + stats.losses > 0
                 ? (stats.wins * 100 / (stats.wins + stats.losses)).toFixed(1)
                 : "0") + "%";
+}
+async function init2FAToggle() {
+    const toggle = document.getElementById("twofa-toggle");
+    if (!toggle)
+        return;
+    // handle changes
+    toggle.addEventListener("change", async () => {
+        const resUser = await fetch("/api/me", {
+            method: "GET",
+            credentials: "include" // cookie JWT
+        });
+        console.log("after /api/me");
+        console.log(resUser);
+        const user = await resUser.json();
+        if (toggle.checked) {
+            console.log("trying to activate 2FA");
+            const res = await fetch("/auth/2fa/setup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    email: user.email
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                // Afficher le QR code
+                const img = document.createElement("img");
+                img.src = data.qrCodeUrl;
+                document.body.appendChild(img); // ou ouvrir un modal
+                // Demander à l’utilisateur d’entrer un code OTP
+                const otp = prompt("Entrez le code affiché dans votre application 2FA :");
+                // 2. Vérification du code
+                const verifyRes = await fetch("/auth/2fa/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        email: user.email,
+                        token: otp
+                    })
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyRes.ok) {
+                    alert("✅ 2FA activée avec succès !");
+                }
+                else {
+                    alert(verifyData.error || "Code invalide");
+                    toggle.checked = false; // revert si échec
+                }
+            }
+            else {
+                alert(data.error || "Impossible d’activer la 2FA");
+                toggle.checked = false;
+            }
+        }
+        else {
+            console.log("trying to deactivate 2FA");
+            // Désactiver la 2FA
+            const res = await fetch("/auth/2fa/disable", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ email: user.email })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("2FA désactivée");
+            }
+            else {
+                alert(data.error || "Impossible de désactiver la 2FA");
+                toggle.checked = true; // revert si échec
+            }
+        }
+    });
 }
 export async function renderHome() {
     document.title = "ft_transcendence";
@@ -115,6 +196,7 @@ export async function renderHome() {
         return;
     }
     refreshAuthUI();
+    init2FAToggle();
     loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
         // Utiliser système de navigation SPA

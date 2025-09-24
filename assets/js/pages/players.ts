@@ -151,6 +151,7 @@ function	isConnectedUser(obj: any): obj is ConnectedUser {
 async function getAuthUser(): Promise<ConnectedUser | null> {
 	try {
 		const	res = await fetch('/auth/me', {
+			method: 'GET',
 			credentials: 'include',
 		});
 		if (!res.ok)

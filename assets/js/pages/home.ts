@@ -107,36 +107,80 @@ function displayStats(stats: Stats) {
 			: "0") + "%";
 }
 
-async function init2FAToggle(email: string) {
+async function init2FAToggle() {
 	const toggle = document.getElementById("twofa-toggle") as HTMLInputElement | null;
 	if (!toggle) return;
 
 	// handle changes
 	toggle.addEventListener("change", async () => {
+		const resUser = await fetch("/api/me", {
+		  method: "GET",
+		  credentials: "include" // cookie JWT
+		});
+		console.log("after /api/me");
+		console.log(resUser);
+		const user = await resUser.json();
+
 		if (toggle.checked) {
-			// user enabled 2FA -> call your setup endpoint
+			console.log("trying to activate 2FA");
 			const res = await fetch("/auth/2fa/setup", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email, password: "user-password" })
+				credentials: "include",
+				body: JSON.stringify({
+					email: user.email
+				})
 			});
 
 			const data = await res.json();
 			if (res.ok) {
-				// show QR code in modal
-				console.log("2FA setup data:", data);
+				// Afficher le QR code
+				const img = document.createElement("img");
+				img.src = data.qrCodeUrl;
+				document.body.appendChild(img); // ou ouvrir un modal
+
+				// Demander à l’utilisateur d’entrer un code OTP
+				const otp = prompt("Entrez le code affiché dans votre application 2FA :");
+
+				// 2. Vérification du code
+				const verifyRes = await fetch("/auth/2fa/verify", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					credentials: "include",
+					body: JSON.stringify({
+						email: user.email,
+						token: otp
+					})
+				});
+
+				const verifyData = await verifyRes.json();
+				if (verifyRes.ok) {
+					alert("✅ 2FA activée avec succès !");
+				} else {
+					alert(verifyData.error || "Code invalide");
+					toggle.checked = false; // revert si échec
+				}
 			} else {
-				alert(data.error || "Failed to enable 2FA");
-				toggle.checked = false; // revert
+				alert(data.error || "Impossible d’activer la 2FA");
+				toggle.checked = false;
 			}
 		} else {
-			// user disabled 2FA -> call a disable endpoint
-			// const res = await fetch("/auth/2fa/disable", {
-			// 	method: "POST",
-			// 	headers: { "Content-Type": "application/json" },
-			// 	body: JSON.stringify({ email })
-			// });
-			// if (!res.ok) toggle.checked = true; // revert if failed
+			console.log("trying to deactivate 2FA");
+			// Désactiver la 2FA
+			const res = await fetch("/auth/2fa/disable", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({ email: user.email })
+			});
+
+			const data = await res.json();
+			if (res.ok) {
+				alert("2FA désactivée");
+			} else {
+				alert(data.error || "Impossible de désactiver la 2FA");
+				toggle.checked = true; // revert si échec
+			}
 		}
 	});
 }
@@ -181,6 +225,7 @@ export async function renderHome() {
 		return;
 	}
 	refreshAuthUI();
+	init2FAToggle();
 	loginBtn.addEventListener('click', (e) => {
 		e.preventDefault();
 		// Utiliser système de navigation SPA

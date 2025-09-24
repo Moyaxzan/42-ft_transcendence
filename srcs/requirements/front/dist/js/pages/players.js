@@ -102,6 +102,7 @@ function isConnectedUser(obj) {
 async function getAuthUser() {
     try {
         const res = await fetch('/auth/me', {
+            method: 'GET',
             credentials: 'include',
         });
         if (!res.ok)
