@@ -231,6 +231,37 @@ async function routes (fastify, options) {
 			return reply.code(500).send({ error: 'User creation failed' });
 		}
 	});
+
+/// TEST 2FA
+fastify.patch('/api/users/2fa-toggle', async (request, reply) => {
+    const db = fastify.sqlite;
+ //   const userId = request.user.id; // ex: middleware JWT doit mettre user dans request
+    const { enabled, id } = request.body;
+
+    if (enabled === undefined) return reply.status(400).send({ error: 'Missing enabled flag' });
+
+    try {
+        await new Promise((resolve, reject) => {
+            db.run(
+                'UPDATE users SET twofa_enabled = ? WHERE id = ?',
+                [enabled ? 1 : 0, id],
+                function(err) {
+                    if (err) return reject(err);
+                    if (this.changes === 0) return reject(new Error('User not found'));
+                    resolve();
+                }
+            );
+        });
+
+        reply.send({ message: `2FA ${enabled ? 'enabled' : 'disabled'}`, enabled });
+    } catch (err) {
+        fastify.log.error(err);
+        if (err.message === 'User not found') return reply.status(404).send({ error: 'User not found' });
+        return reply.status(500).send({ error: 'Database update error', details: err.message });
+    }
+});
 }
+
+
 
 export default routes

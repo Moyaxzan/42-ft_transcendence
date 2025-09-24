@@ -60,6 +60,13 @@ async function refreshAuthUI() {
 
 		console.log("Not logged in");
 	}
+if (user) {
+    displayStats({ wins: user.wins, losses: user.losses });
+    setupTwoFASwitch(user); // <<< ici
+} else {
+    const container = document.getElementById('twofa-container');
+    if (container) container.classList.add('hidden');
+}
 }
 
 function displayStats(stats: Stats) {
@@ -143,3 +150,47 @@ export async function renderHome() {
 		window.dispatchEvent(new CustomEvent('routeChanged'));
 	});
 }
+
+async function setupTwoFASwitch(user: any) {
+    const container = document.getElementById('twofa-container');
+    const switchBtn = document.getElementById('twofa-switch');
+    if (!container || !switchBtn || !user) return;
+
+    container.classList.remove('hidden');
+
+    // Initialiser l'état
+    switchBtn.dataset.enabled = user.twofa_enabled === 1 ? "true" : "false";
+
+    switchBtn.addEventListener('click', async () => {
+        const currentlyEnabled = switchBtn.dataset.enabled === "true";
+        const newEnabled = !currentlyEnabled;
+
+        // Mettre à jour visuellement
+        switchBtn.dataset.enabled = newEnabled ? "true" : "false";
+
+        try {
+            const res = await fetch('/auth/2fa/toggle', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ enabled: newEnabled })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                // rollback si erreur
+                switchBtn.dataset.enabled = currentlyEnabled ? "true" : "false";
+                console.error('Error updating 2FA:', data);
+                alert('Failed to update 2FA. Try again.');
+            } else {
+                console.log(`2FA ${newEnabled ? 'enabled' : 'disabled'} successfully`);
+            }
+        } catch (err) {
+            // rollback si erreur réseau
+            switchBtn.dataset.enabled = currentlyEnabled ? "true" : "false";
+            console.error(err);
+            alert('Failed to update 2FA. Try again.');
+        }
+    });
+}
+
