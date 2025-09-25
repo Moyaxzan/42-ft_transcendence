@@ -71,6 +71,9 @@ INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALU
 
 INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALUES (1, "Tao", "nelajo8413@artvara.com", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", 1);
 
+INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALUES (12, "Rym", "testRym@gmail.com", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", 0);
+
+
 INSERT OR IGNORE INTO users (name) VALUES ("Jovica");
 
 INSERT OR IGNORE INTO matches (id, user_id, score, opponent_score, opponent_id, match_round, match_index) VALUES (0, 0, 0, 0, 1, 0, 2);

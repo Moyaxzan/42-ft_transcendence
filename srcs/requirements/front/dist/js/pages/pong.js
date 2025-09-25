@@ -5,6 +5,11 @@ import { sendMatchResult, advanceWinner } from '../tournament.js';
 import { router } from '../router.js';
 import { getCurrentUser } from '../auth.js';
 let animationId = 0;
+const pressTranslation = {
+    en: "Press space to start",
+    fr: "Appuyez sur espace",
+    jp: "スタートでプレイ"
+};
 let gameStopped = false;
 export function stopGame() {
     cancelAnimationFrame(animationId);
@@ -106,6 +111,12 @@ export async function renderPong() {
         headLoginButton.classList.remove('hidden');
         headLogoutButton.classList.add('hidden');
     }
+    window.addEventListener("languageChanged", (e) => {
+        const lang = e.detail;
+        if (countdownDiv && countdownDiv.style.display === "block") {
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
+        }
+    });
     // keys handling
     let launchRound = false;
     let keysPressed = {};
@@ -292,7 +303,7 @@ export async function renderPong() {
                     resolve();
                 }
             }
-            countdownDiv.innerText = "Press space to start!";
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
             countdownDiv.style.display = 'block';
             document.addEventListener("keydown", onKeyDown, { signal: controller.signal });
         });
@@ -314,7 +325,7 @@ export async function renderPong() {
         console.log(player2.name);
         return new Promise(async (resolve) => {
             countdownDiv.style.display = 'block';
-            countdownDiv.innerText = "Press space to start !";
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
             ball.style.top = `50%`;
             ball.style.left = `50%`;
             await waitForSpacePress();
@@ -348,6 +359,10 @@ export async function renderPong() {
                 }
                 if (player1Score === 3 || player2Score === 3) {
                     launchRound = false;
+                    // console.log("Player1Name = ", player1.name);
+                    // console.log("Player1ID = ", player1.id);
+                    // console.log("Player2Name = ", player2.name);
+                    // console.log("Player2ID = ", player2.id);
                     sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
                     stopGame();
                     let winnerId;
@@ -361,6 +376,8 @@ export async function renderPong() {
                         winnerName = player2.name;
                     }
                     resolve({ winnerId, winnerName });
+                    // const result = await Response.json();
+                    // console.log("Update response:", result);
                     return (winnerId);
                 }
                 else {

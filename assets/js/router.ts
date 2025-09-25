@@ -4,10 +4,12 @@ import { renderPlayers } from './pages/players.js';
 import { renderPong, stopGame } from './pages/pong.js';
 import { render404 } from './pages/error404.js';
 import { showLoginModal, showRegisterModal } from './pages/modals.js'
-
+import { updateBackground } from './pages/bg_video.js'
 import { renderProfile, renderUser, renderMatch } from './pages/profile.js';
 import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
+import { getCurrentLang, setLanguage } from './lang.js';
+
 
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
@@ -15,7 +17,6 @@ const routes: Record<string, () => void> = {
   '/game-mode': renderGameMode,
   '/players': renderPlayers,
   '/pong': renderPong,
-
   '/profile': renderProfile,
   '/login': renderLogin,
   '/register': renderRegister,
@@ -27,6 +28,7 @@ const routes: Record<string, () => void> = {
 export function router() {
 	const path = window.location.pathname;
 	console.log("Routing to:", path);
+	updateBackground();
 	const helpBtn = document.getElementById("help-button") as HTMLDivElement;
 	if (helpBtn) {
 		if (routes[path]) {
@@ -43,6 +45,19 @@ export function router() {
 		} else {
 			langSwitch.classList.remove("hidden");
 		}
+		if (!langSwitch.dataset.listenerAttached) {
+		langSwitch.addEventListener("click", () => {
+			const newLang = getCurrentLang();
+
+			setLanguage(newLang);
+
+			// envoie un événement global pour prévenir pong.ts
+			window.dispatchEvent(new CustomEvent("languageChanged", { detail: newLang }));
+
+		});
+
+		langSwitch.dataset.listenerAttached = "true";
+	}
 	}
 
 	const render = routes[path] || render404;

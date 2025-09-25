@@ -2,6 +2,8 @@ GREEN := \e[92m
 GRAY := \e[90m
 MAGENTA := \e[38;2;224;176;255m
 BLUE := \e[38;2;80;150;255m
+RED := \e[38;2;255;60;60m
+BROWN := \e[38;2;150;75;0m
 RESET := \e[0m
 NAME = Transcendence
 REQUIREMENTS = ./srcs/requirements
@@ -22,9 +24,16 @@ all:
 	@echo -e "\n$(GRAY)Creating repositories for persistent data$(RESET)"
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
-	@echo "\n$(PINK)$(NAME) ready!$(RESET)"
+	@echo "\n$(MAGENTA)$(NAME) ready!$(RESET)"
 #@npm install -g typescript
 	@npm install canvas-confetti
+	@echo -e "⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⡇"
+	@echo -e "⡇ $(RED)⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿  ⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿$(RESET)  ⡇"
+	@echo -e "⡇ $(RED)⣿    ⣿ $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿⣿  ⣿⣿ $(BROWN)⡇$(RED) ⣿    ⠛  $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿⣿⣿⣿⣿⡟ $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿ ⢻ ⣿⣿ $(BROWN)⡇$(RED) ⣿       $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿      $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿  ⢷⣿⣿ $(BROWN)⡇$(RED) ⣿   ⠛⣿  $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿      $(BROWN)⡇$(RED) ⣿⣦⣤⣤⣾⣿ $(BROWN)⡇$(RED) ⣿   ⣿⣿ $(BROWN)⡇$(RED) ⣿⣿⣿⣿⣿⣿  $(RESET)⡇" 
+	@echo -e "⣇⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡇"
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
 	@tsc
@@ -59,8 +68,16 @@ clean:
 	@docker network ls
 	@echo -e "Containers removed $(GREEN)successfully$(RESET)"
 	@echo -e "\n$(MAGENTA)$(NAME)$(RESET) stop: $(GREEN)Success$(RESET)"
+	@echo -e "⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⡇"
+	@echo -e "⡇ $(RED)⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿  ⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿$(RESET)  ⡇"
+	@echo -e "⡇ $(RED)⣿    ⣿ $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿⣿  ⣿⣿ $(BROWN)⡇$(RED) ⣿    ⠛  $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿⣿⣿⣿⣿⡟ $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿ ⢻ ⣿⣿ $(BROWN)⡇$(RED) ⣿       $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿      $(BROWN)⡇$(RED) ⣿    ⣿ $(BROWN)⡇$(RED) ⣿  ⢷⣿⣿ $(BROWN)⡇$(RED) ⣿   ⠛⣿  $(RESET)⡇"
+	@echo -e "⡇ $(RED)⣿      $(BROWN)⡇$(RED) ⣿⣦⣤⣤⣾⣿ $(BROWN)⡇$(RED) ⣿   ⣿⣿ $(BROWN)⡇$(RED) ⣿⣿⣿⣿⣿⣿  $(RESET)⡇" 
+	@echo -e "⣇⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡇"
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
+	@echo "Containers removed $(GREEN)successfully$(RESET)"
 
 down:
 	@docker $(COMPOSE) stop
