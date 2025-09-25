@@ -69,7 +69,10 @@ CREATE TABLE IF NOT EXISTS user_stats (
 
 INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALUES (0, "Antoine", "test@gmail.com", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", 0);
 
+INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALUES (1, "Tao", "nelajo8413@artvara.com", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", 1);
+
 INSERT OR IGNORE INTO users (id, name, email, password_hash, twofa_enabled) VALUES (12, "Rym", "testRym@gmail.com", "$2b$10$eCXJmmeGeqUPYjdALWtqrO.jKOB0BarWsFcEgwlzKGv1F.lS6yLfe", 0);
+
 
 INSERT OR IGNORE INTO users (name) VALUES ("Jovica");
 
