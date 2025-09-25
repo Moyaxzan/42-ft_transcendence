@@ -81,52 +81,54 @@ async function routes (fastify, options) {
 	})
 
 	//fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
-	fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
+	// fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
+	fastify.patch('/api/users/wins/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
-		let { wins, losses } = request.body;
+		// let { wins, losses } = request.body;
 		// wins += 1;
-		wins++;
+		// wins++;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('UPDATE users SET wins = ? WHERE id = ?', [wins, id], function (err) {
+			db.run('UPDATE users SET wins = wins + 1 WHERE id = ?', [id], function (err) {
 				if (err) return reject(err);
 				if (this.changes === 0) {
 						return reject(new Error('User not found'));
 				}
-				resolve(id, wins);
+				resolve(id);
 				});
 			});
     		if (!rows) {
     			return reply.status(404).send({ message: 'User not found' });
     		}
-			reply.send({ message: 'Wins updated successfully', wins });
+			reply.send({ message: 'Wins updated successfully', id });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
 		}
 	});
 
-	fastify.patch('/api/users/losses/:id', { schema: updateRecordsSchema }, async (request, reply) => {
+	// fastify.patch('/api/users/losses/:id', { schema: updateRecordsSchema }, async (request, reply) => {
+	fastify.patch('/api/users/losses/:id', async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
-		let { wins, losses } = request.body;
+		// let { wins, losses } = request.body;
 		// losses += 1;
-		losses++;
+		// losses++;
 		try {
 			const rows = await new Promise((resolve, reject) => {
-			db.run('UPDATE users SET losses = ? WHERE id = ?', [losses, id], function (err) {
+			db.run('UPDATE users SET losses = losses + 1 WHERE id = ?', [id], function (err) {
 				if (err) return reject(err);
 				if (this.changes === 0) {
 					return reject(new Error('User not found'));
 				}
-				resolve(id, losses);
+				resolve(id);
 				});
 			});
     		if (!rows) {
     			return reply.status(404).send({ message: 'User not found' });
     		}
-			reply.send({ message: 'Losses updated successfully', losses });
+			reply.send({ message: 'Losses updated successfully', id });
 		} catch (err) {
 			fastify.log.error(err);
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });

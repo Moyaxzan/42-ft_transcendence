@@ -25,7 +25,8 @@ export async function sendMatchResult(
 		const response = await fetch(`/api/users/wins/${winnerId}`, {
 			method: "PATCH",
 			headers: {"Content-Type": "application/json"},
-			body: JSON.stringify({wins: 0, losses: 0}),
+			body: JSON.stringify({}),
+			// body: JSON.stringify({wins: 0, losses: 0}),
 		});
 		console.log(response);
 		if (!response.ok) {
@@ -63,7 +64,8 @@ export async function sendMatchResult(
 		const response = await fetch(`/api/users/losses/${looserId}`, {
 			method: "PATCH",
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ wins: 0, losses: 0 })
+			body: JSON.stringify({})
+			// body: JSON.stringify({ wins: 0, losses: 0 })
 		});
 		if (!response.ok) {
 			const errorText = await response.text();
