@@ -190,6 +190,7 @@ function getCurrentPlayerInput() {
 function initialisePlayersLogic(gameMode) {
     console.log("Initialising players logic for mode:", gameMode.type);
     // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
+    // const	lang = getCurrentLang();
     const modeIndicator = document.getElementById('mode-indicator');
     const playerLimits = document.getElementById('player-limits');
     const playerCount = document.getElementById('player-count');

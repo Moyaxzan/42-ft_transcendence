@@ -12,10 +12,7 @@ export async function render404() {
     const html = await res.text();
 
     app.innerHTML = html;
-
-    setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
-
-
+    setLanguage(document.documentElement.lang);
     animateLinesToFinalState([
         { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
         { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
