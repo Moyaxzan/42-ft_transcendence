@@ -348,6 +348,10 @@ export async function renderPong() {
                 }
                 if (player1Score === 3 || player2Score === 3) {
                     launchRound = false;
+                    // console.log("Player1Name = ", player1.name);
+                    // console.log("Player1ID = ", player1.id);
+                    // console.log("Player2Name = ", player2.name);
+                    // console.log("Player2ID = ", player2.id);
                     sendMatchResult(player1.id, player1Score, player2Score, player2.id, tournamentId, matchRound, matchIndex);
                     stopGame();
                     let winnerId;
@@ -361,6 +365,8 @@ export async function renderPong() {
                         winnerName = player2.name;
                     }
                     resolve({ winnerId, winnerName });
+                    // const result = await Response.json();
+                    // console.log("Update response:", result);
                     return (winnerId);
                 }
                 else {

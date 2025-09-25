@@ -34,6 +34,7 @@ async function routes (fastify, options) {
 	})
 
 	fastify.post('/api/users/history/:id', async (request, reply) => {
+		const {id} = request.params;
 		const res = await fetch(`http://database:3000/api/users/history/${encodeURIComponent(id)}`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

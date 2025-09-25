@@ -88,7 +88,7 @@ export async function	renderPlayers() {
 	};
 
 	const	currentMode = gameModes[mode];
-	console.log("Mode indicator set to:", currentMode);
+	console.log("Mode indicator set to:", currentMode.type);
 
 	// Chargement du HTML de la page players
 	const	res = await fetch('/dist/html/players.html');
@@ -502,7 +502,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			// sessionStorage.setItem("gamePlayers", JSON.stringify(players));
 			// window.history.pushState({}, '', '/pong');
 			const playerNames = players.map(player => player.alias);
-			
+			console.log("PlayerNames = ", playerNames);
 			await startTournament(playerNames);
 			// Déclencher le routeur pour injecter la page
 			// window.dispatchEvent(new CustomEvent('routeChanged'));

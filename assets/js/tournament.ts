@@ -21,27 +21,33 @@ export async function sendMatchResult(
 
 	// 2. update winner stats
 	try {
+		console.log("Winner stats update in progress");
 		const response = await fetch(`/api/users/history/${winnerId}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				isWinner: true
+				// isWinner: true
+				id: winnerId,
+				score: score,
+				opponent_score: opponentScore
 			})
 		});
+		console.log(response);
 		if (!response.ok) {
 			const errorText = await response.text();
 			console.error('Erreur lors de l’envoi du score :', errorText);
 			return;
 		}
-		const result = await response.json();
+		// const result = await response.json();
 	} catch (err) {
 		console.error('Erreur réseau ou serveur :', err);
 	}
 
 	// 3. update looser stats
 	try {
+		console.log("Looser stats update in progress");
 		const response = await fetch(`/api/users/history/${looserId}`, {
 			method: 'POST',
 			headers: {
