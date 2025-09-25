@@ -85,7 +85,8 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		wins += 1;
+		// wins += 1;
+		wins++;
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET wins = ? WHERE id = ?', [wins, id], function (err) {
@@ -110,7 +111,8 @@ async function routes (fastify, options) {
 		const db = fastify.sqlite;
 		const { id } = request.params;
 		let { wins, losses } = request.body;
-		losses += 1;
+		// losses += 1;
+		losses++;
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET losses = ? WHERE id = ?', [losses, id], function (err) {
@@ -131,45 +133,45 @@ async function routes (fastify, options) {
 		}
 	});
 
-	fastify.post('/api/users/history/:id', async (request, reply) => {
-		const db = fastify.sqlite;
-		const { id: user_id } = request.params;
-		const { isWinner } = request.body;
+	// fastify.post('/api/users/history/:id', async (request, reply) => {
+	// 	const db = fastify.sqlite;
+	// 	const { id: user_id } = request.params;
+	// 	const { isWinner } = request.body;
 
-		try {
-			// vérifie si une entrée existe déjà pour cet utilisateur
-			const row = await db.get(
-				'SELECT * FROM user_stats WHERE user_id = ?',
-				[user_id]
-			);
+	// 	try {
+	// 		// vérifie si une entrée existe déjà pour cet utilisateur
+	// 		const row = await db.get(
+	// 			'SELECT * FROM user_stats WHERE user_id = ?',
+	// 			[user_id]
+	// 		);
 
-			if (row) {
-				// mise à jour des stats existantes
-				if (isWinner) {
-					await db.run(
-						'UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?',
-						[user_id]
-					);
-				} else {
-					await db.run(
-						'UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?',
-						[user_id]
-					);
-				}
-			} else {
-				//creation de la ligne si elle n'existe pas
-				await db.run(
-					'INSERT INTO user_stats (user_id, total_wins, total_losses) VALUES (?, ?, ?)',
-					[user_id, isWinner ? 1 : 0, isWinner ? 0 : 1]
-				);
-			}
+	// 		if (row) {
+	// 			// mise à jour des stats existantes
+	// 			if (isWinner) {
+	// 				await db.run(
+	// 					'UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?',
+	// 					[user_id]
+	// 				);
+	// 			} else {
+	// 				await db.run(
+	// 					'UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?',
+	// 					[user_id]
+	// 				);
+	// 			}
+	// 		} else {
+	// 			//creation de la ligne si elle n'existe pas
+	// 			await db.run(
+	// 				'INSERT INTO user_stats (user_id, total_wins, total_losses) VALUES (?, ?, ?)',
+	// 				[user_id, isWinner ? 1 : 0, isWinner ? 0 : 1]
+	// 			);
+	// 		}
 
-			reply.send({ success: true });
-		} catch (err) {
-			console.error('Erreur lors de la mise à jour des stats :', err);
-			reply.status(500).send({ error: 'Erreur serveur' });
-		}
-	});
+	// 		reply.send({ success: true });
+	// 	} catch (err) {
+	// 		console.error('Erreur lors de la mise à jour des stats :', err);
+	// 		reply.status(500).send({ error: 'Erreur serveur' });
+	// 	}
+	// });
 
 	fastify.patch('/api/users/:id', { schema: updateNameSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
