@@ -319,48 +319,6 @@ function initialisePlayersLogic(gameMode) {
         console.log("Deleted player, ID:", playerId);
     }
     // Fonction pour mettre à jour l'affichage des joueurs
-    // function	updatePlayersDisplay() {
-    // 	// Vider la liste actuelle
-    // 	playersList.innerHTML = "";
-    // 	if (players.length === 0)
-    // 		noPlayersMsg.style.display = "block"; // Afficher le message "aucun joueur"
-    // 	else {
-    // 		noPlayersMsg.style.display = "none"; // Cacher le message "aucun joueur"
-    // 		// Créer un élément pour chaque joueur
-    // 		players.forEach((player, index) => {
-    // 			const	playerElement = document.createElement("div");
-    // 			playerElement.className = "flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200";
-    // 			if (connectedUser && player.alias === connectedUser.name) {
-    // 				playerElement.innerHTML =	`<div class="flex items-center space-x-2">
-    // 												<span class="text-sm font-bold text-[#218DBE]">
-    // 													${index + 1}. </span>
-    // 												<span class="text-sm font-bold text-gray-800">
-    // 													${player.alias} </span>
-    // 											</div>`
-    // 			} else {
-    // 				playerElement.innerHTML =	`<div class="flex items-center space-x-2">
-    // 												<span class="text-sm font-bold text-[#218DBE]">
-    // 													${index + 1}. </span>
-    // 												<span class="text-sm font-bold text-gray-800">
-    // 													${player.alias} </span>
-    // 											</div>
-    // 											<button class="w-6 h-6 flex items-center justify-center bg-red-500 text-white
-    // 														   text-xs rounded hover:bg-red-600 transition-colors duration-200 font-bold
-    // 														   remove-player-btn" data-player-id="${player.id}">
-    // 												✕ 
-    // 											</button>`;
-    // 				// Ajout de l'event listener pour chaque player
-    // 				const	removeBtn = playerElement.querySelector('.remove-player-btn') as HTMLButtonElement;
-    // 				if (removeBtn) {
-    // 					const	clickHandler = () => removePlayer(player.id);
-    // 					removeBtn.addEventListener("click", clickHandler);
-    // 					currentEventListeners.push(() => removeBtn.removeEventListener("click", clickHandler));
-    // 				}
-    // 			}
-    // 			playersList.appendChild(playerElement);
-    // 		});
-    // 	}
-    // }
     function updatePlayersDisplay() {
         // Vider la liste actuelle
         playersList.innerHTML = "";
