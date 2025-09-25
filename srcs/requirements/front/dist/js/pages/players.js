@@ -190,9 +190,11 @@ function getCurrentPlayerInput() {
 function initialisePlayersLogic(gameMode) {
     console.log("Initialising players logic for mode:", gameMode.type);
     // Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
+    // const	lang = getCurrentLang();
     const modeIndicator = document.getElementById('mode-indicator');
     const playerLimits = document.getElementById('player-limits');
     const playerCount = document.getElementById('player-count');
+    // const	playerInput = document.getElementById(`player-input-${lang}`) as HTMLInputElement;
     const addPlayerBtn = document.getElementById("add-player-btn");
     const playersList = document.getElementById("players-list");
     const noPlayersMsg = document.getElementById("no-players");
@@ -204,6 +206,7 @@ function initialisePlayersLogic(gameMode) {
             modeIndicator: !!modeIndicator,
             playerLimits: !!playerLimits,
             playerCount: !!playerCount,
+            // playerInput: !!playerInput,
             addPlayerBtn: !!addPlayerBtn,
             playersList: !!playersList,
             noPlayersMsg: !!noPlayersMsg,
@@ -250,7 +253,7 @@ function initialisePlayersLogic(gameMode) {
                 ? `<span lang="en">Players Complete</span><span lang="fr">Joueurs au complet</span><span lang="jp">プレイヤーが揃いました</span>`
                 : `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
             : `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
-        setLanguage(getCurrentLang());
+        setLanguage(document.documentElement.lang);
     }
     // Fonction pour valider un alias
     function isValidAlias(alias) {

@@ -77,6 +77,7 @@ clean:
 	@echo -e "⣇⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡇"
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
+	@echo "Containers removed $(GREEN)successfully$(RESET)"
 
 down:
 	@docker $(COMPOSE) stop

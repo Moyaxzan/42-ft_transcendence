@@ -10,6 +10,7 @@ import { renderLogin } from './pages/modals/login.js';
 import { renderRegister } from './pages/modals/register.js';
 import { getCurrentLang, setLanguage } from './lang.js';
 
+
 // Define a map of paths to render functions
 const routes: Record<string, () => void> = {
   '/': renderHome,

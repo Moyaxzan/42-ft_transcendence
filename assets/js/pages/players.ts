@@ -255,9 +255,11 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	console.log("Initialising players logic for mode:", gameMode.type);
 
 	// Récupération des éléments DOM nécessaires, lien entre code ts et page html (préparation des elmts à manipuler)
+	// const	lang = getCurrentLang();
 	const	modeIndicator = document.getElementById('mode-indicator') as HTMLParagraphElement;
 	const	playerLimits = document.getElementById('player-limits') as HTMLParagraphElement;
 	const	playerCount = document.getElementById('player-count') as HTMLSpanElement;
+	// const	playerInput = document.getElementById(`player-input-${lang}`) as HTMLInputElement;
 	const	addPlayerBtn = document.getElementById("add-player-btn") as HTMLButtonElement;
 	const	playersList = document.getElementById("players-list") as HTMLDivElement;
 	const	noPlayersMsg = document.getElementById("no-players") as HTMLDivElement;
@@ -270,6 +272,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			modeIndicator: !!modeIndicator,
 			playerLimits: !!playerLimits,
 			playerCount: !!playerCount,
+			// playerInput: !!playerInput,
 			addPlayerBtn: !!addPlayerBtn,
 			playersList: !!playersList,
 			noPlayersMsg: !!noPlayersMsg,
@@ -324,7 +327,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 				: `<span lang="en">Tournament Full</span><span lang="fr">Tournoi complet</span><span lang="jp">トーナメントは満員です</span>`)
 			: `<span lang="en">Add player</span><span lang="fr">Ajouter un joueur</span><span lang="jp">プレイヤーを追加</span>`;
 
-		setLanguage(getCurrentLang());
+		setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
 	}
 
 	// Fonction pour valider un alias
@@ -400,6 +403,52 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 	}
 
 	// Fonction pour mettre à jour l'affichage des joueurs
+	// function	updatePlayersDisplay() {
+	// 	// Vider la liste actuelle
+	// 	playersList.innerHTML = "";
+
+	// 	if (players.length === 0)
+	// 		noPlayersMsg.style.display = "block"; // Afficher le message "aucun joueur"
+	// 	else {
+	// 		noPlayersMsg.style.display = "none"; // Cacher le message "aucun joueur"
+
+	// 		// Créer un élément pour chaque joueur
+	// 		players.forEach((player, index) => {
+	// 			const	playerElement = document.createElement("div");
+	// 			playerElement.className = "flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-200";
+
+	// 			if (connectedUser && player.alias === connectedUser.name) {
+	// 				playerElement.innerHTML =	`<div class="flex items-center space-x-2">
+	// 												<span class="text-sm font-bold text-[#218DBE]">
+	// 													${index + 1}. </span>
+	// 												<span class="text-sm font-bold text-gray-800">
+	// 													${player.alias} </span>
+	// 											</div>`
+	// 			} else {
+	// 				playerElement.innerHTML =	`<div class="flex items-center space-x-2">
+	// 												<span class="text-sm font-bold text-[#218DBE]">
+	// 													${index + 1}. </span>
+	// 												<span class="text-sm font-bold text-gray-800">
+	// 													${player.alias} </span>
+	// 											</div>
+	// 											<button class="w-6 h-6 flex items-center justify-center bg-red-500 text-white
+	// 														   text-xs rounded hover:bg-red-600 transition-colors duration-200 font-bold
+	// 														   remove-player-btn" data-player-id="${player.id}">
+	// 												✕ 
+	// 											</button>`;
+	// 				// Ajout de l'event listener pour chaque player
+	// 				const	removeBtn = playerElement.querySelector('.remove-player-btn') as HTMLButtonElement;
+	// 				if (removeBtn) {
+	// 					const	clickHandler = () => removePlayer(player.id);
+	// 					removeBtn.addEventListener("click", clickHandler);
+	// 					currentEventListeners.push(() => removeBtn.removeEventListener("click", clickHandler));
+	// 				}
+	// 			}
+	// 			playersList.appendChild(playerElement);
+	// 		});
+	// 	}
+	// }
+
 	function updatePlayersDisplay() {
   	// Vider la liste actuelle
 		playersList.innerHTML = "";
@@ -447,6 +496,7 @@ function	initialisePlayersLogic(gameMode: GameMode) {
 			});
 		}
 	}
+
 
 	// Fonction pour mettre à jour le bouton BEGIN
 	function	updateBeginButton() {
