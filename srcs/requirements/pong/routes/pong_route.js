@@ -5,25 +5,25 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
-	fastify.patch('/api/users/wins/:id', async (request, reply) => {
-		const res = await fetch(`http://database:3000/api/users/wins/${encodeURIComponent(id)}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
-		});
- 		const data = await res.json();
-  		reply.send(data);
-	})
+	// fastify.patch('/api/users/wins/:id', async (request, reply) => {
+	// 	const res = await fetch(`http://database:3000/api/users/wins/${encodeURIComponent(id)}`, {
+	// 		method: 'PATCH',
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
+	// 	});
+ 	// 	const data = await res.json();
+  	// 	reply.send(data);
+	// })
 
-	fastify.patch('/api/users/losses/:id', async (request, reply) => {
-		const res = await fetch(`http://database:3000/api/users/losses/${encodeURIComponent(id)}`, {
-			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
-		});
- 		const data = await res.json();
-  		reply.send(data);
-	})
+	// fastify.patch('/api/users/losses/:id', async (request, reply) => {
+	// 	const res = await fetch(`http://database:3000/api/users/losses/${encodeURIComponent(id)}`, {
+	// 		method: 'PATCH',
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		body: JSON.stringify({ id: request.body.id, wins: request.body.wins, losses: request.body.losses })
+	// 	});
+ 	// 	const data = await res.json();
+  	// 	reply.send(data);
+	// })
 
 	fastify.delete('/api/users/:id', async (request, reply) => {
 		const res = await fetch(`http://database:3000/api/users/${encodeURIComponent(id)}`, {
@@ -33,16 +33,16 @@ async function routes (fastify, options) {
 	 	const data = await res.json();
 	})
 
-	fastify.post('/api/users/history/:id', async (request, reply) => {
-		const {id} = request.params;
-		const res = await fetch(`http://database:3000/api/users/history/${encodeURIComponent(id)}`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: request.body.id, score: request.body.score, opponent_score: request.body.opponent_score })
-		});
- 		const data = await res.json();
-  		reply.send(data);
-	})
+	// fastify.post('/api/users/history/:id', async (request, reply) => {
+	// 	const {id} = request.params;
+	// 	const res = await fetch(`http://database:3000/api/users/history/${encodeURIComponent(id)}`, {
+	// 		method: 'POST',
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		body: JSON.stringify({ id: request.body.id, score: request.body.score, opponent_score: request.body.opponent_score })
+	// 	});
+ 	// 	const data = await res.json();
+  	// 	reply.send(data);
+	// })
 
 	 //fastify.get('/api/matches/:match_round/:match_index', async (request, reply) => {
 	 fastify.get('/api/play/:match_round/:match_index', async (request, reply) => {
