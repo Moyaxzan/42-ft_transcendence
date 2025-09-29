@@ -26,7 +26,7 @@ async function refreshAuthUI() {
     const welcomeMessage = document.getElementById('welcome-message');
     const headLoginButton = document.getElementById('head-login-button');
     const headLogoutButton = document.getElementById('head-logout-button');
-    const twofaDiv = document.getElementById('twofa-div');
+    const twofaDiv = document.getElementById('twofa-container');
     if (!loginBtn
         || !registerBtn
         || !googleBtn
