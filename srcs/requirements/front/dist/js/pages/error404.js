@@ -1,42 +1,8 @@
-/*
-import { animateLinesToFinalState } from './navbar.js'
-import { setLanguage } from '../lang.js';
-
 export async function render404() {
     document.title = "404 - Page Not Found";
     const app = document.getElementById('app');
     if (!app)
         return;
-
-    const res = await fetch('/dist/html/error404.html');
-    const html = await res.text();
-
-    app.innerHTML = html;
-
-    setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
-
-
-    animateLinesToFinalState([
-        { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-        { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
-    ]);
-
-    const	headLoginButton = document.getElementById('head-login-button');
-    const	headLogoutButton = document.getElementById('head-logout-button');
-
-    headLoginButton?.classList.add('hidden');
-    headLogoutButton?.classList.add('hidden');
-}
-*/
-import { setLinesFinalState } from './navbar.js';
-import { setVideoFinalState } from './bg_video.js';
-import { setLanguage } from '../lang.js';
-export async function render404() {
-    document.title = "404 - Page Not Found";
-    const app = document.getElementById('app');
-    if (!app)
-        return;
-    // Injecte directement le contenu HTML
     app.innerHTML = `
     <div class="flex flex-col items-center justify-start h-full text-center px-6 pt-20 relative">
       <h1 class="text-[8rem] font-extrabold text-[#FFB942] drop-shadow-lg leading-none animate-bounce">404</h1>
@@ -57,18 +23,23 @@ export async function render404() {
       </a>
     </div>
   `;
-    setLanguage(document.documentElement.lang);
-    setLinesFinalState([
+    /*
+      setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
+    
+      setLinesFinalState([
         { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
         { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
-    ]);
-    setVideoFinalState({
+      ]);
+    
+      setVideoFinalState({
         height: "55%",
         objectFit: "contain",
         bottom: "0",
         left: "0",
         opacity: "1"
-    });
-    document.getElementById('head-login-button')?.classList.add('hidden');
-    document.getElementById('head-logout-button')?.classList.add('hidden');
+      });
+    
+      document.getElementById('head-login-button')?.classList.add('hidden');
+      document.getElementById('head-logout-button')?.classList.add('hidden');
+    */
 }

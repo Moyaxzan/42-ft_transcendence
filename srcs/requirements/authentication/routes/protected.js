@@ -18,7 +18,6 @@ export default async function protectedRoutes(fastify) {
 
 		return {
 			name: user.name,
-		//	email: user.email,
 			wins: user.wins,
 			losses: user.losses
 		};

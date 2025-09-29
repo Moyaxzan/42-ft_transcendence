@@ -10,12 +10,6 @@ async function routes (fastify, options) {
 		return { hello: 'world' }
 	})
 
-/*
-	fastify.addHook('onRequest', (request, reply, done) => {
-		// authentication code
-	});
-*/
-
 	fastify.get('/api/users', async (request, reply) => {
 		const db = fastify.sqlite;
 		try {
@@ -80,14 +74,9 @@ async function routes (fastify, options) {
 		const { id } = request.params;
 	})
 
-	//fastify.patch('/api/users/points/:id', { schema: updatePointsSchema }, async (request, reply) => {
-	// fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
-	fastify.patch('/api/users/wins/:id', async (request, reply) => {
+	fastify.patch('/api/users/wins/:id', { schema: updateRecordsSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
 		const { id } = request.params;
-		// let { wins, losses } = request.body;
-		// wins += 1;
-		// wins++;
 		try {
 			const rows = await new Promise((resolve, reject) => {
 			db.run('UPDATE users SET wins = wins + 1 WHERE id = ?', [id], function (err) {
@@ -134,46 +123,6 @@ async function routes (fastify, options) {
 			return reply.status(500).send({ error: 'database UPDATE error', details: err.message });
 		}
 	});
-
-	// fastify.post('/api/users/history/:id', async (request, reply) => {
-	// 	const db = fastify.sqlite;
-	// 	const { id: user_id } = request.params;
-	// 	const { isWinner } = request.body;
-
-	// 	try {
-	// 		// vérifie si une entrée existe déjà pour cet utilisateur
-	// 		const row = await db.get(
-	// 			'SELECT * FROM user_stats WHERE user_id = ?',
-	// 			[user_id]
-	// 		);
-
-	// 		if (row) {
-	// 			// mise à jour des stats existantes
-	// 			if (isWinner) {
-	// 				await db.run(
-	// 					'UPDATE user_stats SET total_wins = total_wins + 1 WHERE user_id = ?',
-	// 					[user_id]
-	// 				);
-	// 			} else {
-	// 				await db.run(
-	// 					'UPDATE user_stats SET total_losses = total_losses + 1 WHERE user_id = ?',
-	// 					[user_id]
-	// 				);
-	// 			}
-	// 		} else {
-	// 			//creation de la ligne si elle n'existe pas
-	// 			await db.run(
-	// 				'INSERT INTO user_stats (user_id, total_wins, total_losses) VALUES (?, ?, ?)',
-	// 				[user_id, isWinner ? 1 : 0, isWinner ? 0 : 1]
-	// 			);
-	// 		}
-
-	// 		reply.send({ success: true });
-	// 	} catch (err) {
-	// 		console.error('Erreur lors de la mise à jour des stats :', err);
-	// 		reply.status(500).send({ error: 'Erreur serveur' });
-	// 	}
-	// });
 
 	fastify.patch('/api/users/:id', { schema: updateNameSchema }, async (request, reply) => {
 		const db = fastify.sqlite;
@@ -233,6 +182,28 @@ async function routes (fastify, options) {
 		} catch (err) {
 			console.error('User creation error:', err);
 			return reply.code(500).send({ error: 'User creation failed' });
+		}
+	});
+
+	fastify.patch('/api/users/2fa-toggle', async (request, reply) => {
+		const db = fastify.sqlite;
+		const { enabled, id } = request.body;
+
+		if (enabled === undefined) return reply.status(400).send({ error: 'Missing enabled flag' });
+		try {
+			await new Promise((resolve, reject) => {
+				db.run(`UPDATE users SET twofa_enabled = ? WHERE id = ?`, [enabled ? 1 : 0, id],
+				function(err) {
+					if (err) return reject(err);
+					if (this.changes === 0) return reject(new Error('User not found'));
+					resolve();
+				});
+			});
+			reply.send({ message: `2FA ${enabled ? 'enabled' : 'disabled'}`, enabled });
+		} catch (err) {
+			fastify.log.error(err);
+			if (err.message === 'User not found') return reply.status(404).send({ error: 'User not found' });
+			return reply.status(500).send({ error: 'Database update error', details: err.message });
 		}
 	});
 }
