@@ -17,7 +17,8 @@ export default async function protectedRoutes(fastify) {
 		return {
 			name: user.name,
 			wins: user.wins,
-			losses: user.losses
+			losses: user.losses,
+			twofa_enabled: user.twofa_enabled
 		};
 	});
 }

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
  password_hash TEXT DEFAULT NULL,
  reset_token TEXT UNIQUE DEFAULT NULL,
  reset_expiry NUMERIC DEFAULT 0,
- twofa_enabled NUMERIC DEFAULT 1,
+ twofa_enabled NUMERIC DEFAULT 0,
  twofa_secret TEXT DEFAULT NULL,
  wins INTEGER DEFAULT 0,
  losses INTEGER DEFAULT 0,
