@@ -102,6 +102,7 @@ async function gameRoutes (fastify, options) {
 			const getUserId = `SELECT id FROM users WHERE name = ?`;
 			const insertTournament = `INSERT INTO tournaments (user_id) VALUES (?)`;
 			const linkUserToTournament = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`;
+			const insertMatch = `INSERT INTO matches (tournament_id, user_id, opponent_id, match_round, match_index, score, opponent_score) VALUES (?, ?, ?, ?, ?, 0, 0)`;
 			const is_guest = true;
 			const userIds = [];
 
@@ -147,9 +148,7 @@ async function gameRoutes (fastify, options) {
 			await Promise.all(
 				matches.map(match =>
 					new Promise((resolve, reject) => {
-						db.run(
-							`INSERT INTO matches (tournament_id, user_id, opponent_id, match_round, match_index, score, opponent_score)
-							 VALUES (?, ?, ?, ?, ?, 0, 0)`,
+						db.run(insertMatch,
 							[
 								tournamentId,
 								match.user_id,
@@ -255,17 +254,9 @@ async function gameRoutes (fastify, options) {
 		const db = fastify.sqlite;
 		const { tournament_id, match_round, match_index, winner_id } = request.body;
 
-		const updateNewUser = `
-			UPDATE matches SET user_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
-		`;
-
-		const updateNewOpponent = `
-			UPDATE matches SET opponent_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
-		`;
-
-		const updateWinnerId = `
-			UPDATE matches SET winner_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;
-		`;
+		const updateNewUser = `UPDATE matches SET user_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;`;
+		const updateNewOpponent = `UPDATE matches SET opponent_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;`;
+		const updateWinnerId = `UPDATE matches SET winner_id = ? WHERE tournament_id = ? AND match_round = ? AND match_index = ?;`;
 		await db.run(updateWinnerId, [winner_id, tournament_id, match_round, match_index]);
 
 		try {

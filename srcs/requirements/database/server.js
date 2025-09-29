@@ -19,8 +19,6 @@ fastify.register(fastifySqlite, {
 	dbFile: './data/transcendence_db.db'
 })
 
-
-
 fastify.register(dbConnector)
 fastify.register(routes)
 fastify.register(authRoutes)

@@ -62,5 +62,4 @@ function generateBracket(userIds) {
 	return rounds.flat();
 }
 
-
 export default generateBracket
