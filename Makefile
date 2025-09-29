@@ -9,7 +9,6 @@ NAME = Transcendence
 REQUIREMENTS = ./srcs/requirements
 DB_DATA = ./data/database
 DB_DOCKER = $(REQUIREMENTS)/database/data
-NGINX_DATA = ./data/modsec_logs
 COMPOSE = compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.yml
 
 IMAGE := pongchat-removebg-preview.png
@@ -25,7 +24,7 @@ all:
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(MAGENTA)$(NAME) ready!$(RESET)"
-#@npm install -g typescript
+	@npm install -g typescript
 	@npm install canvas-confetti
 	@echo -e "⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⡇"
 	@echo -e "⡇ $(RED)⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿  ⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿$(RESET)  ⡇"
