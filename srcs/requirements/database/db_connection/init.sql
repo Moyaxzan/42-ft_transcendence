@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY,
- name TEXT UNIQUE NOT NULL,
+ name TEXT NOT NULL,
+--  name TEXT UNIQUE NOT NULL,
  is_guest NUMERIC DEFAULT 0,
  google_user NUMERIC DEFAULT 0,
  email TEXT UNIQUE DEFAULT NULL,
@@ -14,7 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
 /* ip_address TEXT DEFAULT NULL,
  is_log NUMERIC DEFAULT 0,
  points INTEGER DEFAULT 0,*/
- language TEXT DEFAULT en
+ language TEXT DEFAULT 'en',
+ UNIQUE(name, is_guest)
 );
 
 CREATE TABLE IF NOT EXISTS matches (

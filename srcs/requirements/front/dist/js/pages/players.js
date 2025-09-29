@@ -139,10 +139,14 @@ async function createGuestUser(name) {
 // Function to create tournament via API
 async function createTournamentFromPseudonyms(playerNames) {
     try {
+        let loggedUser = false;
+        if (await getAuthUser()) {
+            loggedUser = true;
+        }
         const response = await fetch('/api/tournaments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ players: playerNames }),
+            body: JSON.stringify({ players: playerNames, logged: loggedUser }),
         });
         const data = await response.json();
         if (!response.ok) {

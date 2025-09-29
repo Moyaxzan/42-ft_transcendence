@@ -91,34 +91,40 @@ async function gameRoutes (fastify, options) {
 
 	fastify.post('/api/tournaments', async (request, reply) => {
 		const db = fastify.sqlite;
-		const { players } = request.body;
+		const players = request.body.players;
+		const logged = request.body.logged;
 		console.log("📦 Contenu complet du body :", request.body);
 		if (!Array.isArray(players) || players.length < 2) {
 			return reply.status(400).send({ error: "At least two player names are required." });
 		}
 
 		try {
-			const insertGuest = `INSERT OR IGNORE INTO users (name, is_guest) VALUES (?, ?)`;
-			const getUserId = `SELECT id FROM users WHERE name = ?`;
+			const insertGuest = `INSERT INTO users (name, is_guest) VALUES (?, ?)`;
+			const getUserId = `SELECT id FROM users WHERE name = ? AND is_guest = ?`;
 			const insertTournament = `INSERT INTO tournaments (user_id) VALUES (?)`;
 			const linkUserToTournament = `INSERT INTO users_join_tournaments (user_id, tournament_id) VALUES (?, ?)`;
-			const is_guest = true;
+			let	  is_guest = true;
 			const userIds = [];
 
 			for (const player of players) {
-				 await new Promise ((resolve, reject) => {
-					db.run(insertGuest, [player, is_guest], function (err) {
-						if (err) return reject(err);
-						resolve(null);
-					});
-				})
+				if (player === players[0] && logged) {
+					is_guest = false;
+				} else {
+					await new Promise ((resolve, reject) => {
+						db.run(insertGuest, [player, is_guest], function (err) {
+							if (err) return reject(err);
+							resolve(null);
+						});
+					})
+				}
 				const userId = await new Promise((resolve, reject) => {
-					db.get(getUserId, [player], (err, row) => {
+					db.get(getUserId, [player, is_guest], (err, row) => {
 						if (err) return reject(err);
 						resolve(row.id);
 					});
 				});
 				userIds.push(userId);
+				is_guest = true;
 			}
 
 			const ownerId = userIds[0];

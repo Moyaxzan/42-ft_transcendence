@@ -60,15 +60,15 @@ async function routes (fastify, options) {
 	// 	reply.send(matches);
 	// });
 
-	fastify.post('/api/tournaments', async (request, reply) => {
-		const res = await fetch(`http://database:3000/api/tournaments`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ user_id: request.body.user_id, tournament_id: request.body.tournament_id })
-		});
- 		const data = await res.json();
-  		reply.send(data);
-	})
+	// fastify.post('/api/tournaments', async (request, reply) => {
+	// 	const res = await fetch(`http://database:3000/api/tournaments`, {
+	// 		method: 'POST',
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		body: JSON.stringify({ user_id: request.body.user_id, tournament_id: request.body.tournament_id })
+	// 	});
+ 	// 	const data = await res.json();
+  	// 	reply.send(data);
+	// })
 
 }
 
