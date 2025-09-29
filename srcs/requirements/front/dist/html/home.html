@@ -85,14 +85,25 @@
 						<span lang="jp">勝率</span>
 					</p>
 				</div>
-<!-- Switch 2FA -->
-<div id="twofa-container" class="flex items-center space-x-3 mt-4 hidden">
-    <span class="text-lg font-semibold text-[#FFB942]">Two-Factor Authentication</span>
-    <button id="twofa-switch" class="relative inline-flex items-center h-6 w-11 bg-gray-300 rounded-full transition-colors focus:outline-none">
-        <span class="sr-only">Enable 2FA</span>
-        <span class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></span>
-    </button>
-</div>
+
+				<!-- 2fA -->
+      				<div id="twofa-container" class="flex items-center justify-center h-14 w-full font-sans">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                                <input id="twofa-switch" type="checkbox" value="" class="sr-only peer">
+                                                <div class="relative w-11 h-6 bg-[#00303C]
+                                                        rounded-full peer peer-checked:after:translate-x-full
+                                                        rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white
+                                                        after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white
+                                                        after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all
+                                                        peer-checked:bg-[#FFB942]">
+                                                </div>
+                                                <p class="ml-4 font-bold text-black">
+                                                        <span lang="en">Two-Factor Authentication (2FA)</span>
+                                                        <span lang="fr">Authentication à deux facteurs (2FA)</span>
+                                                        <span lang="jp">二要素認証</span>
+                                                </p>
+                                        </label>
+                                </div>
 
 				<!-- Boutons Login -->
 				<div class="h-14 flex-1 flex-row w-full flex items-center justify-center space-x-4" style="font-family: 'Inter', sans-serif;">

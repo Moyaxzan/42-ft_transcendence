@@ -11,9 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
  twofa_secret TEXT DEFAULT NULL,
  wins INTEGER DEFAULT 0,
  losses INTEGER DEFAULT 0,
-/* ip_address TEXT DEFAULT NULL,
- is_log NUMERIC DEFAULT 0,
- points INTEGER DEFAULT 0,*/
  language TEXT DEFAULT en
 );
 
