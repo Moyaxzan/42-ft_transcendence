@@ -88,6 +88,34 @@
         <span lang="jp">コードを確認</span>
       </button>
     </div>
+	<div id="twofa-setup-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
+		<div class="bg-white rounded p-6 max-w-sm w-full relative">
+			<button
+				id="close2FAModal"
+				class="absolute top-2 right-2 text-gray-700 hover:text-black text-xl font-bold"
+			>
+			&times;
+			</button>
+			<h3 class="text-lg font-semibold mb-4 text-center">
+				<span lang="en">Configure Two-Factor Authentication</span><span lang="fr">Configurer la double authentification</span><span lang="fr">2要素認証を設定</span>
+			</h3>
+			<p class="mb-4 text-center">
+				<span lang="en">Scan this QR code with your authentication app:</span>
+				<span lang="fr">Scannez ce QR code avec votre application :</span>
+				<span lang="jp">認証アプリでこのQRコードをスキャンしてください</span>
+			</p>
+			<div id="qrCodeContainer" class="flex justify-center mb-4"></div>
+				<p class="text-center text-sm text-gray-600">
+				<span lang="en">Then go back to the login window to enter the code.</span>
+				<span lang="fr">Puis retournez dans la fenetre de connexion pour entrer le code.</span>
+				<span lang="jp">その後、ログイン画面に戻ってコードを入力してください</span>
+			</p>
+			</div>
+		</div>
+	</div>
+
+
+
 
     <!-- Alternative sign-in -->
     <!-- <div class="mt-6 text-center"> -->
@@ -98,5 +126,4 @@
     <!--   </p> -->
     <!--   <div id="googleSignInDiv"></div> -->
     <!-- </div> -->
-  </div>
 </div>

@@ -4,31 +4,6 @@ import { animateLinesToFinalState } from '../navbar.js'
 import { router } from '../../router.js'
 import { hideLoginModal } from '../modals.js';
 
-
-declare global {
-	interface Window {
-		google: any;
-		handleGoogleCredentialResponse: (response: any) => void;
-	}
-}
-
-function loadGoogleSdk(): Promise<void> {
-	return new Promise((resolve, reject) => {
-		if (window.google && window.google.accounts) {
-			resolve();
-			return;
-		}
-
-		const script = document.createElement('script');
-		script.src = 'https://accounts.google.com/gsi/client?hl=en';
-		script.async = true;
-		script.defer = true;
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error('Failed to load Google SDK'));
-		document.head.appendChild(script);
-	});
-}
-
 export async function renderLogin(): Promise<void> {
 	document.title = "Login";
 	const app = document.getElementById('app');
@@ -63,14 +38,6 @@ export async function renderLogin(): Promise<void> {
 	const twofaSetupModal = document.getElementById('twofa-setup-modal') as HTMLElement | null;
 	const qrCodeContainer = document.getElementById('qrCodeContainer') as HTMLElement | null;
 	const close2FAModalBtn = document.getElementById('close2FAModal') as HTMLButtonElement | null;
-	// const googleDiv = document.getElementById('googleSignInDiv');
-	// if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
-	// 	window.google.accounts.id.renderButton(googleDiv, {
-	// 		theme: 'outline',
-	// 		size: 'large',
-	// 		width: 280
-	// 	});
-	// }
 
 	let pendingEmail = '';
 	let pendingPassword = '';
@@ -158,9 +125,8 @@ export async function renderLogin(): Promise<void> {
 				return;
 			}
 
-			messageEl.style.color = 'green';
-			messageEl.textContent = 'Connexion successful';
-			//TODO better login message (persistent on home)
+			// messageEl.style.color = 'green';
+			// messageEl.textContent = 'Connexion successful';
 			hideLoginModal();
 		}
 		catch (err) {
@@ -206,44 +172,4 @@ export async function renderLogin(): Promise<void> {
 			console.error(err);
 		}
 	});
-
-	try {
-		await loadGoogleSdk();
-
-		const clientIdRes = await fetch('/auth/google/client-id');
-		const { clientId } = await clientIdRes.json();
-
-		console.log('Id received:', clientId);
-
-		window.handleGoogleCredentialResponse = async function(response) {
-			const { credential } = response;
-			const res = await fetch('/auth/google', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ token: credential }),
-			});
-
-			if (!res.ok) {
-				console.error(await res.text());
-				return;
-			}
-
-			const data = await res.json();
-			console.log('Connected via Google, got token:', data);
-			window.history.pushState({}, "", "/");
-			router();
-		};
-
-		window.google.accounts.id.initialize({
-			client_id: clientId,
-			callback: window.handleGoogleCredentialResponse,
-		});
-
-		window.google.accounts.id.renderButton(
-			document.getElementById('googleSignInDiv'),
-			{ theme: 'outline', size: 'large' }
-		);
-	} catch (err) {
-		console.error("Error loading Google Sign-In", err);
-	}
 }
