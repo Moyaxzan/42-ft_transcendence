@@ -99,10 +99,24 @@ async function authRoutes (fastify, options) {
             	return reply.code(500).send({ error: 'CouldNotCreateUser', details: text || 'Unknown error from database' });
         	}
 
+
+
 			const user = await createRes.json();
 			fastify.log.info({ email: user.email }, "User created");
 
-			return reply.send({ success: true, user });
+			const token = fastify.jwt.sign({
+				email: user.email,
+				id: user.id,
+			});
+
+			return reply
+			.setCookie('token', token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/'
+			})
+			.send({ success: true });
   		} catch (err) {
 			fastify.log.error(err, "Server error during registration");
         	return reply.code(500).send({ error: 'ServerError', details: err.message });
@@ -219,7 +233,7 @@ async function authRoutes (fastify, options) {
 	});
 
 	fastify.post('/auth/2fa/verify', async (request, reply) => {
-		const { token, email, password } = request.body;
+		const { token, email } = request.body;
 
 		const resUser = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
 		if (!resUser.ok)
@@ -254,6 +268,29 @@ async function authRoutes (fastify, options) {
 				path: '/'
 			})
 			.send({ success: true });
+	});
+
+	// Désactiver la 2FA
+	fastify.post('/auth/2fa/disable', async (request, reply) => {
+		const { email } = request.body;
+
+		// Vérifier que l'utilisateur existe
+		const resUser = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
+		if (!resUser.ok)
+			return reply.code(401).send({ error: 'User not found' });
+
+		const user = await resUser.json();
+
+		const patchRes = await fetch(`http://database:3000/api/users/${user.id}/2fa-secret`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ secret: null })
+		});
+
+		if (!patchRes.ok)
+			return reply.code(500).send({ error: 'Failed to disable 2FA' });
+
+		return reply.send({ success: true });
 	});
 
 	fastify.get('/auth/google/client-id', async (request, reply) => {

@@ -38,13 +38,23 @@ export async function renderProfile() {
             throw new Error("User not logged or unauthorized.");
         }
         const user = await res.json();
-        profileArea.innerHTML = `
-			<h2>Welcome, ${user.name} 👋</h2>
-			<ul>
-				<li><strong>Losses:</strong> ${user.losses}</li>
-				<li><strong>Wins:</strong> ${user.wins}</li>
-			</ul>
-		`;
+        const userElement = document.createElement("h2");
+        userElement.textContent = `${user.name}`;
+        profileArea.appendChild(userElement);
+        // profileArea.innerHTML = `
+        // 	<ul>
+        // 		<li><strong>Losses:</strong> ${user.losses}</li>
+        // 		<li><strong>Wins:</strong> ${user.wins}</li>
+        // 	</ul>
+        // `;
+        const ul = document.createElement("ul");
+        const liLosses = document.createElement("li");
+        liLosses.textContent = `<strong>Losses:</strong> ${user.losses}`;
+        ul.appendChild(liLosses);
+        const liWins = document.createElement("li");
+        liWins.textContent = `<strong>Wins:</strong> ${user.wins}`;
+        ul.appendChild(liWins);
+        profileArea.appendChild(ul);
         authActionContainer.innerHTML = `
 			<button id="logoutBtn" class="px-4 py-2 rounded bg-blue-400 text-black hover:bg-blue-500 transition">
 				Log out

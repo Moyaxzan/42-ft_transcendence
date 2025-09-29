@@ -10,6 +10,7 @@ services:
      - 8080:443
     volumes:
       - ./requirements/front:/var/www
+      - nginx:/modsec_logs
     depends_on:
       - logstash
     networks:
@@ -78,6 +79,7 @@ services:
       options:
         gelf-address: "udp://127.0.0.1:5000"
         tag: "auth-service"
+
 
 volumes:
   nginx:

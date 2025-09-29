@@ -5,29 +5,12 @@ import { hideRegisterModal } from '../modals.js';
 import { router } from '../../router.js'
 
 
-declare global {
-	interface Window {
-		google: any;
-		handleGoogleCredentialResponse: (response: any) => void;
-	}
-}
-
-function loadGoogleSdk(): Promise<void> {
-	return new Promise((resolve, reject) => {
-		if (window.google && window.google.accounts) {
-			resolve();
-			return;
-		}
-
-		const script = document.createElement('script');
-		script.src = 'https://accounts.google.com/gsi/client?hl=en';
-		script.async = true;
-		script.defer = true;
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error('Failed to load Google SDK'));
-		document.head.appendChild(script);
-	});
-}
+// declare global {
+// 	interface Window {
+// 		google: any;
+// 		handleGoogleCredentialResponse: (response: any) => void;
+// 	}
+// }
 
 export async function renderRegister(): Promise<void> {
 	document.title = "Register";
@@ -63,14 +46,6 @@ export async function renderRegister(): Promise<void> {
 	const twofaSetupModal = document.getElementById('twofa-setup-modal') as HTMLElement | null;
 	const qrCodeContainer = document.getElementById('qrCodeContainer') as HTMLElement | null;
 	const close2FAModalBtn = document.getElementById('close2FAModal') as HTMLButtonElement | null;
-	// const googleDiv = document.getElementById('googleSignInDiv');
-	// if (googleDiv && window.google && window.google.accounts && window.google.accounts.id) {
-	// 	window.google.accounts.id.renderButton(googleDiv, {
-	// 		theme: 'outline',
-	// 		size: 'large',
-	// 		width: 280
-	// 	});
-	// }
 
 	let pendingEmail = '';
 	let pendingPassword = '';
@@ -86,7 +61,6 @@ export async function renderRegister(): Promise<void> {
 
 	registerForm.addEventListener('submit', async (e: Event) => {
 		e.preventDefault();
-		console.log("SUBMIT EVENT LISTENER LISTENED NICELY !!!!!!!!!!!!");
 
 		const target = e.target as HTMLFormElement;
 		const email = (target.elements.namedItem('email') as HTMLInputElement)?.value.trim();
@@ -114,57 +88,56 @@ export async function renderRegister(): Promise<void> {
 
 			if (!res.ok) {
 				console.log(res);
-				if (data?.error === '2FA_REQUIRED') {
-					messageEl.textContent = 'Two-factor authentication required';
-					twofaSection?.classList.remove('hidden');
-					pendingEmail = email;
-					pendingPassword = password;
-					return;
-				}
-
-				if (data?.error === '2FA_SETUP_REQUIRED') {
-					messageEl.textContent = 'Two-factor authentication setup required';
-					pendingEmail = email;
-					pendingPassword = password;
-
-					twofaSetupModal?.classList.remove('hidden');
-					if (qrCodeContainer) 
-						qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
-
-					try {
-						const qrRes = await fetch('/auth/2fa/setup', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ email, password }),
-						});
-						const qrData = await qrRes.json();
-
-						if (!qrRes.ok || !qrData.qrCodeUrl) {
-							if (qrCodeContainer) 
-								qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
-							return;
-						}
-						if (qrCodeContainer) 
-							qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
-					}
-					catch (err) {
-						if (qrCodeContainer) 
-							qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
-						console.error(err);
-					}
-
-					return;
-				}
-
+				// if (data?.error === '2FA_REQUIRED') {
+				// 	messageEl.textContent = 'Two-factor authentication required';
+				// 	twofaSection?.classList.remove('hidden');
+				// 	pendingEmail = email;
+				// 	pendingPassword = password;
+				// 	return;
+				// }
+				//
+				// if (data?.error === '2FA_SETUP_REQUIRED') {
+				// 	messageEl.textContent = 'Two-factor authentication setup required';
+				// 	pendingEmail = email;
+				// 	pendingPassword = password;
+				//
+				// 	twofaSetupModal?.classList.remove('hidden');
+				// 	if (qrCodeContainer) 
+				// 		qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+				//
+				// 	try {
+				// 		const qrRes = await fetch('/auth/2fa/setup', {
+				// 			method: 'POST',
+				// 			headers: { 'Content-Type': 'application/json' },
+				// 			body: JSON.stringify({ email, password }),
+				// 		});
+				// 		const qrData = await qrRes.json();
+				//
+				// 		if (!qrRes.ok || !qrData.qrCodeUrl) {
+				// 			if (qrCodeContainer) 
+				// 				qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+				// 			return;
+				// 		}
+				// 		if (qrCodeContainer) 
+				// 			qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
+				// 	}
+				// 	catch (err) {
+				// 		if (qrCodeContainer) 
+				// 			qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+				// 		console.error(err);
+				// 	}
+				//
+				// 	return;
+				// }
+				//
 				messageEl.textContent = data?.message || 'Authentication failed.';
 				return;
 			}
 
-			messageEl.style.color = 'green';
-			messageEl.textContent = 'Connexion successful';
-			//TODO trad
-			//TODO better register message (persistent on home)
-			// hideRegisterModal();
+			// messageEl.style.color = 'green';
+			// messageEl.textContent = 'Connexion successful';
+			localStorage.setItem('authToken', data.token);
+			hideRegisterModal();
 		}
 		catch (err) {
 			messageEl.textContent = 'Network error, please try again later';
@@ -209,44 +182,4 @@ export async function renderRegister(): Promise<void> {
 			console.error(err);
 		}
 	});
-
-	try {
-		await loadGoogleSdk();
-
-		const clientIdRes = await fetch('/auth/google/client-id');
-		const { clientId } = await clientIdRes.json();
-
-		console.log('Id received:', clientId);
-
-		window.handleGoogleCredentialResponse = async function(response) {
-			const { credential } = response;
-			const res = await fetch('/auth/google', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ token: credential }),
-			});
-
-			if (!res.ok) {
-				console.error(await res.text());
-				return;
-			}
-
-			const data = await res.json();
-			console.log('Connected via Google, got token:', data);
-			window.history.pushState({}, "", "/");
-			router();
-		};
-
-		window.google.accounts.id.initialize({
-			client_id: clientId,
-			callback: window.handleGoogleCredentialResponse,
-		});
-
-		window.google.accounts.id.renderButton(
-			document.getElementById('googleSignInDiv'),
-			{ theme: 'outline', size: 'large' }
-		);
-	} catch (err) {
-		console.error("Error loading Google Sign-In", err);
-	}
 }

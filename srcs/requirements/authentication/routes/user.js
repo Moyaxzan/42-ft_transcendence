@@ -22,8 +22,8 @@ async function userRoutes (fastify, options) {
 		const data = await res.json();
 		reply.send(data);
 	})
-
-fastify.patch('/auth/2fa/toggle', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+  
+  fastify.patch('/auth/2fa/toggle', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { enabled } = request.body;
     const userId = request.user.id; // récupéré depuis le JWT
 
@@ -45,8 +45,7 @@ fastify.patch('/auth/2fa/toggle', { preHandler: [fastify.authenticate] }, async 
         fastify.log.error(err);
         return reply.status(500).send({ error: 'Internal server error' });
     }
-});
-
+  });
 }
 
 export default userRoutes
