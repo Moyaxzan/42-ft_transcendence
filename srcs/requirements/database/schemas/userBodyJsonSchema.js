@@ -10,7 +10,7 @@ const userBodyJsonSchema = {
                 reset_token: { type: 'string' },
                 reset_expiry: { type: 'integer' },
 		twofa_enabled: { type: 'integer' },
-		twofa_secret: { type: 'integer' },
+		twofa_secret: { type: 'string' },
                 wins: { type: 'integer' },
                 losses: { type: 'integer' },
         },
