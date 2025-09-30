@@ -1,5 +1,5 @@
 // import { renderHome } from '../home.js'
-import { setLanguage } from '../../lang.js';
+import { getCurrentLang, setLanguage, qrCodeMessages, loginMessages } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js';
 import { router } from '../../router.js';
 function loadGoogleSdk() {
@@ -73,7 +73,7 @@ export async function renderRegister() {
         messageEl.textContent = '';
         twofaSection?.classList.add('hidden');
         if (!email || !password || !nameInput) {
-            messageEl.textContent = 'Please fill all the fields';
+            messageEl.textContent = loginMessages.fields[getCurrentLang()];
             return;
         }
         try {
@@ -88,19 +88,19 @@ export async function renderRegister() {
             if (!res.ok) {
                 console.log(res);
                 if (data?.error === '2FA_REQUIRED') {
-                    messageEl.textContent = 'Two-factor authentication required';
+                    messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
                     twofaSection?.classList.remove('hidden');
                     pendingEmail = email;
                     pendingPassword = password;
                     return;
                 }
                 if (data?.error === '2FA_SETUP_REQUIRED') {
-                    messageEl.textContent = 'Two-factor authentication setup required';
+                    messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
                     pendingEmail = email;
                     pendingPassword = password;
                     twofaSetupModal?.classList.remove('hidden');
                     if (qrCodeContainer)
-                        qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+                        qrCodeContainer.innerHTML = qrCodeMessages.loading[getCurrentLang()];
                     try {
                         const qrRes = await fetch('/auth/2fa/setup', {
                             method: 'POST',
@@ -110,7 +110,7 @@ export async function renderRegister() {
                         const qrData = await qrRes.json();
                         if (!qrRes.ok || !qrData.qrCodeUrl) {
                             if (qrCodeContainer)
-                                qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+                                qrCodeContainer.innerHTML = qrCodeMessages.failed[getCurrentLang()];
                             return;
                         }
                         if (qrCodeContainer)
@@ -118,29 +118,29 @@ export async function renderRegister() {
                     }
                     catch (err) {
                         if (qrCodeContainer)
-                            qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+                            qrCodeContainer.innerHTML = qrCodeMessages.network[getCurrentLang()];
                         console.error(err);
                     }
                     return;
                 }
-                messageEl.textContent = data?.message || 'Authentication failed.';
+                messageEl.textContent = data?.message || loginMessages.failed[getCurrentLang()];
                 return;
             }
             messageEl.style.color = 'green';
-            messageEl.textContent = 'Connexion successful';
+            messageEl.textContent = loginMessages.successReg[getCurrentLang()];
             //TODO trad
             //TODO better register message (persistent on home)
             // hideRegisterModal();
         }
         catch (err) {
-            messageEl.textContent = 'Network error, please try again later';
+            messageEl.textContent = loginMessages.network[getCurrentLang()];
             console.error(err);
         }
     });
     submit2FABtn?.addEventListener('click', async () => {
         const code = totpInput?.value.trim();
         if (!code || !pendingEmail || !pendingPassword) {
-            messageEl.textContent = 'Please enter the 2FA code';
+            messageEl.textContent = qrCodeMessages.enter[getCurrentLang()];
             return;
         }
         try {
@@ -156,11 +156,11 @@ export async function renderRegister() {
             const data = await res.json().catch(() => null);
             if (!res.ok) {
                 messageEl.style.color = 'red';
-                messageEl.textContent = data?.message || 'Invalid 2FA code';
+                messageEl.textContent = data?.message || qrCodeMessages.invalid[getCurrentLang()];
                 return;
             }
             messageEl.style.color = 'green';
-            messageEl.textContent = 'Connexion successful';
+            messageEl.textContent = loginMessages.successReg[getCurrentLang()];
             window.history.pushState({}, "", "/");
             router();
         }

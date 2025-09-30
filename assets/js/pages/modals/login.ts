@@ -1,5 +1,5 @@
 // import { renderHome } from '../home.js'
-import { setLanguage } from '../../lang.js';
+import { getCurrentLang, setLanguage, qrCodeMessages, loginMessages } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js'
 import { router } from '../../router.js'
 import { hideLoginModal } from '../modals.js';
@@ -64,7 +64,7 @@ export async function renderLogin(): Promise<void> {
 		twofaSection?.classList.add('hidden');
 
 		if (!email || !password) {
-			messageEl.textContent = 'Please fill all the fields';
+			messageEl.textContent = loginMessages.fields[getCurrentLang()];
 			return;
 		}
 
@@ -80,7 +80,7 @@ export async function renderLogin(): Promise<void> {
 
 			if (!res.ok) {
 				if (data?.error === '2FA_REQUIRED') {
-					messageEl.textContent = 'Two-factor authentication required';
+					messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
 					twofaSection?.classList.remove('hidden');
 					pendingEmail = email;
 					pendingPassword = password;
@@ -88,13 +88,13 @@ export async function renderLogin(): Promise<void> {
 				}
 
 				if (data?.error === '2FA_SETUP_REQUIRED') {
-					messageEl.textContent = 'Two-factor authentication setup required';
+					messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
 					pendingEmail = email;
 					pendingPassword = password;
 
 					twofaSetupModal?.classList.remove('hidden');
 					if (qrCodeContainer) 
-						qrCodeContainer.innerHTML = '<p>Loading QR code...</p>';
+						qrCodeContainer.innerHTML = qrCodeMessages.loading[getCurrentLang()];
 
 					try {
 						const qrRes = await fetch('/auth/2fa/setup', {
@@ -106,7 +106,7 @@ export async function renderLogin(): Promise<void> {
 
 						if (!qrRes.ok || !qrData.qrCodeUrl) {
 							if (qrCodeContainer) 
-								qrCodeContainer.innerHTML = '<p class="text-red-600">Failed to load QR code</p>';
+								qrCodeContainer.innerHTML = qrCodeMessages.failed[getCurrentLang()];
 							return;
 						}
 						if (qrCodeContainer) 
@@ -114,14 +114,23 @@ export async function renderLogin(): Promise<void> {
 					}
 					catch (err) {
 						if (qrCodeContainer) 
-							qrCodeContainer.innerHTML = '<p class="text-red-600">Network error loading QR code</p>';
+							qrCodeContainer.innerHTML = qrCodeMessages.network[getCurrentLang()];
 						console.error(err);
 					}
 
 					return;
 				}
 
-				messageEl.textContent = data?.message || 'Authentication failed.';
+				if (data?.error === 'USER_NOT_FOUND') {
+					messageEl.textContent = loginMessages.notFound[getCurrentLang()];
+					return ;
+				}
+
+				if (data?.error === 'INCORRECT_PASSWORD') {
+					messageEl.textContent = loginMessages.incorrect[getCurrentLang()];
+					return ;
+				}
+				messageEl.textContent = data?.message || loginMessages.failed[getCurrentLang()];
 				return;
 			}
 
@@ -130,7 +139,7 @@ export async function renderLogin(): Promise<void> {
 			hideLoginModal();
 		}
 		catch (err) {
-			messageEl.textContent = 'Network error, please try again later';
+			messageEl.textContent = loginMessages.network[getCurrentLang()];
 			console.error(err);
 		}
 	});
@@ -139,7 +148,7 @@ export async function renderLogin(): Promise<void> {
 		const code = totpInput?.value.trim();
 
 		if (!code || !pendingEmail || !pendingPassword) {
-			messageEl.textContent = 'Please enter the 2FA code';
+			messageEl.textContent = qrCodeMessages.enter[getCurrentLang()];
 			return;
 		}
 
@@ -158,17 +167,17 @@ export async function renderLogin(): Promise<void> {
 
 			if (!res.ok) {
 				messageEl.style.color = 'red';
-				messageEl.textContent = data?.message || 'Invalid 2FA code';
+				messageEl.textContent = data?.message || qrCodeMessages.invalid[getCurrentLang()];
 				return;
 			}
 
 			messageEl.style.color = 'green';
-			messageEl.textContent = 'Connexion successful';
+			messageEl.textContent = loginMessages.success[getCurrentLang()];
 			window.history.pushState({}, "", "/");
 			router();
 		}
 		catch (err) {
-			messageEl.textContent = 'Network error during 2FA';
+			messageEl.textContent = qrCodeMessages.network[getCurrentLang()];
 			console.error(err);
 		}
 	});

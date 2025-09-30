@@ -28,3 +28,74 @@ export function getCurrentLang(): 'en' | 'fr' | 'jp' {
 		return (lang);
 	return ('en');
 }
+
+export const qrCodeMessages = {
+    failed: {
+        en: '<p class="text-red-600">Failed to load QR code</p>',
+        fr: '<p class="text-red-600">Echec du chargement du QR code</p>',
+        jp: '<p class="text-red-600">QRコードの読み込みに失敗しました</p>',
+    },
+    network: {
+        en: '<p class="text-red-600">Network error loading QR code</p>',
+        fr: '<p class="text-red-600">Erreur réseau lors du chargement du QR code</p>',
+        jp: '<p class="text-red-600">QRコードの読み込み中にネットワークエラーが発生しました</p>',
+    },
+	required: {
+		en: 'Two-factor authentication setup required',
+		fr: 'Authentification a deux facteurs nécessaire',
+		jp: '二要素認証が必要です'
+	},
+	loading: {
+		en: '<p>Loading QR code...</p>',
+		fr: '<p>Chargement du QR code...</p>',
+		jp: 'QRコードを読み込み中'
+	},
+	enter: {
+		en: 'Please enter the 2FA code',
+		fr: 'Veuillez entrer votre code 2FA',
+		jp: '2FAコードを入力してください'
+	},
+	invalid: {
+		en: 'Invalid 2FA code',
+		fr: 'Code 2FA invalide',
+		jp: '無効な2FAコード'
+	}
+};
+
+export const loginMessages = {
+	success: {
+		en: "Successfully logged in",
+		fr: "Connexion réussie",
+		jp: "ログイン成功"
+	},
+	failed: {
+		en: 'Authentication failed',
+		fr: "Echec d'authentification",
+		jp: '認証に失敗しました'
+	},
+	fields: {
+		en: 'Please fill all the fields',
+		fr: 'Veuillez remplir chaque champ',
+		jp: 'すべての項目を入力してください'
+	},
+	notFound: {
+		en: 'User not found in database',
+		fr: 'Utilisateur non trouvé',
+		jp: 'ユーザーが見つかりません'
+	},
+	incorrect: {
+		en: 'Incorrect password',
+		fr: 'Mot de passe invalide',
+		jp: '無効なパスワード',
+	},
+	network: {
+		en: 'Network error, try again later',
+		fr: 'Erreur réseau, essayez plus tard',
+		jp: 'ネットワークエラー。後で再試行してください'
+	},
+	successReg: {
+		en: "Registered successfully",
+		fr: "Inscription réussie",
+		jp: "登録成功"
+	}
+};

@@ -4,6 +4,11 @@ import { showWinnerModal, hideWinnerModal, showHelpModal, hideHelpModal } from '
 import { sendMatchResult, advanceWinner } from '../tournament.js';
 import { router } from '../router.js';
 import { getCurrentUser } from '../auth.js';
+const pressTranslation = {
+    en: "Press space to start",
+    fr: "Appuyez sur espace",
+    jp: "スタートでプレイ"
+};
 let animationId = 0;
 let gameStopped = false;
 export function stopGame() {
@@ -106,6 +111,12 @@ export async function renderPong() {
         headLoginButton.classList.remove('hidden');
         headLogoutButton.classList.add('hidden');
     }
+    window.addEventListener("languageChanged", (e) => {
+        const lang = e.detail;
+        if (countdownDiv && countdownDiv.style.display === "block") {
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
+        }
+    });
     // keys handling
     let launchRound = false;
     let keysPressed = {};
@@ -292,7 +303,7 @@ export async function renderPong() {
                     resolve();
                 }
             }
-            countdownDiv.innerText = "Press space to start!";
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
             countdownDiv.style.display = 'block';
             document.addEventListener("keydown", onKeyDown, { signal: controller.signal });
         });
@@ -314,7 +325,7 @@ export async function renderPong() {
         console.log(player2.name);
         return new Promise(async (resolve) => {
             countdownDiv.style.display = 'block';
-            countdownDiv.innerText = "Press space to start !";
+            countdownDiv.innerText = pressTranslation[getCurrentLang()];
             ball.style.top = `50%`;
             ball.style.left = `50%`;
             await waitForSpacePress();

@@ -15,18 +15,18 @@ async function authRoutes (fastify, options) {
 		});
 
 		if (!res.ok) {
-			return reply.status(401).send({ message: 'User not found in database' });
+			return reply.status(401).send({ error: 'USER_NOT_FOUND' });
 		}
 
 		const user = await res.json();
 
 		if (!user || !user.password_hash) {
-			return reply.status(401).send({ message: 'User not found in database' });
+			return reply.status(401).send({ error: 'USER_NOT_FOUND' });
 		}
 
 		const match = await bcrypt.compare(password, user.password_hash);
 		if (!match) {
-			return reply.status(401).send({ message: 'Incorrect password' });
+			return reply.status(401).send({ error: 'INCORRECT_PASSWORD' });
 		}
 
 		if (user.twofa_enabled) {
