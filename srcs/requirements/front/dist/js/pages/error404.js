@@ -23,23 +23,4 @@ export async function render404() {
       </a>
     </div>
   `;
-    /*
-      setLanguage(document.documentElement.lang as 'en' | 'fr' | 'jp');
-    
-      setLinesFinalState([
-        { id: "line-top", rotationDeg: -9, translateYvh: -30, height: "50vh" },
-        { id: "line-bottom", rotationDeg: -9, translateYvh: 30, height: "50vh" },
-      ]);
-    
-      setVideoFinalState({
-        height: "55%",
-        objectFit: "contain",
-        bottom: "0",
-        left: "0",
-        opacity: "1"
-      });
-    
-      document.getElementById('head-login-button')?.classList.add('hidden');
-      document.getElementById('head-logout-button')?.classList.add('hidden');
-    */
 }
