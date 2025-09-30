@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY,
- name TEXT UNIQUE NOT NULL,
+ name TEXT NOT NULL,
  is_guest NUMERIC DEFAULT 0,
  google_user NUMERIC DEFAULT 0,
  email TEXT UNIQUE DEFAULT NULL,
@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
  twofa_secret TEXT DEFAULT NULL,
  wins INTEGER DEFAULT 0,
  losses INTEGER DEFAULT 0,
- language TEXT DEFAULT en
+ language TEXT DEFAULT en,
+ UNIQUE(name, is_guest)
 );
 
 CREATE TABLE IF NOT EXISTS matches (
