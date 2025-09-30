@@ -7,9 +7,9 @@ export async function render404() {
   if (!app) return;
 
   app.innerHTML = `
-    <div class="flex flex-col items-center justify-start h-full text-center px-6 pt-20 relative">
+    <div class="flex flex-col items-center justify-start h-full text-center px-6 pt-24 relative">
       <h1 class="text-[8rem] font-extrabold text-[#FFB942] drop-shadow-lg leading-none animate-bounce">404</h1>
-      <p class="text-2xl font-semibold text-[#00303C] mb-4">
+      <p class="text-2xl font-semibold text-[#00303C] mb-4 pt-2">
         <span lang="en">Page not found</span>
         <span lang="fr">Page introuvable</span>
         <span lang="jp">ページが見つかりません</span>
