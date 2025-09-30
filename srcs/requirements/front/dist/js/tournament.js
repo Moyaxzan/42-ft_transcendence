@@ -12,45 +12,40 @@ export async function sendMatchResult(userId, score, opponentScore, opponentId, 
     }
     // 2. update winner stats
     try {
-        const response = await fetch(`/api/users/history/${winnerId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                isWinner: true
-            })
+        console.log("✅ Updating winner stats...");
+        const response = await fetch(`/api/users/wins/${winnerId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({})
         });
+        console.log(response);
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Erreur lors de l’envoi du score :', errorText);
+            console.error('Erreur MAJ gagnant :', errorText);
             return;
         }
-        const result = await response.json();
+        console.log("🏆 Winner updated:", await response.json());
     }
     catch (err) {
-        console.error('Erreur réseau ou serveur :', err);
+        console.error('Erreur réseau ou serveur MAJ gagnant:', err);
     }
     // 3. update looser stats
     try {
-        const response = await fetch(`/api/users/history/${looserId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                isWinner: false
-            })
+        console.log("✅ Updating loser stats...");
+        const response = await fetch(`/api/users/losses/${looserId}`, {
+            method: "PATCH",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
         });
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Erreur lors de l’envoi du score :', errorText);
+            console.error('Erreur MAJ perdant :', errorText);
             return;
         }
-        const result = await response.json();
+        console.log("💀 Loser updated:", await response.json());
     }
     catch (err) {
-        console.error('Erreur réseau ou serveur :', err);
+        console.error('Erreur réseau ou serveur MAJ perdant:', err);
     }
     //4. advance winner inside bracket
     await advanceWinner(tournamentId, matchRound, matchIndex, winnerId);
