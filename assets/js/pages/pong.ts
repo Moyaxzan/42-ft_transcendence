@@ -518,6 +518,12 @@ export async function renderPong() {
 				router();
 				return;
 			}
+			// Closes modal automatically 
+			const autoCloseTimeout = setTimeout(() => {
+				hideWinnerModal();
+				window.history.pushState({}, "", "/game-mode");
+				router();
+			}, 5000);
 			// Closes modal when clicking outside the content
 			winnerModal.addEventListener('click', (e) => {
 				const content = document.getElementById('modal-content')!;

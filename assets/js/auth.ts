@@ -1,4 +1,3 @@
-
 export async function getCurrentUser() {
 	const res = await fetch("/auth/me", {
 		credentials: "include",

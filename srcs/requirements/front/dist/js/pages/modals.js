@@ -70,4 +70,11 @@ export async function showRegisterModal() {
     closeBtn.addEventListener("click", () => {
         hideRegisterModal();
     });
+    // Close automatically
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        setTimeout(() => {
+            hideRegisterModal();
+        }, 1500);
+    });
 }
