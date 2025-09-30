@@ -15,6 +15,8 @@ COMPOSE = compose -f ./srcs/docker-compose.yml -f ./srcs/docker-compose-devops.y
 IMAGE := pongchat-removebg-preview.png
 
 all:
+	@chmod +x install_dependencies.sh
+	@./install_dependencies.sh
 	@echo -e  "$(GRAY)Copying HOME/.env into ./srcs$(RESET)"
 	@cp $(HOME)/.env srcs/.env
 	@echo -e "$(BLUE)HOME/.env$(RESET) copied into ./srcs: $(GREEN)Success$(RESET)\n"
@@ -25,7 +27,6 @@ all:
 	@mkdir -p $(DB_DATA) $(NGINX_DATA) $(DB_DOCKER)
 	@echo "$(BLUE)Repositories for persistent data$(RESET) created: $(GREEN)Success$(RESET)\n"
 	@echo "\n$(MAGENTA)$(NAME) ready!$(RESET)"
-#@npm install -g typescript
 	@npm install canvas-confetti
 	@echo -e "⡏⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⡇"
 	@echo -e "⡇ $(RED)⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿ $(BROWN)⡇$(RED) ⣿⡿  ⢿⣿ $(BROWN)⡇$(RED) ⣿⡿⠛⠛⢿⣿$(RESET)  ⡇"
@@ -36,7 +37,6 @@ all:
 	@echo -e "⣇⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡇"
 	@command -v chafa >/dev/null || { echo "Chafa n’est pas installé !"; exit 1; }
 	@chafa --symbols=block --fill=block --size=40x40 $(IMAGE)
-	@tsc
 	@docker $(COMPOSE) up --build -d
 
 
