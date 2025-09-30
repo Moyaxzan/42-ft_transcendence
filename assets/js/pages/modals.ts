@@ -99,6 +99,6 @@ export async function showRegisterModal() {
 		e.preventDefault(); 
 		setTimeout(() => {
 			hideRegisterModal();
-		}, 1500);
+		}, 3000);
 	});
 }

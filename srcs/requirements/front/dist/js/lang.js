@@ -26,7 +26,7 @@ export function getCurrentLang() {
 export const qrCodeMessages = {
     failed: {
         en: '<p class="text-red-600">Failed to load QR code</p>',
-        fr: '<p class="text-red-600">Échec du chargement du QR code</p>',
+        fr: '<p class="text-red-600">Echec du chargement du QR code</p>',
         jp: '<p class="text-red-600">QRコードの読み込みに失敗しました</p>',
     },
     network: {
@@ -36,7 +36,7 @@ export const qrCodeMessages = {
     },
     required: {
         en: 'Two-factor authentication setup required',
-        fr: 'Authentification a deux facteurs necessaire',
+        fr: 'Authentification a deux facteurs nécessaire',
         jp: '二要素認証が必要です'
     },
     loading: {
@@ -58,7 +58,7 @@ export const qrCodeMessages = {
 export const loginMessages = {
     success: {
         en: "Successfully logged in",
-        fr: "Connexion reussie",
+        fr: "Connexion réussie",
         jp: "ログイン成功"
     },
     failed: {
@@ -73,7 +73,7 @@ export const loginMessages = {
     },
     notFound: {
         en: 'User not found in database',
-        fr: 'Utilisateur non trouve',
+        fr: 'Utilisateur non trouvé',
         jp: 'ユーザーが見つかりません'
     },
     incorrect: {
@@ -83,12 +83,12 @@ export const loginMessages = {
     },
     network: {
         en: 'Network error, try again later',
-        fr: 'Erreur reseau, essayez plus tard',
+        fr: 'Erreur réseau, essayez plus tard',
         jp: 'ネットワークエラー。後で再試行してください'
     },
     successReg: {
         en: "Registered successfully",
-        fr: "Inscription reussie",
+        fr: "Inscription réussie",
         jp: "登録成功"
     }
 };
