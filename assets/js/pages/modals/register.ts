@@ -114,6 +114,7 @@ export async function renderRegister(): Promise<void> {
 
 			if (!res.ok) {
 				console.log(res);
+				messageEl.textContent = "Error: User already exists (username or email)";
 				if (data?.error === '2FA_REQUIRED') {
 					messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
 					twofaSection?.classList.remove('hidden');
@@ -156,7 +157,7 @@ export async function renderRegister(): Promise<void> {
 					return;
 				}
 
-				messageEl.textContent = "Error: User already exists (username or email)";
+				// messageEl.textContent = "Error: User already exists (username or email)";
 				return;
 			}
 
