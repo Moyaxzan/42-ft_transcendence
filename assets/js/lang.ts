@@ -97,5 +97,10 @@ export const loginMessages = {
 		en: "Registered successfully",
 		fr: "Inscription réussie",
 		jp: "登録成功"
+	},
+	alreadyExists: {
+		en: 'Error: User already exists (username or email)',
+		fr: "Nom d'utilisateur ou email déjà utilisé",
+		jp: 'ユーザー名またはメールアドレスは既に使用されています'
 	}
 };
