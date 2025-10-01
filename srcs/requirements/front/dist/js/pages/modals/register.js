@@ -88,7 +88,7 @@ export async function renderRegister() {
             const data = await res.json().catch(() => null);
             if (!res.ok) {
                 console.log(res);
-                messageEl.textContent = "Error: User already exists (username or email)";
+                messageEl.textContent = loginMessages.alreadyExists[getCurrentLang()];
                 // messageEl.textContent = "Error: User already exists (username or email)";
                 return;
             }
