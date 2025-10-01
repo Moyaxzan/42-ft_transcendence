@@ -18,7 +18,7 @@ function loadGoogleSdk(lang = "en"): Promise<void> {
 		}
 
 		const script = document.createElement('script');
-		script.src = 'https://accounts.google.com/gsi/client?hl=${}';
+		script.src = `https://accounts.google.com/gsi/client?hl=${lang}`;
 		script.async = true;
 		script.defer = true;
 		script.onload = () => resolve();
@@ -261,47 +261,43 @@ export async function renderHome() {
 
 
 	try {
+		// 1. Load the Google SDK
 		await loadGoogleSdk(getCurrentLang());
 
+		// 2. Fetch client ID from your backend
 		const clientIdRes = await fetch("/auth/google/client-id");
 		const { clientId } = await clientIdRes.json();
 
 		console.log("Id received:", clientId);
 
-		window.handleGoogleCredentialResponse = async function (response) {
-			const { credential } = response;
-			const res = await fetch("/auth/google", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ token: credential }),
-			});
-
-			if (!res.ok) {
-				console.error(await res.text());
-				return;
-			}
-
-			const data = await res.json();
-			console.log("Connected via Google, got token:", data);
-			window.history.pushState({}, "", "/");
-			router();
-		};
-
-		window.google.accounts.id.initialize({
+		// 3. Create OAuth2 popup client
+		const client = window.google.accounts.oauth2.initCodeClient({
 			client_id: clientId,
-			callback: window.handleGoogleCredentialResponse,
-			auto_select: false,
-			itp_support: true,
-			cancel_on_tap_outside: false,
+			scope: 'openid email profile',
+			ux_mode: 'popup', // popup instead of redirect
+			callback: async (response: any) => {
+				// 4. Handle token exchange with your backend
+				const res = await fetch('/auth/google', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ token: response.code }),
+				});
+
+				if (!res.ok) {
+					console.error('Failed to sign in via Google:', await res.text());
+					return;
+				}
+
+				console.log('Signed in:', await res.json());
+				window.history.pushState({}, '', '/');
+				router(); // or whatever routing you use
+			},
 		});
 
-		const googleBtn = document.getElementById("google-button");
-		if (googleBtn) {
-			    window.google.accounts.id.renderButton(
-               		googleBtn,
-                	{ theme: "outline", size: "large" }
-            );
-		}
+		// 5. Attach handler to the Google Sign-In button
+		googleBtn.addEventListener('click', () => {
+			client.requestCode();  // <-- opens popup every time
+		});
 	} catch (err) {
 		console.error("Error loading Google Sign-In", err);
 	}

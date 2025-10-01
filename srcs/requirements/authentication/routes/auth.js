@@ -109,70 +109,99 @@ async function authRoutes (fastify, options) {
   		}
 	});
 
-
 	fastify.post('/auth/google', async (request, reply) => {
-		const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-		const { token } = request.body;
-		if (!token)
-			return reply.code(400).send({ error: 'Missing Google token' });
+		const { token: code } = request.body;
+		if (!code) {
+			return reply.code(400).send({ error: 'Missing Google authorization code' });
+		}
 
-		let ticket;
 		try {
-			ticket = await client.verifyIdToken({
-				idToken: token,
-				audience: process.env.GOOGLE_CLIENT_ID
+			// 1. Exchange the authorization code for tokens
+			const params = new URLSearchParams({
+				code,
+				client_id: process.env.GOOGLE_CLIENT_ID || '',
+				client_secret: process.env.GOOGLE_CLIENT_SECRET || '', // required for code exchange
+				redirect_uri: 'postmessage',
+				grant_type: 'authorization_code',
 			});
-		} catch (e) {
-			console.error("Google token verification failed:", e);
-			return reply.code(401).send({ error: 'Invalid Google token' });
-		}
 
-		const payload = ticket.getPayload();
-		if (!payload)
-			return reply.code(400).send({ error: 'Invalid Google payload' });
-
-		const email = payload.email;
-		const name = payload.name;
-
-		let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
-		let user;
-
-		if (res.ok) {
-			user = await res.json();
-		} else {
-			res = await fetch(`http://database:3000/api/users/google-signin`, {
+			const googleRes = await fetch('https://oauth2.googleapis.com/token', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, name, google_user: true })
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: params,
 			});
-			if (!res.ok) {
-				const text = await res.text();
-				console.error("Error creating user:", text);
-				return reply.code(500).send({ error: 'Could not create user', details: text });
-		}
-			try {
-				user = await res.json();
-			} catch (e) {
-				console.error("Failed to parse user JSON:", e);
-				return reply.code(500).send({ error: 'Invalid JSON from user creation' });
+
+			if (!googleRes.ok) {
+				const text = await googleRes.text();
+				console.error('[Google Auth] Token exchange failed:', text);
+				return reply.code(401).send({ error: 'Google token exchange failed', details: text });
 			}
-		}
 
-		const jwt = fastify.jwt.sign({
-			id: user.id,
-			email: user.email,
-			name: user.name
-		});
+			const { id_token } = await googleRes.json();
+			if (!id_token) {
+				return reply.code(401).send({ error: 'No ID token returned by Google' });
+			}
 
-		reply
+			// 2. Verify the ID token
+			const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+			const ticket = await client.verifyIdToken({
+				idToken: id_token,
+				audience: process.env.GOOGLE_CLIENT_ID,
+			});
+
+			const payload = ticket.getPayload();
+			if (!payload) {
+				return reply.code(400).send({ error: 'Invalid Google payload' });
+			}
+
+			const email = payload.email;
+			const name = payload.name;
+
+			// 3. Find or create the user in your DB
+			let res = await fetch(`http://database:3000/api/users/${encodeURIComponent(email)}`);
+			let user;
+
+			if (res.ok) {
+				user = await res.json();
+			} else {
+				// User not found → create new one
+				res = await fetch(`http://database:3000/api/users/google-signin`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, name, google_user: true }),
+				});
+
+				if (!res.ok) {
+					const text = await res.text();
+					console.error('Error creating user:', text);
+					return reply.code(500).send({ error: 'Could not create user', details: text });
+				}
+
+				user = await res.json();
+			}
+
+			// 4. Create your own session token (JWT)
+			const jwt = fastify.jwt.sign({
+				id: user.id,
+				email: user.email,
+				name: user.name,
+			});
+
+			// 5. Send cookie back to client
+			reply
 			.setCookie('token', jwt, {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'lax',
-				path: '/'
+				path: '/',
 			})
 			.send({ success: true });
-	});
+
+		} catch (err) {
+			console.error('[Google Auth] Error:', err);
+			return reply.code(500).send({ error: 'Server error during Google auth' });
+		}
+});
 
 
 	fastify.post('/auth/2fa/setup', async (request, reply) => {
