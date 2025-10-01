@@ -156,7 +156,7 @@ export async function renderRegister(): Promise<void> {
 					return;
 				}
 
-				messageEl.textContent = data?.message || loginMessages.failed[getCurrentLang()];
+				messageEl.textContent = "Error: User already exists (username or email)";
 				return;
 			}
 
@@ -215,8 +215,6 @@ export async function renderRegister(): Promise<void> {
 
 		const clientIdRes = await fetch('/auth/google/client-id');
 		const { clientId } = await clientIdRes.json();
-
-		console.log('Id received:', clientId);
 
 		window.handleGoogleCredentialResponse = async function(response) {
 			const { credential } = response;

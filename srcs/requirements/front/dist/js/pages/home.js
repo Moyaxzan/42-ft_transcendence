@@ -253,28 +253,13 @@ export async function renderHome() {
         window.google.accounts.id.initialize({
             client_id: clientId,
             callback: window.handleGoogleCredentialResponse,
+            auto_select: false,
             itp_support: true,
             cancel_on_tap_outside: false,
         });
         const googleBtn = document.getElementById("google-button");
         if (googleBtn) {
-            googleBtn.addEventListener("click", () => {
-                window.google.accounts.id.prompt((notification) => {
-                    console.log("[GSI] prompt notification:", notification);
-                    if (notification.isNotDisplayed?.()) {
-                        console.warn("[GSI] One Tap NOT displayed:", notification.getNotDisplayedReason?.());
-                    }
-                    else if (notification.isSkippedMoment?.()) {
-                        console.warn("[GSI] One Tap SKIPPED:", notification.getSkippedReason?.());
-                    }
-                    else if (notification.isDismissedMoment?.()) {
-                        console.warn("[GSI] One Tap DISMISSED:", notification.getDismissedReason?.());
-                    }
-                    else if (notification.isDisplayed?.()) {
-                        console.log("[GSI] One Tap DISPLAYED.");
-                    }
-                });
-            });
+            window.google.accounts.id.renderButton(googleBtn, { theme: "outline", size: "large" });
         }
     }
     catch (err) {

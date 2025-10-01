@@ -123,7 +123,7 @@ export async function renderRegister() {
                     }
                     return;
                 }
-                messageEl.textContent = data?.message || loginMessages.failed[getCurrentLang()];
+                messageEl.textContent = "Error: User already exists (username or email)";
                 return;
             }
             messageEl.style.color = 'green';
@@ -173,7 +173,6 @@ export async function renderRegister() {
         await loadGoogleSdk();
         const clientIdRes = await fetch('/auth/google/client-id');
         const { clientId } = await clientIdRes.json();
-        console.log('Id received:', clientId);
         window.handleGoogleCredentialResponse = async function (response) {
             const { credential } = response;
             const res = await fetch('/auth/google', {
