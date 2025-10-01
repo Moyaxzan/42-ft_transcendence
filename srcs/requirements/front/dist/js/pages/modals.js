@@ -71,10 +71,10 @@ export async function showRegisterModal() {
         hideRegisterModal();
     });
     // Close automatically
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        setTimeout(() => {
-            hideRegisterModal();
-        }, 3000);
-    });
+    // form.addEventListener("submit", (e) => {
+    // 	e.preventDefault(); 
+    // 	setTimeout(() => {
+    // 		hideRegisterModal();
+    // 	}, 3000);
+    // });
 }

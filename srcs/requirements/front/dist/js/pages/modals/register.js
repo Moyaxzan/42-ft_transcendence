@@ -1,6 +1,7 @@
 // import { renderHome } from '../home.js'
 import { getCurrentLang, setLanguage, qrCodeMessages, loginMessages } from '../../lang.js';
 import { animateLinesToFinalState } from '../navbar.js';
+import { hideRegisterModal } from '../modals.js';
 import { router } from '../../router.js';
 function loadGoogleSdk() {
     return new Promise((resolve, reject) => {
@@ -88,50 +89,12 @@ export async function renderRegister() {
             if (!res.ok) {
                 console.log(res);
                 messageEl.textContent = "Error: User already exists (username or email)";
-                if (data?.error === '2FA_REQUIRED') {
-                    messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
-                    twofaSection?.classList.remove('hidden');
-                    pendingEmail = email;
-                    pendingPassword = password;
-                    return;
-                }
-                if (data?.error === '2FA_SETUP_REQUIRED') {
-                    messageEl.textContent = qrCodeMessages.required[getCurrentLang()];
-                    pendingEmail = email;
-                    pendingPassword = password;
-                    twofaSetupModal?.classList.remove('hidden');
-                    if (qrCodeContainer)
-                        qrCodeContainer.innerHTML = qrCodeMessages.loading[getCurrentLang()];
-                    try {
-                        const qrRes = await fetch('/auth/2fa/setup', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, password }),
-                        });
-                        const qrData = await qrRes.json();
-                        if (!qrRes.ok || !qrData.qrCodeUrl) {
-                            if (qrCodeContainer)
-                                qrCodeContainer.innerHTML = qrCodeMessages.failed[getCurrentLang()];
-                            return;
-                        }
-                        if (qrCodeContainer)
-                            qrCodeContainer.innerHTML = `<img src="${qrData.qrCodeUrl}" alt="QR Code 2FA" class="mx-auto" />`;
-                    }
-                    catch (err) {
-                        if (qrCodeContainer)
-                            qrCodeContainer.innerHTML = qrCodeMessages.network[getCurrentLang()];
-                        console.error(err);
-                    }
-                    return;
-                }
                 // messageEl.textContent = "Error: User already exists (username or email)";
                 return;
             }
             messageEl.style.color = 'green';
             messageEl.textContent = loginMessages.successReg[getCurrentLang()];
-            //TODO trad
-            //TODO better register message (persistent on home)
-            // hideRegisterModal();
+            hideRegisterModal();
         }
         catch (err) {
             messageEl.textContent = loginMessages.network[getCurrentLang()];
